@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+  <constant name="struts.objectFactory" value="org.apache.struts2.spring.StrutsSpringObjectFactory" />
+  <constant name="struts.i18n.encoding" value="UTF8" /> 
+  <constant name="struts.multipart.maxSize" value="15000000" />
+  <package name="myDefaultPackage"  extends="struts-default">
+	   <interceptors>
+	       <interceptor name="securityInterceptor" class="br.ufpb.dicomflow.interceptor.SecurityInterceptor"/>
+	   </interceptors>
+	   
+  </package>
+  
+  
+
+  		
+</struts>
