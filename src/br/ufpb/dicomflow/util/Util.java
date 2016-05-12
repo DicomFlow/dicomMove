@@ -398,43 +398,6 @@ public class Util {
 		}
 		return lastFileName;
 	}
-	
-
-	public static String saveThumb(byte[] file, String fileName, String lastFileName, String location, int width,
-			int height, int quality ) throws ServiceException{
-
-		
-		createIfLocationNotExists(location);
-		
-		System.out.println("file " + file);
-		if(file != null && file.length != 0){
-			File lastFile = null;
-			if(lastFileName != null && !lastFileName.equals("")){
-				lastFile = new File(location+File.separator+lastFileName);
-				lastFile.delete();
-			}
-			StringBuffer newFileName = new StringBuffer(String.valueOf("thumb"+Util.getRadom()) + Calendar.getInstance().getTimeInMillis()+Util.getExtencao(fileName));		
-			fileName = newFileName.toString();
-			FileOutputStream out  = null;
-
-			try {			
-				out = new FileOutputStream(location+File.separator+fileName);	    			
-				out.write(Thumbnail.makeThumbnail(file,width,height,quality));
-				out.flush();			
-				out.close();
-			} catch (FileNotFoundException e) {
-				throw new ServiceException(e);
-			} catch (IOException e) {			
-				throw new ServiceException(e);
-			}
-			
-			return fileName;
-			
-		}
-		return lastFileName;
-	}
-
-
 
 	private static void createIfLocationNotExists(String location) {
 		File tmp = new File(location);
@@ -477,32 +440,6 @@ public class Util {
 			file = new File(location+File.separator+fileName);
 			file.delete();
 		}
-	}
-	
-	public static String saveThumb(File file, String fileName, String path, int width,
-			int height, int quality ) {
-		createIfLocationNotExists(path);
-		String thumb = "";
-		try {
-				
-				thumb = "thumb"+fileName;
-				FileOutputStream out  = null;			
-    			
-    			out = new FileOutputStream(path+File.separator+thumb);	    			
-    			out.write(Thumbnail.makeThumbnail(Util.getBytesFromFile(file),width,height,quality));
-    			
-    			out.flush();			
-    			out.close();
-			
-		} catch (FileNotFoundException e) {
-			System.err.println("Não foi possível gerar o thumbnail para a imagem!");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.err.println("Não foi possível gerar o thumbnail para a imagem!");
-			e.printStackTrace();
-		}
-		
-		return thumb;
 	}
 	
 	
@@ -612,89 +549,6 @@ public class Util {
 		}
 	}
 	
-	public static void main(String[] args) {
-		
-		System.err.println("A senha " + Base64Coder.decodeString("MzFQQTI5"));
-		System.err.println("A senha " + Base64Coder.decodeString("MjlZQTI4"));
-		System.err.println("A senha " + Base64Coder.decodeString("NTJBTDQ0"));
-		System.err.println("A senha " + Base64Coder.decodeString("NTBNQTEx"));
-		System.err.println("A senha " + Base64Coder.decodeString("NTJBTjQ0"));
-		System.err.println("A senha " + Base64Coder.decodeString("MzdNTzEx"));
-		System.err.println("A senha " + Base64Coder.decodeString("NTlBTjEy"));
-		System.err.println("A senha " + Base64Coder.decodeString("MTFSQTE5"));
-		System.err.println("A senha " + Base64Coder.decodeString("MzFBTjI5"));
-		System.err.println("A senha " + Base64Coder.decodeString("NThMSTQ4"));
-		System.err.println("A senha " + Base64Coder.decodeString("OTRFTTE2"));
-		System.err.println("A senha " + Base64Coder.decodeString("MjFKVTI0"));
-		System.err.println("A senha " + Base64Coder.decodeString("MzNCSTI5"));
-		System.err.println("A senha " + Base64Coder.decodeString("NzJIVTU0"));
-		System.err.println("A senha " + Base64Coder.decodeString("MTlLQTEx"));
-		System.err.println("A senha " + Base64Coder.decodeString("NjRJRzEy"));
-		System.err.println("A senha " + Base64Coder.decodeString("NzRHVTU0"));
-		System.err.println("A senha " + Base64Coder.decodeString("NTNFUjQ0"));
-		
-		
-		System.out.println("executando!");
-		if(args.length != 1){
-			System.out.println("informe o diretório das imagens");
-			System.exit(0);
-		}
-		
-		File dir = new File(args[0]);
-		if(!dir.isDirectory()){
-			System.out.println(args[0] + " Não é um diretório válido");
-			System.exit(1);
-		}
-		
-		FileFilter fileFilter = new FileFilter() { 
-            public boolean accept(File file){ 
-                return 	file.getName().toLowerCase().endsWith(".jpeg") || 
-                		file.getName().toLowerCase().endsWith(".jpg") ||
-                		file.getName().toLowerCase().endsWith(".bmp") ||
-                		file.getName().toLowerCase().endsWith(".png"); 
-            } 
-        };
-		
-		File[] files = dir.listFiles(fileFilter);
-		for (int i = 0; i < files.length; i++) {
-			
-			File file = files[i];
-			System.out.println("redimensionando o arquivo: " +  file.getName() + " no diretório: " + file.getParent());
-			resizeFile(file, file.getName(), file.getParent(), 800, 600, 100);
-			System.out.println("arquivo redimensionado!");
-		}
-		
-		System.out.println("execução finalizada com sucesso!");
-		
-		
-		
-	}
-	
-	
-	private static String resizeFile(File file, String fileName, String path, int width, int height, int quality ) {
-		
-		String thumb = "";
-		try {
-				
-				thumb = "thumb_"+fileName;
-				FileOutputStream out  = null;			
-    			
-    			out = new FileOutputStream(path+File.separator+thumb);	    			
-    			out.write(Thumbnail.makeThumbnail(Util.getBytesFromFile(file),width,height,quality));
-    			
-    			out.flush();			
-    			out.close();
-			
-		} catch (FileNotFoundException e) {
-			System.err.println("Não foi possível gerar o thumbnail para a imagem!");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.err.println("Não foi possível gerar o thumbnail para a imagem!");
-			e.printStackTrace();
-		}
-		
-		return thumb;
-	}
 	
 	public static String getCredential(){
 		return "" + (int)Math.random() * 1000000;
