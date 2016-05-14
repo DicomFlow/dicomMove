@@ -38,3 +38,4 @@ Thumbs.db
 
 #Specific project files
 /temp/*
+/target
