@@ -1,3 +1,21 @@
+/*
+ * 	This file is part of DicomFlow.
+ * 
+ * 	DicomFlow is free software: you can redistribute it and/or modify
+ * 	it under the terms of the GNU General Public License as published by
+ * 	the Free Software Foundation, either version 3 of the License, or
+ * 	(at your option) any later version.
+ * 
+ * 	This program is distributed in the hope that it will be useful,
+ * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * 	GNU General Public License for more details.
+ * 
+ * 	You should have received a copy of the GNU General Public License
+ * 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
 package br.ufpb.dicomflow.agent;
 
 import java.util.ArrayList;
@@ -12,7 +30,6 @@ import br.ufpb.dicomflow.bean.Access;
 import br.ufpb.dicomflow.bean.Registry;
 import br.ufpb.dicomflow.bean.RegistryAccess;
 import br.ufpb.dicomflow.bean.Study;
-import br.ufpb.dicomflow.service.MessageService;
 import br.ufpb.dicomflow.service.PersistentService;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
