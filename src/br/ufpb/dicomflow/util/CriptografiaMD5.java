@@ -18,6 +18,7 @@
 
 package br.ufpb.dicomflow.util;
 
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -60,12 +61,29 @@ public class CriptografiaMD5 {
 		}
 		return null;
 	}
+	
+	/**
+	 * Performs MD5-encoding of input String.
+	 * 
+	 * @param data
+	 *            * String to be encoded
+	 * @return * The MD5 encoded string representation of data.
+	 */
+	public static String EncodeMD5(String data) {
+		MessageDigest messageDigest;
+		try {
+			messageDigest = MessageDigest.getInstance("MD5");
+			messageDigest.update(data.getBytes(), 0, data.length());  
+			String hashedPass = new BigInteger(1,messageDigest.digest()).toString(16);  
+			if (hashedPass.length() < 32) {
+			   hashedPass = "0" + hashedPass; 
+			}
+			
+			return hashedPass;
 
-	public static void main(String[] args) {
-		String senha = "123456";
-		System.out.println(CriptografiaMD5.criptografar(senha));
-
-		senha = "132546";
-		System.out.println(CriptografiaMD5.criptografar(senha));
+		} catch (NoSuchAlgorithmException e) {
+			return null;
+		}  
 	}
+
 }

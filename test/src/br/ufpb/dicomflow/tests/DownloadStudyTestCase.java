@@ -23,7 +23,7 @@ public class DownloadStudyTestCase extends GenericTestCase {
 		Client client = ClientBuilder.newClient(clientConfig);
 //		client.register(ThirdClientFilter.class);
 		//http://localhost:8090/DicomMoveServer/rest/DownloadStudy
-		WebTarget webTarget = client.target("http://localhost:8090/DicomMoveServer/rest");
+		WebTarget webTarget = client.target("http://localhost:8080/DicomMove/rest");
 //		webTarget.register(FilterForExampleCom.class);
 		WebTarget resourceWebTarget = webTarget.path("DownloadStudy");
 //		WebTarget helloworldWebTarget = resourceWebTarget.path("helloworld");
