@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
-import br.ufpb.dicomflow.util.Signature;
+import br.ufpb.dicomflow.util.RequestOperations;
 
 public class GenericWebService {
 	
@@ -68,9 +68,9 @@ public class GenericWebService {
 			//String accessKey = accessKeyObj.getKey();
 			//CdnUser user = accessKeyObj.getCdnUser();
 			//String hash = Signature.calculateRFC2104HMAC(calculatedHeaderString, accessKey);
-			if (hash.equals(requestSignature)) {
+			//if (hash.equals(requestSignature)) {
 				//return user;
-			}
+			//}
 		} catch (Exception e) {
 			return false;
 		}
