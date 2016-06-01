@@ -154,10 +154,10 @@
     </bean>
     <bean id="urlGenerator" class="br.ufpb.dicomflow.service.impl.DefaultURLGenerator">
     	<property name="host">
-            <value>localhost</value>
+            <value>192.168.0.114</value>
         </property>
         <property name="port">
-            <value>8443</value>
+            <value>8080</value>
         </property>
     </bean> 
     

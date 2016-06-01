@@ -1,10 +1,7 @@
 package br.ufpb.dicomflow.ws;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -23,7 +20,6 @@ import br.ufpb.dicomflow.bean.Study;
 import br.ufpb.dicomflow.service.PersistentService;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
-import br.ufpb.dicomflow.util.Util;
 
 @Path("/DownloadStudy/{studyIUID}")
 public class DownloadStudy extends GenericWebService {
@@ -35,9 +31,9 @@ public class DownloadStudy extends GenericWebService {
 	public Response getStudy(@PathParam("studyIUID") String studyIUID) {
 		
 		//TODO - Modificar
-//				if (authenticate()) {
-//					System.out.println("OK");
-//				}
+//		if (authenticate()) {
+//			System.out.println("OK");
+//		}
 		
 		PersistentService persistentService = ServiceLocator.singleton().getPersistentService();
 		Study study = (Study) persistentService.select("studyIuid", studyIUID, Study.class);		
@@ -52,14 +48,13 @@ public class DownloadStudy extends GenericWebService {
 			public void write(OutputStream os) throws IOException, WebApplicationException {				
 				try {
 					ServiceLocator.singleton().getFileService().createZipFile(files, os);
-				} catch (ServiceException e) {
-					// TODO Auto-generated catch block
+				} catch (ServiceException e) {				
 					e.printStackTrace();
 				}                                				
 			}
         };       
-
-        return Response.ok(stream).build();
+        String responseHeader =   "attachment; filename=\"" + studyIUID + ".zip\"";
+        return Response.ok(stream).header("Content-Disposition",responseHeader).build();
 	}
 
 }
