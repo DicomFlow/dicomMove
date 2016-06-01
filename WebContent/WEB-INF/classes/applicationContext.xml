@@ -139,12 +139,12 @@
     </bean>
     
     <bean id="mailAuthenticator" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPAuthenticator" >
-        <constructor-arg type="java.lang.String" value="protocolointegracao@gmail.com"/>
+        <constructor-arg type="java.lang.String" value="dicomflow@gmail.com"/>
         <constructor-arg type="java.lang.String" value="pr0t0c0l0ap1"/>
     </bean>
     <bean id="mailHeadBuilder" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPHeadBuilder">
         <property name="from">
-            <value>protocolointegracao@gmail.com</value>
+            <value>dicomflow@gmail.com</value>
         </property>
         <property name="domain">
             <value>localhost</value>
@@ -154,10 +154,10 @@
     </bean>
     <bean id="urlGenerator" class="br.ufpb.dicomflow.service.impl.DefaultURLGenerator">
     	<property name="host">
-            <value>localhost</value>
+            <value>192.168.0.102</value>
         </property>
         <property name="port">
-            <value>8443</value>
+            <value>8080</value>
         </property>
     </bean> 
     
@@ -176,7 +176,7 @@
             <ref bean="urlGenerator"/>
         </property>
         <property name="propertiesConfigPath">
-			<value>D:/Danilo/Workspace/J2EE/dicomMove/WebRoot/WEB-INF/classes/config.properties</value>
+			<value>D:/Danilo/WorkspaceDicomFlow/dicomMove2/WebContent/WEB-INF/classes/config.properties</value>
 		</property>
 		<property name="maxAttempts">
 			<value>3</value>
@@ -197,7 +197,7 @@
             <value>11112</value>
         </property>
         <property name="extractDir">
-            <value>D:/Danilo/Workspace/J2EE/dicomMove/WebRoot/extract/</value>
+            <value>D:/Danilo/WorkspaceDicomFlow/dicomMove2/WebContent/extract/</value>
         </property>
         <property name="keystore">
 			<value>C:/Program Files/Java/jdk1.7.0_51/jre/lib/security/cacerts</value>

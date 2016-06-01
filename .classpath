@@ -85,7 +85,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/dcm4che-tool-xml2prefs-3.3.8-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/dcm4che-ws-rs-3.3.8-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/dcm4che.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/dicomMessage.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/freemarker-2.3.16.jar"/>
@@ -110,7 +109,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/lucene.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mail-1.4.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mysql-connector-java-3.1.10-bin.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/odmg.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/ognl-3.0.jar"/>

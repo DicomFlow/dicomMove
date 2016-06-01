@@ -37,35 +37,35 @@ public class CronSchedule {
 		
 		//Jobs em ordem do fluxo do processo
 		
-		//envia o certificado do próprio domínio
-		JobDetail sendCertificateJobDetail = new JobDetail("sendCertificateJobDetail","group1",SendCertificateAgent.class);
-		CronTrigger sendCertificateCronTrigger = new CronTrigger("sendCertificateCronTrigger","group2","0 * * * * ?");		
-		sched.scheduleJob(sendCertificateJobDetail ,sendCertificateCronTrigger);
+//		//envia o certificado do próprio domínio
+//		JobDetail sendCertificateJobDetail = new JobDetail("sendCertificateJobDetail","group1",SendCertificateAgent.class);
+//		CronTrigger sendCertificateCronTrigger = new CronTrigger("sendCertificateCronTrigger","group2","0 * * * * ?");		
+//		sched.scheduleJob(sendCertificateJobDetail ,sendCertificateCronTrigger);
+//		
+//		//armazena certificados recebidos de outros domínios
+//		JobDetail storeCertificateJobDetail = new JobDetail("storeCertificateJobDetail","group1",StoreCertificateAgent.class);
+//		CronTrigger storeCertificateCronTrigger = new CronTrigger("storeCertificateCronTrigger","group2","0 * * * * ?");		
+//		sched.scheduleJob(storeCertificateJobDetail ,storeCertificateCronTrigger);
+//		
+//		//verifica resultado do envio do certificado do próprio domínio 
+//		JobDetail findCertificateResultJobDetail = new JobDetail("findCertificateResultJobDetail","group1",FindCertificateResultAgent.class);
+//		CronTrigger findCertificateResultCronTrigger = new CronTrigger("findCertificateResultCronTrigger","group2","0 * * * * ?");		
+//		sched.scheduleJob(findCertificateResultJobDetail ,findCertificateResultCronTrigger);
 		
-		//armazena certificados recebidos de outros domínios
-		JobDetail storeCertificateJobDetail = new JobDetail("storeCertificateJobDetail","group1",StoreCertificateAgent.class);
-		CronTrigger storeCertificateCronTrigger = new CronTrigger("storeCertificateCronTrigger","group2","0 * * * * ?");		
-		sched.scheduleJob(storeCertificateJobDetail ,storeCertificateCronTrigger);
-		
-		//verifica resultado do envio do certificado do próprio domínio 
-		JobDetail findCertificateResultJobDetail = new JobDetail("findCertificateResultJobDetail","group1",FindCertificateResultAgent.class);
-		CronTrigger findCertificateResultCronTrigger = new CronTrigger("findCertificateResultCronTrigger","group2","0 * * * * ?");		
-		sched.scheduleJob(findCertificateResultJobDetail ,findCertificateResultCronTrigger);
-		
-		//busca de novos estudos medicos
-		JobDetail findStudiesJobDetail = new JobDetail("findStudiesJobDetail","group1",FindStudiesAgent.class);
-		CronTrigger findStudiesCronTrigger = new CronTrigger("findStudiesCronTrigger","group2","0 * * * * ?");		
-		sched.scheduleJob(findStudiesJobDetail ,findStudiesCronTrigger);
-		
-		//envia urls de acesso aos novos estudos
-		JobDetail sendStudiesURLsJobDetail = new JobDetail("sendStudiesURLsJobDetail","group1",SendStudiesURLsAgent.class);
-		CronTrigger sendStudiesURLsCronTrigger = new CronTrigger("sendStudiesURLsCronTrigger","group2","0 * * * * ?");		
-		sched.scheduleJob(sendStudiesURLsJobDetail ,sendStudiesURLsCronTrigger);
-		
-		//resolve envio pendende de urls de acesso aos novos estudos
-		JobDetail sendPendingStudiesURLsJobDetail = new JobDetail("sendPendingStudiesURLsJobDetail","group1",SendPendingStudiesURLsAgent.class);
-		CronTrigger sendPendingStudiesURLsCronTrigger = new CronTrigger("sendPendingStudiesURLsCronTrigger","group2","0 * * * * ?");		
-		sched.scheduleJob(sendPendingStudiesURLsJobDetail ,sendPendingStudiesURLsCronTrigger);
+//		//busca de novos estudos médicos
+//		JobDetail findStudiesJobDetail = new JobDetail("findStudiesJobDetail","group1",FindStudiesAgent.class);
+//		CronTrigger findStudiesCronTrigger = new CronTrigger("findStudiesCronTrigger","group2","0 * * * * ?");		
+//		sched.scheduleJob(findStudiesJobDetail ,findStudiesCronTrigger);
+//		
+//		//envia urls de acesso aos novos estudos
+//		JobDetail sendStudiesURLsJobDetail = new JobDetail("sendStudiesURLsJobDetail","group1",SendStudiesURLsAgent.class);
+//		CronTrigger sendStudiesURLsCronTrigger = new CronTrigger("sendStudiesURLsCronTrigger","group2","0 * * * * ?");		
+//		sched.scheduleJob(sendStudiesURLsJobDetail ,sendStudiesURLsCronTrigger);
+//		
+//		//resolve envio pendende de urls de acesso aos novos estudos
+//		JobDetail sendPendingStudiesURLsJobDetail = new JobDetail("sendPendingStudiesURLsJobDetail","group1",SendPendingStudiesURLsAgent.class);
+//		CronTrigger sendPendingStudiesURLsCronTrigger = new CronTrigger("sendPendingStudiesURLsCronTrigger","group2","0 * * * * ?");		
+//		sched.scheduleJob(sendPendingStudiesURLsJobDetail ,sendPendingStudiesURLsCronTrigger);
 		
 		//busca por urls de acessos recebidas para novos estudos
 		JobDetail findStudiesURLsJobDetail = new JobDetail("findStudiesURLsJobDetail","group1",FindStudiesURLsAgent.class);
