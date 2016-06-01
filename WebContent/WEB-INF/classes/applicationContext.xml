@@ -74,7 +74,7 @@
                 <value>br.ufpb.dicomflow.bean.Access</value>
                 <value>br.ufpb.dicomflow.bean.Registry</value>
                 <value>br.ufpb.dicomflow.bean.RegistryAccess</value>
-                <value>br.ufpb.dicomflow.bean.User</value>
+                <value>br.ufpb.dicomflow.bean.User</value>                                
             </list>
         </property>
                 

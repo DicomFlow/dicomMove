@@ -26,7 +26,7 @@ public class GenericWebService {
 	protected SecurityContext securityContext;
 	
 	@Context 
-	protected static ServletContext context;
+	protected ServletContext context;
 	
 	public final String authorizationHeader = "Authorization";
 	public final String authorizationSplitToken = ":";
