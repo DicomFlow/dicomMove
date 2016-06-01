@@ -35,10 +35,13 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -315,6 +318,30 @@ public class CertUtil {
 		}
 		return sb.toString();
 	}
+	
+	
+	public PrivateKey getPrivateKey(String alias, String password) throws Exception {
+		return getKeyEntry(alias, password).getPrivateKey();
+	}
+
+	public PublicKey getPublicKey(String alias, String password) throws Exception {
+		return getKeyEntry(alias, password).getCertificate().getPublicKey();
+	}
+	
+	private KeyStore.PrivateKeyEntry getKeyEntry(String alias, String password ) throws Exception {
+		
+		KeyStore clientKeyStore = KeyStore.getInstance("JKS");
+		InputStream is = new FileInputStream(new File(this.keystoreFile));
+		clientKeyStore.load(is, this.keystorePass.toCharArray());
+		KeyStore.PasswordProtection keyPassword = new KeyStore.PasswordProtection(this.keyPass.toCharArray());
+		KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) clientKeyStore.getEntry(alias, keyPassword);
+		
+		if (!javax.security.cert.X509Certificate.getInstance(pkEntry.getCertificate().getEncoded()).getNotAfter().after(new Date())) {
+			throw new Exception("The identity certificate has expired");
+		}
+		
+		return pkEntry;
+	}
 
 	private static class SavingTrustManager implements X509TrustManager {
 
@@ -343,6 +370,8 @@ public class CertUtil {
 			tm.checkServerTrusted(chain, authType);
 		}
 	}
+	
+	
 	
 	public static void main(String[] args){
 		
@@ -385,6 +414,21 @@ public class CertUtil {
 			certUtil.importCert(host, port);
 			
 			certUtil.loadCert();
+			
+			
+		    //for localhost testing only
+		    javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(
+		    new javax.net.ssl.HostnameVerifier(){
+
+		        public boolean verify(String hostname,
+		                javax.net.ssl.SSLSession sslSession) {
+		            if (hostname.equals("localhost")) {
+		                return true;
+		            }
+		            return false;
+		        }
+		    });
+			
 			
 			URL link = new URL(url);
 			HttpsURLConnection con = (HttpsURLConnection) link.openConnection();
