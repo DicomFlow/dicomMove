@@ -90,7 +90,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/dcm4che-tool-xml2prefs-3.3.8-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/dcm4che-ws-rs-3.3.8-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/dcm4che.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/dicomMessage.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/freemarker-2.3.16.jar"/>
