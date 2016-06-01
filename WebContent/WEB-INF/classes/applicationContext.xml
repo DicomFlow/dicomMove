@@ -176,7 +176,7 @@
             <ref bean="urlGenerator"/>
         </property>
         <property name="propertiesConfigPath">
-			<value>D:/Danilo/Workspace/J2EE/dicomMove/WebRoot/WEB-INF/classes/config.properties</value>
+			<value>C:/home/dicomflow/repos/dicomMove2/WebContent/WEB-INF/classes/config.properties</value>
 		</property>
 		<property name="maxAttempts">
 			<value>3</value>
@@ -185,7 +185,7 @@
     
     <bean id="fileService" class="br.ufpb.dicomflow.service.impl.FileServiceImpl"> 
         <property name="archivePath">
-            <value>D:/Danilo/Desenvolvimento/dcm4chee-2.17.1-mysql/server/default/</value>
+            <value>C:/home/dcm/local/dcm4chee/server/default/</value>
         </property>
         <property name="eat">
             <value>DCM4CHEE</value>
@@ -197,10 +197,10 @@
             <value>11112</value>
         </property>
         <property name="extractDir">
-            <value>D:/Danilo/Workspace/J2EE/dicomMove/WebRoot/extract/</value>
+            <value>C:/home/dicomflow/repos/dicomMove2/WebContent/extract/</value>
         </property>
         <property name="keystore">
-			<value>C:/Program Files/Java/jdk1.7.0_51/jre/lib/security/cacerts</value>
+			<value>C:/home/dicomflow/local/jdk7/jre/lib/security/cacerts</value>
 		</property>
 		<property name="keystorePass">
 			<value>changeit</value>
