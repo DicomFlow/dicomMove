@@ -262,11 +262,11 @@ public class HibernatePersistentServiceImpl extends HibernateDaoSupport  impleme
 			Iterator it = values.iterator();
 			if(it.hasNext()){
 				Object value = it.next();
-				query += "\"" + value.toString()+ "\"";
+				query += "'" + value.toString()+ "'";
 			}
 			while (it.hasNext()) {
 				Object value = (Object) it.next();
-				query += ",\"" + value.toString() +"\"";
+				query += ",'" + value.toString() +"'";
 				
 			}
 			query +=")";
