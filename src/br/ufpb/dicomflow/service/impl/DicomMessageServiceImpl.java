@@ -405,7 +405,7 @@ public class DicomMessageServiceImpl implements MessageService {
 		filter.setInitialDate(initialDate);
 		filter.setFinalDate(finalDate);
 		filter.setIdMessage(messageID);
-		filter.setServiceType(ServiceIF.CERTIFICATE_REQUEST);
+		filter.setServiceType(type);
 		
 		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
 		iap.load(propertiesConfigPath);
