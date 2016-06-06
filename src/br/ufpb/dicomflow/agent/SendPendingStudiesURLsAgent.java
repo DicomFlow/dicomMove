@@ -97,14 +97,17 @@ public class SendPendingStudiesURLsAgent implements Job {
 				} catch (ServiceException e) {
 					Util.getLogger(this).error("Could not save RegistryAccess: " + e.getMessage(),e);
 					e.printStackTrace();
+				}							
+				
+			} else {
+				registryAccess.setStatus(Registry.CLOSED);
+				try {
+					registryAccess.save();
+				} catch (ServiceException e) {
+					Util.getLogger(this).error("Could not save RegistryAccess: " + e.getMessage(),e);
 					e.printStackTrace();
 				}
-				
-				
-				
-			}
-			
-			
+			}						
 		}
 		
 		Util.getLogger(this).debug("DONE!!");	

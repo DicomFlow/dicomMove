@@ -47,6 +47,12 @@ public class GenericWebService {
 		return res;
 	}
 	
+	protected Response notFound() {
+		Response res;
+		res = Response.status(Status.NOT_FOUND).build();
+		return res;
+	}
+	
 	protected Response serverError(Exception e) {
 		Response res;
 		String result = e.getLocalizedMessage();

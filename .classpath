@@ -114,7 +114,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/lucene.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mail-1.4.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mysql-connector-java-3.1.10-bin.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/odmg.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/ognl-3.0.jar"/>
@@ -162,6 +161,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/imap.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

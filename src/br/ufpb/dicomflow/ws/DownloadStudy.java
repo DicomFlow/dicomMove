@@ -36,25 +36,31 @@ public class DownloadStudy extends GenericWebService {
 //		}
 		
 		PersistentService persistentService = ServiceLocator.singleton().getPersistentService();
-		Study study = (Study) persistentService.select("studyIuid", studyIUID, Study.class);		
+		Study study = (Study) persistentService.select("studyIuid", studyIUID, Study.class);	
 		
-		//TODO melhorar o resgate dos arquivos objetivando melhor desempenho
-		List<Series> series = persistentService.selectAll("study", study, Series.class);
-		List<Instance> instances =  persistentService.selectAll("series", series, Instance.class);	
-		files =  persistentService.selectAll("instance", instances, File.class);	
+		if (study != null ) {
+			//TODO melhorar o resgate dos arquivos objetivando melhor desempenho
+			List<Series> series = persistentService.selectAll("study", study, Series.class);
+			List<Instance> instances =  persistentService.selectAll("series", series, Instance.class);	
+			files =  persistentService.selectAll("instance", instances, File.class);	
 
-        StreamingOutput stream = new StreamingOutput() {
-			@Override
-			public void write(OutputStream os) throws IOException, WebApplicationException {				
-				try {
-					ServiceLocator.singleton().getFileService().createZipFile(files, os);
-				} catch (ServiceException e) {				
-					e.printStackTrace();
-				}                                				
-			}
-        };       
-        String responseHeader =   "attachment; filename=\"" + studyIUID + ".zip\"";
-        return Response.ok(stream).header("Content-Disposition",responseHeader).build();
+	        StreamingOutput stream = new StreamingOutput() {
+				@Override
+				public void write(OutputStream os) throws IOException, WebApplicationException {				
+					try {
+						ServiceLocator.singleton().getFileService().createZipFile(files, os);
+					} catch (ServiceException e) {				
+						e.printStackTrace();
+					}                                				
+				}
+	        };       
+	        String responseHeader =   "attachment; filename=\"" + studyIUID + ".zip\"";
+	        return Response.ok(stream).header("Content-Disposition",responseHeader).build();
+		} else {
+			return notFound();
+		}
+		
+
 	}
 
 }
