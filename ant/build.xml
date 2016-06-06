@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="DicomMove" default="build" basedir=".">
+
+	<property file="ant/build.properties" />
+	<property name="app.id" value="${app.id}" />
+	<property name="app.idTest" value="${app.idTest}" />
+	<property name="app.version" value="${app.version}" />
+	<property name="dist.base" value="${dist.base}" />
+	<property name="dist.home" value="${dist.home}" />
+
+	<property name="build.base" value="${build.base}" />
+	<property name="build.home" value="${build.home}" />
+	<property name="build.webinf" value="${build.webinf}" />
+	<property name="build.lib" value="${build.lib}" />
+	<property name="build.classes" value="${build.classes}" />
+
+	<property name="home.conf" value="${home.conf}" />
+	<property name="home.conf.test" value="${home.conf.test}" />
+
+	<property name="home.spring" value="${home.spring}" />
+	<property name="home.hibernate" value="${home.hibernate}" />
+	<property name="home.web" value="${home.web}" />
+	<property name="home.lib" value="${home.lib}" />
+	<property name="home.src" value="${home.src}" />
+	<property name="home.test" value="${home.test}" />
+	<property name="home.docs" value="${home.docs}" />
+
+	<property name="sql.file" value="${sql.file}" />
+	<property name="warfile" value="${warfile}" />
+
+
+	<!--  .::controle de compilacao::.  -->
+	<property name="compile.debug" value="${compile.debug}" />
+	<property name="compile.deprecation" value="${compile.deprecation}" />
+	<property name="compile.optimize" value="${compile.optimize}" />
+	<property name="packagenames" value="${packagenames}" />
+
+	<property name="hibernate.file" value="${hibernate.file}" />
+	<property name="hibernateTest.file" value="${hibernateTest.file}" />
+
+	<property file="${hibernate.file}" />
+	<property name="database.driver" value="${hibernate.connection.driver_class}" />
+	<property name="database.createUrl" value="${hibernate.connection.url}" />
+	<property name="database.createUrlTest" value="${hibernate.connection.urlTest}" />
+	<property name="database.urlbase" value="${hibernate.connection.urlbase}" />
+	<property name="database.user" value="${hibernate.connection.username}" />
+	<property name="database.password" value="${hibernate.connection.password}" />
+	<property name="database.dialect" value="${hibernate.dialect}" />
+
+
+	<!-- .::classpath::. -->
+	<path id="compile.classpath">
+		<fileset dir="${home.lib}/">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="${build.classes}" />
+	</path>
+
+
+	<!-- .::deleção do banco::. -->
+	<target name="drop-db">
+		<echo>Excluindo Banco de dados...</echo>
+		<echo>${database.driver}</echo>
+		<echo>${database.password}</echo>
+		<echo>${database.createUrl}</echo>
+		<echo>${database.user}</echo>
+		<sql  autocommit="true" driver="${database.driver}" onerror="continue" password="${database.password}" url="${database.urlbase}" userid="${database.user}">
+			<classpath refid="compile.classpath" />
+			drop database ${app.id};
+	    </sql>
+
+	</target>
+
+	<!-- .::criação do banco::. -->
+	<target name="build-db" depends="build" >
+		<echo>Criando Banco de dados...</echo>
+		<echo>${database.driver}</echo>
+		<echo>${database.password}</echo>
+		<echo>${database.createUrl}</echo>
+		<echo>${database.user}</echo>
+		
+		<sql autocommit="true" driver="${database.driver}" onerror="continue" password="${database.password}" url="${database.urlbase}" userid="${database.user}">
+			<classpath refid="compile.classpath" />
+			create database if not exists ${app.id};
+	    </sql>
+
+		<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="compile.classpath" />
+
+		<hibernatetool  destdir="${build.classes}" classpath="compile.classpath">
+			
+				
+		<annotationconfiguration  configurationfile="${home.conf}/hibernate/hibernate.cfg.xml"/>
+	
+			
+		 <!-- list exporters here -->
+			<hbm2ddl 
+				 export="true"
+				 update="true"
+				 drop="true"
+				 create="true"
+				 delimiter=";" 
+				 format="true"
+				 haltonerror="false" />
+			
+		</hibernatetool>
+
+		<sql autocommit="true" driver="${database.driver}" onerror="continue" password="${database.password}" src="${sql.file}" url="${database.createUrl}" userid="${database.user}">
+			<classpath refid="compile.classpath" />
+		</sql>
+			
+	</target>
+
+
+	<!-- .::BUILD-ALL::.-->
+	<target name="build-all" depends="clear,build,build-db">
+	</target>
+
+	<!-- CREATE PROJECT -->
+	<target name="create" depends="prepare,cvsignore" />
+
+	<!-- PREPARE  -->
+	<target name="prepare">
+		<mkdir dir="${build.home}" />
+		<mkdir dir="${build.lib}" />
+		<mkdir dir="${build.classes}" />
+		<mkdir dir="${build.home}/extract" />
+		<mkdir dir="${home.conf}" />
+		<mkdir dir="${home.web}" />
+		<mkdir dir="${home.lib}" />
+		<mkdir dir="${home.src}" />
+		<mkdir dir="${home.test}" />
+		<mkdir dir="${home.docs}" />
+
+
+		<copy todir="${build.lib}">
+			<fileset dir="${home.lib}/activation">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/commons">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/informa">
+							<include name="*.jar" />
+						</fileset>
+			<fileset dir="${home.lib}/hibernate">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/log4j">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/mail">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/mysql">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/postgres">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/struts">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/servlet">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/dcm4che">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/dicomMessage">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/jboleto">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/tidy">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/flyingsaucer">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${home.lib}/quartz">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${build.webinf}/classes">
+
+			<fileset dir="${home.conf}/struts">
+				<include name="*.tld" />
+				<include name="*.xml" />
+			</fileset>
+			<fileset dir="${home.conf}/hibernate">
+				<include name="*.xml" />
+			</fileset>
+			<fileset dir="${home.conf}/dicomMessage">
+				<include name="*.properties" />
+			</fileset>
+			<fileset dir="${home.spring}">
+				<include name="*.xml" />
+			</fileset>
+			
+			<fileset dir="${home.conf}/log4j">
+				<include name="*.properties" />
+			</fileset>
+			<fileset dir="${home.docs}">
+				<include name="contact.txt" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.rootProject}">
+
+			<fileset dir="${home.conf}/struts">
+				<include name="*.properties" />
+			</fileset>
+			<fileset dir="${home.conf}/hibernate">
+				<include name="*.properties" />
+			</fileset>
+
+		</copy>
+
+		<copy todir="${build.webinf}">
+
+			<fileset dir="${home.conf}">
+				<include name="*.tld" />
+				<include name="*.xml" />
+			</fileset>
+		</copy>
+
+
+	</target>
+
+	<!-- COPYWEB -->
+	<target name="copyWeb" depends="prepare">
+		<copy todir="${build.home}">
+			<fileset dir="${home.web}">
+				<exclude name="WEB-INF" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- ALL -->
+	<target name="all" depends="clear,copyWeb,build" description="Clean build and dist, then build" />
+
+	<!-- CLEAR -->
+	<target name="clear" description="Delete old build and dist directories">
+		<delete dir="${build.home}" />
+		<delete dir="${dist.home}" />
+	</target>
+
+	<!-- COMPILE -->
+	<target name="build" depends="copyWeb" description="Compile Java sources">
+		<!-- Compile Java classes as necessary -->
+		<javac srcdir="${home.src}" destdir="${build.classes}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}">
+			<classpath refid="compile.classpath" />
+		</javac>
+		<javac srcdir="${home.test}" destdir="${build.classes}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}">
+			<classpath refid="compile.classpath" />
+		</javac>
+	</target>
+
+	<!-- JAVADOC -->
+	<target name="javadoc" depends="prepare" description="Build the full javadocs">
+		<mkdir dir="${dist.base}/docs/api" />
+		<javadoc sourcepath="${home.src}" destdir="${dist.base}/docs/api" doctitle="${app.name} JavaDoc" windowtitle="${app.name} JavaDoc" package="true" author="true" version="true" noindex="true" packagenames="${packagenames}">
+			<classpath refid="compile.classpath" />
+		</javadoc>
+	</target>
+
+	<!-- DISTRIBUTION -->
+	<target name="dist" depends="copyWeb,build" description="Create binary distribution">
+		<mkdir dir="${dist.home}" />
+		<jar jarfile="${dist.home}/${warfile}" basedir="${build.home}" />
+	</target>
+
+	<!-- TESTs -->
+	<target name="test" depends="build">
+		<copy todir="${build.webinf}" overwrite="true">
+			<fileset dir="${home.conf.test}">
+				<include name="hibernateTest.properties" />
+			</fileset>
+		</copy>
+		<copy todir="${build.lib}" overwrite="true">
+			<fileset dir="${home.lib}/junit">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<exec executable="${home.conf.test}/test.bat">
+		</exec>
+	</target>
+
+	<!-- CVSIGNORE -->
+	<target name="cvsignore">
+		<echo file=".cvsignore" append="no">
+			build
+			dist
+			bak
+			lib
+			bin
+			.cvspass
+			.nbattrs
+			build.properties
+			library.library
+			.classpath
+			.project
+			*.html
+			*.jpx*
+			*.jpx.*
+			*.jcp
+			*.jcw
+			*.zip
+			*.jar
+			class*
+		</echo>
+		<echo file="${home.docs}/.cvsignore" append="no">api</echo>
+	</target>
+</project>
