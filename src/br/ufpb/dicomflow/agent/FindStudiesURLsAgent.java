@@ -64,6 +64,8 @@ public class FindStudiesURLsAgent implements Job {
 				registry.setLink(url);
 				try {
 					URL aURL = new URL(url);
+//					verificar se e necessario armazenar o id da mensagem
+//					registry.setMessageID(messageID);
 					registry.setHost(aURL.getHost());
 					registry.setPort(aURL.getPort());
 				} catch (MalformedURLException e) {

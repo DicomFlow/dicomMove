@@ -152,7 +152,9 @@ public class DicomMessageServiceImpl implements MessageService {
 		Iterator<ServiceIF> iterator = getServices(initialDate, finalDate, messageID, ServiceIF.STORAGE_SAVE);
 		while (iterator.hasNext()) {
 			StorageSave storage = (StorageSave) iterator.next();
-			urls.put(storage.getMessageID(), storage.getUrl().getValue());
+			if(storage.getUrl() != null && !storage.getUrl().equals("")){
+				urls.put(storage.getMessageID(), storage.getUrl().getValue());
+			}
 		}
 		return urls;
 	}
