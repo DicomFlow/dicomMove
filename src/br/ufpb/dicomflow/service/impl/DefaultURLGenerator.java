@@ -10,7 +10,7 @@ public class DefaultURLGenerator implements UrlGeneratorIF {
 	
 	@Override
 	public String getURL(Study study) {
-		return "http://"+host+":"+port+"/dicomMove/recoverStudy?studyIUID="+study.getStudyIuid();
+		return "http://"+host+":"+port+"/DicomMove/rest/DownloadStudy/" + study.getStudyIuid();
 	}
 
 	public String getHost() {
