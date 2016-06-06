@@ -59,8 +59,6 @@ public class DownloadStudy extends GenericWebService {
 		} else {
 			return notFound();
 		}
-		
-
 	}
 
 }

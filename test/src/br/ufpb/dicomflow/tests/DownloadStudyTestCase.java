@@ -1,5 +1,7 @@
 package br.ufpb.dicomflow.tests;
 
+import java.io.InputStream;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
@@ -14,6 +16,11 @@ import br.ufpb.dicomflow.integrationAPI.tests.GenericTestCase;
 
 public class DownloadStudyTestCase extends GenericTestCase {
 	
+	public String host = "localhost";
+	public String port = "8080";
+	public String context = "dicomMove2/rest";
+	public String serviceName = "DownloadStudy";
+	
 	@Test
 	public void testDownload() {	
 		ClientConfig clientConfig = new ClientConfig();
@@ -23,9 +30,9 @@ public class DownloadStudyTestCase extends GenericTestCase {
 		Client client = ClientBuilder.newClient(clientConfig);
 //		client.register(ThirdClientFilter.class);
 		//http://localhost:8090/DicomMoveServer/rest/DownloadStudy
-		WebTarget webTarget = client.target("http://localhost:8080/DicomMove/rest");
+		WebTarget webTarget = client.target("http://" + host + ":" + port + "/" + context + "/");
 //		webTarget.register(FilterForExampleCom.class);
-		WebTarget resourceWebTarget = webTarget.path("DownloadStudy");
+		WebTarget resourceWebTarget = webTarget.path(serviceName + "/1.2.840.113745.101000.1008000.38046.4274.5925160");
 //		WebTarget helloworldWebTarget = resourceWebTarget.path("helloworld");
 //		WebTarget helloworldWebTargetWithQueryParam = helloworldWebTarget.queryParam("greeting", "Hi World!");
 		
@@ -34,6 +41,8 @@ public class DownloadStudyTestCase extends GenericTestCase {
 //		invocationBuilder.header("some-header", "true");
 		
 		Response response = invocationBuilder.get();
+		InputStream is = (InputStream)response.getEntity();
+		
 		System.out.println(response.getStatus());
 		System.out.println(response.readEntity(String.class));
 	}
