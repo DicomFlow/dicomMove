@@ -30,7 +30,7 @@ public interface FileService {
 
 	public void createZipFile(List<File> files, OutputStream os) throws IOException, FileNotFoundException, ServiceException;
 	
-	public void extractZipFile(URL url) throws IOException, ServiceException;
+	public void extractZipFile(URL url, String fileName) throws IOException, ServiceException;
 	
 	public void storeFile(java.io.File file) throws ServiceException;
 

@@ -147,7 +147,7 @@
             <value>protocolointegracao@gmail.com</value>
         </property>
         <property name="domain">
-            <value>localhost</value>
+            <value>150.165.202.44</value>
         </property>
     </bean>
     <bean id="mailContentBuilder" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPContentBuilder">

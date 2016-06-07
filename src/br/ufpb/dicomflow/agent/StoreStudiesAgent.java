@@ -57,7 +57,7 @@ public class StoreStudiesAgent implements Job {
 			try {
 				Util.getLogger(this).debug("DOWNLOADING DICOM OBJECT");
 				
-				fileService.extractZipFile(new URL(url));
+				fileService.extractZipFile(new URL(url),registry.getId()+".zip");
 				Util.getLogger(this).debug("STORING DICOM OBJECT");
 				fileService.storeFile(new File(fileService.getExtractDir()));
 				
