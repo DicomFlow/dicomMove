@@ -103,7 +103,7 @@ public class FileServiceImpl implements FileService {
 		in.close();
 		fout.close();
 		
-		
+		//extraindo o arquivo .zip
 		InputStream is = new BufferedInputStream(new FileInputStream(filePath));
 	    ZipInputStream zin = new ZipInputStream(is);
 	    ZipEntry e;
@@ -113,6 +113,14 @@ public class FileServiceImpl implements FileService {
 		}
 
 	    zin.close();
+	    
+	    //apagando o arquivo .zip após a extração
+	    if(file.delete()){
+	    	String errMsg = "Could not delete file " + file.getAbsolutePath();
+			
+			Util.getLogger(this).error(errMsg);
+			throw new ServiceException(new Exception(errMsg));
+	    }
 //		
 //		ZipInputStream zipIn = new ZipInputStream(con.getInputStream());
 //		ZipEntry entry;
@@ -177,12 +185,33 @@ public class FileServiceImpl implements FileService {
 		String[] args = new String[]{"-c", eat+"@"+host+":"+port, file.getAbsolutePath()};
 		StoreSCU.main(args);
 		
-		if(!file.delete()){
-			String errMsg = "Could not delete file" + file.getAbsolutePath();
+		if(deleteFile(file)){
+			String errMsg = "Could not delete file " + file.getAbsolutePath();
 			
 			Util.getLogger(this).error(errMsg);
 			throw new ServiceException(new Exception(errMsg));
 		}
+	}
+	/**
+	 * Apaga um diretório e todos seus arquivos
+	 * @param root o diretório raiz
+	 * @return True se apagou com sucesso, False caso contrário
+	 */
+	private boolean deleteFile(java.io.File root){
+		if(root != null && root.exists()){
+			if(root.isDirectory()){
+				
+				java.io.File fileList[] = root.listFiles();
+				
+				for ( int i = 0; i < fileList.length; i++ ){ 
+					java.io.File file  = fileList[i];
+					deleteFile(file);
+				}
+				
+			}
+			return root.delete();
+		}
+		return false;
 	}
 	
 	@Override
