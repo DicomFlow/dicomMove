@@ -58,7 +58,7 @@ public class StorePendingStudiesAgent implements Job {
 				FileService fileService = ServiceLocator.singleton().getFileService();
 				try {
 					Util.getLogger(this).debug("DOWNLOADING DICOM OBJECT");
-					fileService.extractZipFile(new URL(url));
+					fileService.extractZipFile(new URL(url), registry.getStudyIuid()+".zip");
 					Util.getLogger(this).debug("STORING DICOM OBJECT");
 					fileService.storeFile(new File(fileService.getExtractDir()));
 					

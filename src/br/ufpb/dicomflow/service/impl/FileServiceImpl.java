@@ -1,17 +1,18 @@
 package br.ufpb.dicomflow.service.impl;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import org.dcm4che3.tool.storescu.StoreSCU;
 
@@ -67,7 +68,7 @@ public class FileServiceImpl implements FileService {
 	}
 	
 	@Override
-	public void extractZipFile(URL url) throws IOException, ServiceException{
+	public void extractZipFile(URL url, String fileName) throws IOException, ServiceException{
 
 		if(extractDir == null || extractDir.equals("")){
 			String errMsg = "Could not extract zip file: invalid extract dir.";
@@ -76,33 +77,75 @@ public class FileServiceImpl implements FileService {
 			throw new ServiceException(new Exception(errMsg));
 		}
 		
-		try {
-			CertUtil certUtil = CertUtil.getInstance();
-			certUtil.setKeyStoreProperties(keystore, keystorePass, keyPass);
-			certUtil.importCert(url.getHost(), url.getPort());
-			certUtil.loadCert();
-		} catch (Exception e) {
-			throw new ServiceException (e);
-		}
+//		try {
+//			CertUtil certUtil = CertUtil.getInstance();
+//			certUtil.setKeyStoreProperties(keystore, keystorePass, keyPass);
+//			certUtil.importCert(url.getHost(), url.getPort());
+//			certUtil.loadCert();
+//		} catch (Exception e) {
+//			throw new ServiceException (e);
+//		}
 		
-		HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-		ZipInputStream zipIn = new ZipInputStream(con.getInputStream());
-		ZipEntry entry;
-		while((entry = zipIn.getNextEntry()) != null){
-
-			Util.getLogger(this).debug("Unzipping : " + entry.getName());
-
-			FileOutputStream fout = new FileOutputStream(extractDir +entry.getName());
-
-			while (zipIn.available() > 0){
-				fout.write(zipIn.read());	
-			} 
-
-			zipIn.closeEntry();
-			fout.close();
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		InputStream in = (InputStream)con.getInputStream();					
+		String filePath = extractDir + java.io.File.separator  + fileName;
+		java.io.File file = new java.io.File(filePath);
+		FileOutputStream fout = new FileOutputStream(file, false);
+		Util.getLogger(this).debug("INICIANDO ESCRITA DO .ZIP");
+		int i = 0;
+		byte buffer[] = new byte[8192];
+		
+		
+		while( (i = in.read(buffer)) != -1 ) {
+			fout.write(buffer, 0, i);
+		}
+		Util.getLogger(this).debug(".ZIP CRIADO");
+		in.close();
+		fout.close();
+		
+		
+		InputStream is = new BufferedInputStream(new FileInputStream(filePath));
+	    ZipInputStream zin = new ZipInputStream(is);
+	    ZipEntry e;
+	 
+		while ((e = zin.getNextEntry()) != null) {			
+			unzip(zin, extractDir + e.getName());
 		}
 
-		zipIn.close();
+	    zin.close();
+//		
+//		ZipInputStream zipIn = new ZipInputStream(con.getInputStream());
+//		ZipEntry entry;
+//		while((entry = zipIn.getNextEntry()) != null){
+//
+//			Util.getLogger(this).debug("Unzipping : " + entry.getName());
+//
+//			FileOutputStream fout = new FileOutputStream(extractDir +entry.getName());
+//
+//			while (zipIn.available() > 0){
+//				fout.write(zipIn.read());	
+//			} 
+//
+//			zipIn.closeEntry();
+//			fout.close();
+//		}
+//
+//		zipIn.close();
+		
+	}
+	
+	private void unzip(ZipInputStream zin, String s) throws IOException {
+
+		System.out.println("unzipping " + s);
+		FileOutputStream out = new FileOutputStream(s);
+
+		byte[] b = new byte[512];
+		int len = 0;
+
+		while ((len = zin.read(b)) != -1) {
+			out.write(b, 0, len);
+		}
+		out.close();
 	}
 	
 	@Override
