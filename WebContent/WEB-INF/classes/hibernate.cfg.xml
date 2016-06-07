@@ -5,24 +5,25 @@
 
 <hibernate-configuration>
 
-    
+   
     <session-factory>
 
-	 	<property name="connection.driver_class">org.postgresql.Driver</property>
-        <property name="connection.url">jdbc:postgresql://localhost:5432/dicomflow</property>
-        <property name="connection.username">postgres</property>
-        <property name="connection.password">egen</property>
+         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/pacsdb2</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">root</property>
+        <property name="hibernate.hbm2ddl.auto">create</property>
 
 
         <!-- properties -->
-        <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="show_sql">true</property>
-    
-    	<mapping class="br.ufpb.dicomflow.bean.Access"/>
-    	<mapping class="br.ufpb.dicomflow.bean.Registry"/>
-    	<mapping class="br.ufpb.dicomflow.bean.RegistryAccess"/>
-    	<mapping class="br.ufpb.dicomflow.bean.User"/>
- 		
+   
+        <mapping class="br.ufpb.dicomflow.bean.Access"/>
+        <mapping class="br.ufpb.dicomflow.bean.Registry"/>
+        <mapping class="br.ufpb.dicomflow.bean.RegistryAccess"/>
+        <mapping class="br.ufpb.dicomflow.bean.User"/>
+        
     </session-factory>
 
 </hibernate-configuration>
