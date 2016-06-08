@@ -139,22 +139,22 @@
     </bean>
   
     <bean id="mailAuthenticator" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPAuthenticator" >
-        <constructor-arg type="java.lang.String" value="dicomflow@gmail.com"/>
+        <constructor-arg type="java.lang.String" value="protocolointegracao@gmail.com"/>
         <constructor-arg type="java.lang.String" value="pr0t0c0l0ap1"/>
     </bean>
     <bean id="mailHeadBuilder" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPHeadBuilder">
         <property name="from">
-            <value>dicomflow@gmail.com</value>
+            <value>protocolointegracao@gmail.com</value>
         </property>
         <property name="domain">
-            <value>150.165.202.44</value>
+            <value>150.165.202.43</value>
         </property>
     </bean>
     <bean id="mailContentBuilder" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPContentBuilder">
     </bean>
     <bean id="urlGenerator" class="br.ufpb.dicomflow.service.impl.DefaultURLGenerator">
         <property name="host">
-            <value>150.165.202.44</value>
+            <value>150.165.202.43</value>
         </property>
         <property name="port">
             <value>8081</value>
