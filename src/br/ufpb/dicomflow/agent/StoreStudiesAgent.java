@@ -50,6 +50,13 @@ public class StoreStudiesAgent implements Job {
 		Iterator<Registry> it = registries.iterator();
 		while (it.hasNext()) {
 			Registry registry = it.next();
+			registry.setStatus(Registry.LOCK);
+			try {
+				registry.save();
+			} catch (ServiceException e) {
+				Util.getLogger(this).error("Não foi possível bloquear o registro"+e.getMessage(), e);
+				e.printStackTrace();
+			}
 			String url = registry.getLink();
 			Util.getLogger(this).debug("URL FOUND : " + url);
 			

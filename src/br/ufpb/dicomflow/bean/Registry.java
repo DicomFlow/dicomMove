@@ -48,6 +48,7 @@ public class Registry extends AbstractPersistence {
 	public static final String PENDING = "pending";
 	public static final String CLOSED = "closed";
 	public static final String ERROR = "error";
+	public static final String LOCK = "lock";
 	
 
 	/**

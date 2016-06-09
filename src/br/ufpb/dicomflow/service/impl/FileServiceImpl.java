@@ -115,7 +115,7 @@ public class FileServiceImpl implements FileService {
 	    zin.close();
 	    
 	    //apagando o arquivo .zip após a extração
-	    if(file.delete()){
+	    if(!deleteFile(file)){
 	    	String errMsg = "Could not delete file " + file.getAbsolutePath();
 			
 			Util.getLogger(this).error(errMsg);
@@ -185,7 +185,7 @@ public class FileServiceImpl implements FileService {
 		String[] args = new String[]{"-c", eat+"@"+host+":"+port, file.getAbsolutePath()};
 		StoreSCU.main(args);
 		
-		if(deleteFile(file)){
+		if(!deleteFile(file)){
 			String errMsg = "Could not delete file " + file.getAbsolutePath();
 			
 			Util.getLogger(this).error(errMsg);
@@ -211,7 +211,7 @@ public class FileServiceImpl implements FileService {
 			}
 			return root.delete();
 		}
-		return false;
+		return true;
 	}
 	
 	@Override
