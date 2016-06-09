@@ -277,6 +277,7 @@ public class HibernatePersistentServiceImpl extends HibernateDaoSupport  impleme
 		Session session = this.getSession();
 		Query consulta = session.createQuery(query);
         List list  = consulta.list(); 
+        session.close();
         
         return list;
 	}
