@@ -47,6 +47,19 @@ public class StorePendingStudiesAgent implements Job {
 		
 		List<Registry> registries = persistentService.selectAllByParams(new Object[]{"type", "status"}, new Object[]{Registry.RECEIVED, Registry.PENDING}, Registry.class);
 		
+		Iterator<Registry> itRegistries = registries.iterator();
+		while (itRegistries.hasNext()) {
+			Registry registry = (Registry) itRegistries.next();
+			registry.setStatus(Registry.LOCK);
+			try {
+				registry.save();
+			} catch (ServiceException e) {
+				Util.getLogger(this).error("Não foi possível bloquear o registro"+e.getMessage(), e);
+				e.printStackTrace();
+			}
+			
+		}
+		
 		Iterator<Registry> it = registries.iterator();
 		while (it.hasNext()) {
 			Registry registry = it.next();

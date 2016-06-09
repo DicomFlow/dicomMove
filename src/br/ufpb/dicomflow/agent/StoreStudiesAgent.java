@@ -47,9 +47,9 @@ public class StoreStudiesAgent implements Job {
 		
 		List<Registry> registries = persistentService.selectAllByParams(new Object[]{"type", "status"}, new Object[]{Registry.RECEIVED, Registry.OPEN}, Registry.class);
 		
-		Iterator<Registry> it = registries.iterator();
-		while (it.hasNext()) {
-			Registry registry = it.next();
+		Iterator<Registry> itRegistries = registries.iterator();
+		while (itRegistries.hasNext()) {
+			Registry registry = (Registry) itRegistries.next();
 			registry.setStatus(Registry.LOCK);
 			try {
 				registry.save();
@@ -57,6 +57,13 @@ public class StoreStudiesAgent implements Job {
 				Util.getLogger(this).error("Não foi possível bloquear o registro"+e.getMessage(), e);
 				e.printStackTrace();
 			}
+			
+		}
+		
+		Iterator<Registry> it = registries.iterator();
+		while (it.hasNext()) {
+			Registry registry = it.next();
+			
 			String url = registry.getLink();
 			Util.getLogger(this).debug("URL FOUND : " + url);
 			
