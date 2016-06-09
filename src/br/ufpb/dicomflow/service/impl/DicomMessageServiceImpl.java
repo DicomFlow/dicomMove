@@ -232,7 +232,7 @@ public class DicomMessageServiceImpl implements MessageService {
 				Iterator<Result> resultIt = results.iterator();
 				while (resultIt.hasNext()) {
 					Result result = (Result) resultIt.next();
-					if(result.getOriginalMessageID().equals(originalMessageID)){
+					if(result.getOriginalMessageID() != null && result.getOriginalMessageID().equals(originalMessageID)){
 						map.put(getDomain(xMessageID), result.getCompleted().getStatus());
 					}
 				}
