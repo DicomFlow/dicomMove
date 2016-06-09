@@ -20,6 +20,8 @@ package br.ufpb.dicomflow.agent;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -39,6 +41,7 @@ public class FindStudiesURLsAgent implements Job {
 	
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		
+		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("SEARCHING URLs...");	
 		
 		MessageService messageService = ServiceLocator.singleton().getMessageService();
@@ -100,6 +103,10 @@ public class FindStudiesURLsAgent implements Job {
 		}
 		
 		Util.getLogger(this).debug("DONE");
+		long finish = System.currentTimeMillis();
+		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");						
+		System.out.println("JOB:FIND_STUDIES_URL - StartInMillis - " + start + " - FinishInMillis - " + finish + " - StartFormated - " + sdfDate.format(new Date(start)) + " - FinishFormated " +  sdfDate.format(new Date(finish)));	
+		
 	}
 
 }

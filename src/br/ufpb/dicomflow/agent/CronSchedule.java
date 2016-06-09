@@ -70,17 +70,17 @@ public class CronSchedule {
 
 		//busca por urls de acessos recebidas para novos estudos
 		JobDetail findStudiesURLsJobDetail = new JobDetail("findStudiesURLsJobDetail","group1",FindStudiesURLsAgent.class);
-		CronTrigger findStudiesURLsCronTrigger = new CronTrigger("findStudiesURLsCronTrigger","group2","0 0/5 * * * ?");
+		CronTrigger findStudiesURLsCronTrigger = new CronTrigger("findStudiesURLsCronTrigger","group2","0 0/2 * * * ?");
 		sched.scheduleJob(findStudiesURLsJobDetail, findStudiesURLsCronTrigger);
 		
 		//armazena estudos acessados atrav�s das urls buscadas
 		JobDetail storeStudiesJobDetail = new JobDetail("storeStudiesJobDetail","group1",StoreStudiesAgent.class);
-		CronTrigger storeStudiesCronTrigger = new CronTrigger("storeStudiesCronTrigger","group2","0 04 16 * * ?");
+		CronTrigger storeStudiesCronTrigger = new CronTrigger("storeStudiesCronTrigger","group2","0 * * * * ?");
 		sched.scheduleJob(storeStudiesJobDetail, storeStudiesCronTrigger);
 		
 		//resolve armazenamento pendente de estudos acessados atrav�s das urls buscadas
 		JobDetail storePendingStudiesJobDetail = new JobDetail("storePendingStudiesJobDetail","group1",StorePendingStudiesAgent.class);
-		CronTrigger storePendingStudiesCronTrigger = new CronTrigger("storePendingStudiesCronTrigger","group2","0 0/30 * * * ?");
+		CronTrigger storePendingStudiesCronTrigger = new CronTrigger("storePendingStudiesCronTrigger","group2","0 * * * * ?");
 		sched.scheduleJob(storePendingStudiesJobDetail, storePendingStudiesCronTrigger);
 
 		

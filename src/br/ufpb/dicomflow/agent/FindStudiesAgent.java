@@ -18,7 +18,9 @@
 
 package br.ufpb.dicomflow.agent;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,6 +42,8 @@ import br.ufpb.dicomflow.util.Util;
 public class FindStudiesAgent implements Job {
 
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+		
+		long start = System.currentTimeMillis();
 		
 		Util.getLogger(this).debug("SEARCHING NEW STUDIES...");
 		
@@ -66,7 +70,11 @@ public class FindStudiesAgent implements Job {
 		
 		insertRegistries(studies, accesses);
 		
-		Util.getLogger(this).debug("DONE!!");	
+		Util.getLogger(this).debug("DONE!!");
+		long finish = System.currentTimeMillis();
+		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");						
+		System.out.println("JOB:FIND_STUDIES - StartInMillis - " + start + " - FinishInMillis - " + finish + " - StartFormated - " + sdfDate.format(new Date(start)) + " - FinishFormated " +  sdfDate.format(new Date(finish)));	
+		
 	}
 
 	private List<String> getStudiesIuids(List<Registry> registries) {

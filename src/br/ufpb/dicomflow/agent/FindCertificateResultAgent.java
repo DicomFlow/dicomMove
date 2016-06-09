@@ -18,6 +18,8 @@
 
 package br.ufpb.dicomflow.agent;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -39,6 +41,7 @@ public class FindCertificateResultAgent implements Job {
 
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		
+		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("STORE CERTIFICATES...");
 		
 		PersistentService persistentServiceDICOMMOVE = ServiceLocator.singleton().getPersistentService2();
@@ -72,7 +75,11 @@ public class FindCertificateResultAgent implements Job {
 			
 		}
 		
-		Util.getLogger(this).debug("DONE!!");	
+		Util.getLogger(this).debug("DONE!!");
+		long finish = System.currentTimeMillis();
+		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");						
+		System.out.println("JOB:FIND_SERTIFICATE_RESULT - StartInMillis - " + start + " - FinishInMillis - " + finish + " - StartFormated - " + sdfDate.format(new Date(start)) + " - FinishFormated " +  sdfDate.format(new Date(finish)));	
+		
 	}
 
 	

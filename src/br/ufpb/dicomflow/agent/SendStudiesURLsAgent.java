@@ -18,6 +18,8 @@
 
 package br.ufpb.dicomflow.agent;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class SendStudiesURLsAgent implements Job {
 
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		
+		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("SENDING NEW STUDIES...");
 		
 		PersistentService persistentServiceDICOMMOVE = ServiceLocator.singleton().getPersistentService2();
@@ -72,6 +75,10 @@ public class SendStudiesURLsAgent implements Job {
 		}
 		
 		Util.getLogger(this).debug("DONE!!");	
+		long finish = System.currentTimeMillis();
+		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");						
+		System.out.println("JOB:SEND_STUDIES_URL - StartInMillis - " + start + " - FinishInMillis - " + finish + " - StartFormated - " + sdfDate.format(new Date(start)) + " - FinishFormated " +  sdfDate.format(new Date(finish)));	
+		
 	}
 
 
