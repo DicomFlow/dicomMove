@@ -115,7 +115,7 @@ public class FileServiceImpl implements FileService {
 	    zin.close();
 	    
 	    //apagando o arquivo .zip após a extração
-	    if(!deleteFile(file)){
+	    if(!deleteFile(file, true)){
 	    	String errMsg = "Could not delete file " + file.getAbsolutePath();
 			
 			Util.getLogger(this).error(errMsg);
@@ -185,7 +185,7 @@ public class FileServiceImpl implements FileService {
 		String[] args = new String[]{"-c", eat+"@"+host+":"+port, file.getAbsolutePath()};
 		StoreSCU.main(args);
 		
-		if(!deleteFile(file)){
+		if(!deleteFile(file, false)){
 			String errMsg = "Could not delete file " + file.getAbsolutePath();
 			
 			Util.getLogger(this).error(errMsg);
@@ -197,7 +197,7 @@ public class FileServiceImpl implements FileService {
 	 * @param root o diretório raiz
 	 * @return True se apagou com sucesso, False caso contrário
 	 */
-	private boolean deleteFile(java.io.File root){
+	private boolean deleteFile(java.io.File root, boolean deleteRootDir){
 		if(root != null && root.exists()){
 			if(root.isDirectory()){
 				
@@ -205,11 +205,14 @@ public class FileServiceImpl implements FileService {
 				
 				for ( int i = 0; i < fileList.length; i++ ){ 
 					java.io.File file  = fileList[i];
-					deleteFile(file);
+					deleteFile(file, true);
 				}
 				
 			}
-			return root.delete();
+			if (deleteRootDir) {
+				return root.delete();	
+			}
+			
 		}
 		return true;
 	}
