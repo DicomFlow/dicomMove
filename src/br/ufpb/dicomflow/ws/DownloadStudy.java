@@ -3,7 +3,9 @@ package br.ufpb.dicomflow.ws;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -46,8 +48,9 @@ public class DownloadStudy extends GenericWebService {
 		if (study != null ) {
 			//TODO melhorar o resgate dos arquivos objetivando melhor desempenho
 			List<Series> series = persistentService.selectAll("study", study, Series.class);
-			List<Instance> instances =  persistentService.selectAll("series", series, Instance.class);	
-			files =  persistentService.selectAll("instance", instances, File.class);	
+			List<Instance> instances =  persistentService.selectAll("series", series, Instance.class);
+			List instancesIds = getInstanceIds(instances);
+			files =  persistentService.selectAllIn("instance", instancesIds, File.class);	
 
 	        StreamingOutput stream = new StreamingOutput() {
 				@Override
@@ -67,6 +70,16 @@ public class DownloadStudy extends GenericWebService {
 		} else {
 			return notFound();
 		}
+	}
+
+	private List getInstanceIds(List<Instance> instances) {
+		List ids = new ArrayList<>();
+		Iterator<Instance> it = instances.iterator();
+		while (it.hasNext()) {
+			Instance instance = (Instance) it.next();
+			ids.add(instance.getId());
+		}
+		return ids;
 	}
 
 }

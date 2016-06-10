@@ -110,4 +110,6 @@ public interface PersistentService {
 	public List selectUniqueResultOrderBy(String param, Object value, Class type,String orderType, String order);
 	
 	public List selectAllNotIn(String param, List values, Class type);
+	
+	public List selectAllIn(String param, List values, Class type);
 }

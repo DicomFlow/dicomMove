@@ -67,7 +67,10 @@ public class StoreStudiesAgent implements Job {
 		while (it.hasNext()) {
 			Registry registry = it.next();
 			
-			String url = registry.getLink();
+			//String url = registry.getLink();
+			//TODO - remover  - inserido para testes			
+			String url = "http://150.165.202.39:8081/dicomMove2/rest/DownloadStudy/2.16.840.1.113669.632.20.1211.10000324479";
+			
 			Util.getLogger(this).debug("URL FOUND : " + url);
 			
 			FileService fileService = ServiceLocator.singleton().getFileService();

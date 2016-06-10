@@ -252,12 +252,12 @@ public class HibernatePersistentServiceImpl extends HibernateDaoSupport  impleme
         return new ArrayList();
 	}
 	
-	public List selectAllNotIn(String param, List values, Class type) {
+	public List selectAllIn(String param, List values, Class type) {
 		
 		String query = "from " + type.getName() + " type1 ";
 		
 		if(values != null && values.size() != 0){
-			query +=    " where type1." + param + " not in ( ";
+			query +=    " where type1." + param + " in ( ";
 		
 			Iterator it = values.iterator();
 			if(it.hasNext()){
@@ -275,11 +275,55 @@ public class HibernatePersistentServiceImpl extends HibernateDaoSupport  impleme
 		List result = new ArrayList();
 		
 		Session session = this.getSession();
-		Query consulta = session.createQuery(query);
-        List list  = consulta.list(); 
-        session.close();
-        
-        return list;
+		try {
+			Query consulta = session.createQuery(query);
+	        List list  = consulta.list();
+	        return list;
+		} catch (HibernateException e) {
+			this.logger.error("Error retrieving objects", e);
+	        e.printStackTrace();
+		} finally {
+			session.clear();
+			session.close();	
+		}		                
+		return new ArrayList();
+	}
+	
+	public List selectAllNotIn(String param, List values, Class type) {
+		
+		String query = "from " + type.getName() + " type1 ";
+		
+		if(values != null && values.size() != 0){
+			query +=    " where type1." + param + " not in ( ";
+		
+			Iterator it = values.iterator();
+			if(it.hasNext()){
+				Object value = it.next();
+				query +=  value.toString();
+			}
+			while (it.hasNext()) {
+				Object value = (Object) it.next();
+				query += "," + value.toString();
+				
+			}
+			query +=")";
+		}              
+		               
+		List result = new ArrayList();
+		
+		Session session = this.getSession();
+		try {
+			Query consulta = session.createQuery(query);
+	        List list  = consulta.list();
+	        return list;
+		} catch (HibernateException e) {
+			this.logger.error("Error retrieving objects", e);
+	        e.printStackTrace();
+		} finally {
+			session.clear();
+			session.close();	
+		}		                
+		return new ArrayList();
 	}
 	
 	/**
