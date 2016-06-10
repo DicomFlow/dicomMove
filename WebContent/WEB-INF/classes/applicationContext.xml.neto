@@ -10,36 +10,36 @@
     <context:annotation-config />
     <!-- DataSource Definition -->
     <bean id="dataSource"
-        class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="driverClassName">
-            <value>com.mysql.jdbc.Driver</value>
-        </property>
-        <property name="url">
-            <value>jdbc:mysql:///pacsdb</value>
-        </property>
-        <property name="username">
-            <value>root</value>
-        </property>
-        <property name="password">
-            <value>root</value>
-        </property>
-    </bean>
-    
-    <bean id="dataSource2"
-        class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="driverClassName">
-            <value>com.mysql.jdbc.Driver</value>
-        </property>
-        <property name="url">
-            <value>jdbc:mysql:///pacsdb2</value>
-        </property>
-        <property name="username">
-            <value>root</value>
-        </property>
-        <property name="password">
-            <value>root</value>
-        </property>
-    </bean>
+      	class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName">
+			<value>org.postgresql.Driver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:postgresql://localhost:5432/pacsdb</value>
+		</property>
+		<property name="username">
+			<value>postgres</value>
+		</property>
+		<property name="password">
+			<value>egen</value>
+		</property>
+	</bean>
+	
+	<bean id="dataSource2"
+      	class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName">
+			<value>org.postgresql.Driver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:postgresql://localhost:5432/dicomflow</value>
+		</property>
+		<property name="username">
+			<value>postgres</value>
+		</property>
+		<property name="password">
+			<value>egen</value>
+		</property>
+	</bean>
     <!-- Hibernate SessionFactory Definition -->
     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="annotatedClasses">
@@ -55,13 +55,13 @@
         </property>
                 
         <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
-                <prop key="hibernate.show_sql">false</prop>
-                <prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
-                <prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
-            </props>
-        </property>   
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
+			</props>
+		</property>	
         
         <property name="dataSource">
             <ref bean="dataSource"/>
@@ -74,18 +74,18 @@
                 <value>br.ufpb.dicomflow.bean.Access</value>
                 <value>br.ufpb.dicomflow.bean.Registry</value>
                 <value>br.ufpb.dicomflow.bean.RegistryAccess</value>
-                <value>br.ufpb.dicomflow.bean.User</value>
+                <value>br.ufpb.dicomflow.bean.User</value>                                
             </list>
         </property>
                 
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
-                <prop key="hibernate.show_sql">false</prop>
-                <prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
-                <prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
-            </props>
-        </property>   
+      <property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
+			</props>
+		</property>	
         
         <property name="dataSource">
             <ref bean="dataSource2"/>
@@ -131,7 +131,7 @@
             <value>true</value>
         </property>
         <property name="user">
-            <value>protocolointegracao@gmail.com</value>
+            <value>dicomflow@gmail.com</value>
         </property>
         <property name="password">
             <value>pr0t0c0l0ap1</value>
@@ -139,25 +139,25 @@
     </bean>
     
     <bean id="mailAuthenticator" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPAuthenticator" >
-        <constructor-arg type="java.lang.String" value="dicomflow2@gmail.com"/>
+        <constructor-arg type="java.lang.String" value="dicomflow@gmail.com"/>
         <constructor-arg type="java.lang.String" value="pr0t0c0l0ap1"/>
     </bean>
     <bean id="mailHeadBuilder" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPHeadBuilder">
         <property name="from">
-            <value>dicomflow2@gmail.com</value>
+            <value>dicomflow@gmail.com</value>
         </property>
         <property name="domain">
-            <value>150.165.202.39</value>
+            <value>localhost</value>
         </property>
     </bean>
     <bean id="mailContentBuilder" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPContentBuilder">
     </bean>
     <bean id="urlGenerator" class="br.ufpb.dicomflow.service.impl.DefaultURLGenerator">
     	<property name="host">
-            <value>150.165.202.39</value>
+            <value>192.168.0.114</value>
         </property>
         <property name="port">
-            <value>8081</value>
+            <value>8080</value>
         </property>
     </bean> 
     
@@ -176,7 +176,7 @@
             <ref bean="urlGenerator"/>
         </property>
         <property name="propertiesConfigPath">
-			<value>D:/Danilo/WorkspaceDicomFlow/dicomMove2/WebContent/WEB-INF/classes/config.properties</value>
+			<value>C:/home/dicomflow/repos/dicomMove2/WebContent/WEB-INF/classes/config.properties</value>
 		</property>
 		<property name="maxAttempts">
 			<value>3</value>
@@ -185,7 +185,7 @@
     
     <bean id="fileService" class="br.ufpb.dicomflow.service.impl.FileServiceImpl"> 
         <property name="archivePath">
-            <value>D:/Danilo/Desenvolvimento/dcm4chee-2.17.1-mysql/server/default/</value>
+            <value>C:/home/dcm/local/dcm4chee/server/default/</value>
         </property>
         <property name="eat">
             <value>DCM4CHEE</value>
@@ -197,10 +197,10 @@
             <value>11112</value>
         </property>
         <property name="extractDir">
-            <value>D:/Danilo/WorkspaceDicomFlow/dicomMove2/WebContent/extract/</value>
+            <value>C:/home/dicomflow/repos/dicomMove2/WebContent/extract/</value>
         </property>
         <property name="keystore">
-			<value>C:/Program Files/Java/jdk1.7.0_51/jre/lib/security/cacerts</value>
+			<value>C:/home/dicomflow/local/jdk7/jre/lib/security/cacerts</value>
 		</property>
 		<property name="keystorePass">
 			<value>changeit</value>
