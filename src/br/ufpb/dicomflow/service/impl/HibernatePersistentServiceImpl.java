@@ -291,7 +291,7 @@ public class HibernatePersistentServiceImpl extends HibernateDaoSupport  impleme
 	
 	public List selectAllNotIn(String param, List values, Class type) {
 		
-		String query = "from " + type.getName() + " type1 ";
+String query = "from " + type.getName() + " type1 ";
 		
 		if(values != null && values.size() != 0){
 			query +=    " where type1." + param + " not in ( ";
@@ -299,11 +299,11 @@ public class HibernatePersistentServiceImpl extends HibernateDaoSupport  impleme
 			Iterator it = values.iterator();
 			if(it.hasNext()){
 				Object value = it.next();
-				query +=  value.toString();
+				query += "'" + value.toString()+ "'";
 			}
 			while (it.hasNext()) {
 				Object value = (Object) it.next();
-				query += "," + value.toString();
+				query += ",'" + value.toString() +"'";
 				
 			}
 			query +=")";
