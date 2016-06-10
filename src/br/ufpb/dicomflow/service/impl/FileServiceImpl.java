@@ -24,6 +24,8 @@ import br.ufpb.dicomflow.util.Util;
 
 public class FileServiceImpl implements FileService {
 	
+	public static final String ZIP_EXTENSION = ".zip";
+	
 	private String archivePath; 
 	
 	private String eat;
@@ -85,10 +87,16 @@ public class FileServiceImpl implements FileService {
 //		} catch (Exception e) {
 //			throw new ServiceException (e);
 //		}
+				
+		String zipDir = extractDir + java.io.File.separator + fileName.substring(0, fileName.lastIndexOf(ZIP_EXTENSION));
+		java.io.File dir = new java.io.File(zipDir);
+		if (!dir.exists()) {		
+			dir.mkdir();
+		}
 		
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		InputStream in = (InputStream)con.getInputStream();					
-		String filePath = extractDir + java.io.File.separator  + fileName;
+		String filePath = zipDir  + fileName;
 		java.io.File file = new java.io.File(filePath);
 		FileOutputStream fout = new FileOutputStream(file, false);
 		Util.getLogger(this).debug("INICIANDO ESCRITA DO .ZIP");
