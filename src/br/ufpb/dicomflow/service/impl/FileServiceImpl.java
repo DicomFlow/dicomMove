@@ -57,7 +57,8 @@ public class FileServiceImpl implements FileService {
 			FileInputStream fis = new FileInputStream( ioFile );
 
 			int content;
-			while ((content = fis.read()) != -1) {
+			byte buffer[] = new byte[8192];
+			while ((content = fis.read(buffer)) != -1) {
 				zipOut.write( content );
 			}
 
@@ -96,7 +97,7 @@ public class FileServiceImpl implements FileService {
 		
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		InputStream in = (InputStream)con.getInputStream();					
-		String filePath = zipDir  + fileName;
+		String filePath = zipDir  + java.io.File.separator + fileName;
 		java.io.File file = new java.io.File(filePath);
 		FileOutputStream fout = new FileOutputStream(file, false);
 		Util.getLogger(this).debug("INICIANDO ESCRITA DO .ZIP");
@@ -155,7 +156,7 @@ public class FileServiceImpl implements FileService {
 		System.out.println("unzipping " + s);
 		FileOutputStream out = new FileOutputStream(s);
 
-		byte[] b = new byte[512];
+		byte[] b = new byte[8192];
 		int len = 0;
 
 		while ((len = zin.read(b)) != -1) {
