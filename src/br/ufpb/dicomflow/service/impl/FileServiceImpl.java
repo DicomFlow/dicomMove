@@ -58,7 +58,7 @@ public class FileServiceImpl implements FileService {
 
 			int content;
 			byte buffer[] = new byte[512];
-			while ((content = fis.read(buffer)) != -1) {
+			while ((content = fis.read()) != -1) {
 				zipOut.write( content );
 			}
 
