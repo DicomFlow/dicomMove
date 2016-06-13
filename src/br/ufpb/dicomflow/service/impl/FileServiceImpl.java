@@ -89,7 +89,7 @@ public class FileServiceImpl implements FileService {
 //			throw new ServiceException (e);
 //		}
 				
-		String zipDir = extractDir + java.io.File.separator + fileName.substring(0, fileName.lastIndexOf(ZIP_EXTENSION));
+		String zipDir = extractDir + fileName.substring(0, fileName.lastIndexOf(ZIP_EXTENSION));
 		Util.getLogger(this).debug("zipDIR: " + zipDir);
 		java.io.File dir = new java.io.File(zipDir);
 		if (!dir.exists()) {		
@@ -120,7 +120,7 @@ public class FileServiceImpl implements FileService {
 	    ZipEntry e;
 	 
 		while ((e = zin.getNextEntry()) != null) {			
-			unzip(zin, filePath + e.getName());//extractDir + e.getName());
+			unzip(zin, zipDir + java.io.File.separator  + e.getName());//extractDir + e.getName());
 		}
 
 	    zin.close();
