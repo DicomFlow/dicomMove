@@ -90,6 +90,7 @@ public class FileServiceImpl implements FileService {
 //		}
 				
 		String zipDir = extractDir + java.io.File.separator + fileName.substring(0, fileName.lastIndexOf(ZIP_EXTENSION));
+		Util.getLogger(this).debug("zipDIR: " + zipDir);
 		java.io.File dir = new java.io.File(zipDir);
 		if (!dir.exists()) {		
 			dir.mkdir();
@@ -98,6 +99,7 @@ public class FileServiceImpl implements FileService {
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		InputStream in = (InputStream)con.getInputStream();					
 		String filePath = zipDir  + java.io.File.separator + fileName;
+		Util.getLogger(this).debug("filePath: " + filePath);
 		java.io.File file = new java.io.File(filePath);
 		FileOutputStream fout = new FileOutputStream(file, false);
 		Util.getLogger(this).debug("INICIANDO ESCRITA DO .ZIP");
@@ -118,7 +120,7 @@ public class FileServiceImpl implements FileService {
 	    ZipEntry e;
 	 
 		while ((e = zin.getNextEntry()) != null) {			
-			unzip(zin, extractDir + e.getName());
+			unzip(zin, filePath + e.getName());//extractDir + e.getName());
 		}
 
 	    zin.close();
