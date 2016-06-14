@@ -57,9 +57,9 @@ public class FileServiceImpl implements FileService {
 			FileInputStream fis = new FileInputStream( ioFile );
 
 			int content;
-			byte buffer[] = new byte[512];
-			while ((content = fis.read()) != -1) {
-				zipOut.write( content );
+			byte buffer[] = new byte[8192];
+			while ((content = fis.read(buffer)) != -1) {
+				zipOut.write(buffer, 0, content);
 			}
 
 			zipOut.closeEntry();
@@ -158,7 +158,7 @@ public class FileServiceImpl implements FileService {
 		System.out.println("unzipping " + s);
 		FileOutputStream out = new FileOutputStream(s);
 
-		byte[] b = new byte[512];
+		byte[] b = new byte[8192];
 		int len = 0;
 
 		while ((len = zin.read(b)) != -1) {
