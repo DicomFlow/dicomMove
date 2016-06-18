@@ -14,14 +14,23 @@
  * 	You should have received a copy of the GNU General Public License
  * 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
+ *	The Original Code is part of DicomFlow, available at http://www.dicomflow.org
+ * 
+ * 	Copyright © 2016 Universidade Federal da Paraiba. * 
+ * 
  */
 package br.ufpb.dicomflow.tests;
 
-
+/**
+ * 
+ * @author Danilo Alexandre
+ * @author Juracy Neto
+ * 
+ */
 public class DownloadStudyTest {
 	
 	public static void main(String[] args) {
-		int numRequisicoes = 5;
+		int numRequisicoes = 1;
 		
 		for (int i = 0; i <numRequisicoes; i++) {
 			ConcurrentRequest cr = new ConcurrentRequest();

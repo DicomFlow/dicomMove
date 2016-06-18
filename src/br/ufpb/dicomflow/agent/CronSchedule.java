@@ -14,6 +14,10 @@
  * 	You should have received a copy of the GNU General Public License
  * 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
+ *	The Original Code is part of DicomFlow, available at http://www.dicomflow.org
+ * 
+ * 	Copyright © 2016 Universidade Federal da Paraiba.  
+ * 
  */
 
 package br.ufpb.dicomflow.agent;
@@ -26,7 +30,12 @@ import org.quartz.impl.StdSchedulerFactory;
 
 import br.ufpb.dicomflow.util.Util;
 
-
+/**
+ * 
+ * @author Danilo Alexandre
+ * @author Juracy Neto
+ * 
+ */
 public class CronSchedule {
 
 	public CronSchedule() throws Exception {
@@ -53,7 +62,7 @@ public class CronSchedule {
 //		CronTrigger findCertificateResultCronTrigger = new CronTrigger("findCertificateResultCronTrigger","group2","0 * * * * ?");		
 //		sched.scheduleJob(findCertificateResultJobDetail ,findCertificateResultCronTrigger);
 
-		/*
+		
 //		//busca de novos estudos medicos
 		JobDetail findStudiesJobDetail = new JobDetail("findStudiesJobDetail","group1",FindStudiesAgent.class);
 		CronTrigger findStudiesCronTrigger = new CronTrigger("findStudiesCronTrigger","group2","0 * * * * ?");		
@@ -63,27 +72,27 @@ public class CronSchedule {
 		JobDetail sendStudiesURLsJobDetail = new JobDetail("sendStudiesURLsJobDetail","group1",SendStudiesURLsAgent.class);
 		CronTrigger sendStudiesURLsCronTrigger = new CronTrigger("sendStudiesURLsCronTrigger","group2","0 * * * * ?");		
 		sched.scheduleJob(sendStudiesURLsJobDetail ,sendStudiesURLsCronTrigger);
-	
+
 //		//resolve envio pendende de urls de acesso aos novos estudos
 //		JobDetail sendPendingStudiesURLsJobDetail = new JobDetail("sendPendingStudiesURLsJobDetail","group1",SendPendingStudiesURLsAgent.class);
-//		CronTrigger sendPendingStudiesURLsCronTrigger = new CronTrigger("sendPendingStudiesURLsCronTrigger","group2","30 0 * * * ?");		
+//		CronTrigger sendPendingStudiesURLsCronTrigger = new CronTrigger("sendPendingStudiesURLsCronTrigger","group2","0 0 * * * ?");		
 //		sched.scheduleJob(sendPendingStudiesURLsJobDetail ,sendPendingStudiesURLsCronTrigger);
 
-		//busca por urls de acessos recebidas para novos estudos
-		JobDetail findStudiesURLsJobDetail = new JobDetail("findStudiesURLsJobDetail","group1",FindStudiesURLsAgent.class);
-		CronTrigger findStudiesURLsCronTrigger = new CronTrigger("findStudiesURLsCronTrigger","group2","0 * * * * ?");
-		sched.scheduleJob(findStudiesURLsJobDetail, findStudiesURLsCronTrigger);
+//		//busca por urls de acessos recebidas para novos estudos
+//		JobDetail findStudiesURLsJobDetail = new JobDetail("findStudiesURLsJobDetail","group1",FindStudiesURLsAgent.class);
+//		CronTrigger findStudiesURLsCronTrigger = new CronTrigger("findStudiesURLsCronTrigger","group2","0 0/2 * * * ?");
+//		sched.scheduleJob(findStudiesURLsJobDetail, findStudiesURLsCronTrigger);
+//		
+//		//armazena estudos acessados atrave das urls buscadas
+//		JobDetail storeStudiesJobDetail = new JobDetail("storeStudiesJobDetail","group1",StoreStudiesAgent.class);
+//		CronTrigger storeStudiesCronTrigger = new CronTrigger("storeStudiesCronTrigger","group2","0 0/4 * * * ?");
+//		sched.scheduleJob(storeStudiesJobDetail, storeStudiesCronTrigger);
 		
-		//armazena estudos acessados atravï¿½s das urls buscadas
-		JobDetail storeStudiesJobDetail = new JobDetail("storeStudiesJobDetail","group1",StoreStudiesAgent.class);
-		CronTrigger storeStudiesCronTrigger = new CronTrigger("storeStudiesCronTrigger","group2","0 * * * * ?");
-		sched.scheduleJob(storeStudiesJobDetail, storeStudiesCronTrigger);
+		//resolve armazenamento pendente de estudos acessados atraves das urls buscadas
+//		JobDetail storePendingStudiesJobDetail = new JobDetail("storePendingStudiesJobDetail","group1",StorePendingStudiesAgent.class);
+//		CronTrigger storePendingStudiesCronTrigger = new CronTrigger("storePendingStudiesCronTrigger","group2","0 * * * * ?");
+//		sched.scheduleJob(storePendingStudiesJobDetail, storePendingStudiesCronTrigger);
 		
-		//resolve armazenamento pendente de estudos acessados atravï¿½s das urls buscadas
-		JobDetail storePendingStudiesJobDetail = new JobDetail("storePendingStudiesJobDetail","group1",StorePendingStudiesAgent.class);
-		CronTrigger storePendingStudiesCronTrigger = new CronTrigger("storePendingStudiesCronTrigger","group2","0 * * * * ?");
-		sched.scheduleJob(storePendingStudiesJobDetail, storePendingStudiesCronTrigger);
-		*/
 		sched.start();
 		Util.getLogger(this).debug("CronSchedule Created!");
 		

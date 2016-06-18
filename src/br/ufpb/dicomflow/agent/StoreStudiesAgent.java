@@ -69,7 +69,7 @@ public class StoreStudiesAgent implements Job {
 			
 			//String url = registry.getLink();
 			//TODO - remover  - inserido para testes			
-			String url = "http://150.165.202.39:8081/dicomMove2/rest/DownloadStudy/2.16.840.1.113669.632.20.1211.10000324479";
+			String url = "http://150.165.250.242:8081/dicomMove2/rest/DownloadStudy/2.16.840.1.113669.632.20.1211.10000324479";
 			
 			Util.getLogger(this).debug("URL FOUND : " + url);
 			

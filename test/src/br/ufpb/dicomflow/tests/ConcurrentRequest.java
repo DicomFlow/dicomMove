@@ -33,12 +33,18 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.client.ClientConfig;
 
+/**
+ * 
+ * @author Danilo Alexandre
+ * @author Juracy Neto
+ * 
+ */
 public class ConcurrentRequest implements Runnable {
 	
-	public String host = "150.165.202.43";
+	public String host = "150.165.202.39";
 	public String port = "8081";
 	//public String context = "dicomMove2/rest";
-	public String context = "DicomMove/rest";
+	public String context = "dicomMove2/rest";
 	public String serviceName = "DownloadStudy";
 	public String StudyId = "2.16.840.1.113669.632.20.1211.10000324479";
 	
