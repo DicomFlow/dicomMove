@@ -26,6 +26,7 @@ import br.ufpb.dicomflow.integrationAPI.mail.FilterIF;
 import br.ufpb.dicomflow.integrationAPI.mail.MailAuthenticatorIF;
 import br.ufpb.dicomflow.integrationAPI.mail.MailContentBuilderIF;
 import br.ufpb.dicomflow.integrationAPI.mail.MailHeadBuilderIF;
+import br.ufpb.dicomflow.integrationAPI.mail.MessageIF;
 import br.ufpb.dicomflow.integrationAPI.mail.impl.MailXTags;
 import br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPFilter;
 import br.ufpb.dicomflow.integrationAPI.main.ServiceFactory;
@@ -42,7 +43,6 @@ import br.ufpb.dicomflow.integrationAPI.message.xml.StorageSave;
 import br.ufpb.dicomflow.integrationAPI.message.xml.URL;
 import br.ufpb.dicomflow.service.MessageService;
 import br.ufpb.dicomflow.service.ServiceException;
-import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.service.UrlGeneratorIF;
 import br.ufpb.dicomflow.util.Util;
 
@@ -149,7 +149,7 @@ public class DicomMessageServiceImpl implements MessageService {
 		
 		Map<String,String> urls = new HashMap<String,String>();
 		
-		Iterator<ServiceIF> iterator = getServices(initialDate, finalDate, messageID, ServiceIF.STORAGE_SAVE);
+		Iterator<ServiceIF> iterator = getServices(initialDate, finalDate, messageID, ServiceIF.STORAGE_SAVE).iterator();
 		while (iterator.hasNext()) {
 			StorageSave storage = (StorageSave) iterator.next();
 			if(storage.getUrl() != null && !storage.getUrl().equals("")){
@@ -196,12 +196,12 @@ public class DicomMessageServiceImpl implements MessageService {
 		iap.load(propertiesConfigPath);
 		
 		
-		List<Message> messages = getMessage(null, null, messageID, ServiceIF.STORAGE_SAVE);
-		Iterator<Message> it = messages.iterator();
+		List<MessageIF> messages = getMessage(null, null, messageID, ServiceIF.STORAGE_SAVE);
+		Iterator<MessageIF> it = messages.iterator();
 	
 		while (it.hasNext()) {
-			Message message = (Message) it.next();
-			String mailTo = getMailHeadBuilder().getHeaderValue(message, MailXTags.DISPOSITION_NOTIFICATION_TO_X_TAG);
+			MessageIF message = (MessageIF) it.next();
+			String mailTo = (String) message.getMailTag(MailXTags.DISPOSITION_NOTIFICATION_TO_X_TAG);
 			try {
 				ServiceProcessor.sendMessage(storageResult, mailTo, iap.getSendProperties(), mailAuthenticator, mailHeadBuilder, mailContentBuilder);
 			
@@ -221,26 +221,20 @@ public class DicomMessageServiceImpl implements MessageService {
 		
 		Map<String,String> map = new HashMap<String, String>();
 		
-		List<Message> messages = getMessage(null, null, null, ServiceIF.STORAGE_RESULT);
-		Iterator<Message> it = messages.iterator();
+		List<MessageIF> messages = getMessage(null, null, null, ServiceIF.STORAGE_RESULT);
+		Iterator<MessageIF> it = messages.iterator();
 		while (it.hasNext()) {
-			Message message = (Message) it.next();
-			String xMessageID = getMailHeadBuilder().getHeaderValue(message, MailXTags.MESSAGE_ID_X_TAG);
-			try {
-				StorageResult storageResult = (StorageResult) getMailContentBuilder().getService((Multipart)message.getContent(), ServiceIF.STORAGE_RESULT);
-				List<Result> results  = storageResult.getResult();
-				Iterator<Result> resultIt = results.iterator();
-				while (resultIt.hasNext()) {
-					Result result = (Result) resultIt.next();
-					if(result.getOriginalMessageID() != null && result.getOriginalMessageID().equals(originalMessageID)){
-						map.put(getDomain(xMessageID), result.getCompleted().getStatus());
-					}
+			MessageIF message = (MessageIF) it.next();
+			String xMessageID = (String) message.getMailTag(MailXTags.MESSAGE_ID_X_TAG);
+			
+			StorageResult storageResult = (StorageResult) message.getService();
+			List<Result> results  = storageResult.getResult();
+			Iterator<Result> resultIt = results.iterator();
+			while (resultIt.hasNext()) {
+				Result result = (Result) resultIt.next();
+				if(result.getOriginalMessageID() != null && result.getOriginalMessageID().equals(originalMessageID)){
+					map.put(getDomain(xMessageID), result.getCompleted().getStatus());
 				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (MessagingException e) {
-				e.printStackTrace();
 			}
 			
 		}
@@ -313,14 +307,15 @@ public class DicomMessageServiceImpl implements MessageService {
 		
 		Map<Access,byte[]> servicesAndAttachs = new HashMap<Access,byte[]>();
 		try {
-			Iterator<Map<ServiceIF, byte[]>> iterator = ServiceProcessor.receiveServicesAndAttachs(iap.getReceiveProperties(), mailAuthenticator, null, null, filter);
+			List<MessageIF> messages = ServiceProcessor.receiveMessages(iap.getReceiveProperties(), mailAuthenticator, null, null, filter);
+			Iterator<MessageIF> iterator = messages.iterator();
 			while (iterator.hasNext()) {
-				Map<ServiceIF, byte[]> map = (Map<ServiceIF, byte[]>) iterator.next();
-				Set<ServiceIF> services = map.keySet();
+				MessageIF message = (MessageIF) iterator.next();
+				
 				//Exists only one service on MAP
-				if(services.size() == 1){
-					ServiceIF service = services.iterator().next();
-					byte[] certificate = map.get(service);
+				if(message.getService() != null){
+					ServiceIF service = message.getService();
+					byte[] certificate = message.getAttach();
 					Access access = new Access();
 					access.setHost(((CertificateRequest)service).getDomain());
 					access.setPort(((CertificateRequest)service).getPort());
@@ -382,7 +377,7 @@ public class DicomMessageServiceImpl implements MessageService {
 		
 		Map<Access, String> accesses = new HashMap<Access, String>();
 		
-		Iterator<ServiceIF> iterator = getServices(initialDate, finalDate, messageID, ServiceIF.CERTIFICATE_RESULT);
+		Iterator<ServiceIF> iterator = getServices(initialDate, finalDate, messageID, ServiceIF.CERTIFICATE_RESULT).iterator();
 		while (iterator.hasNext()) {
 			CertificateResult certificateResult = (CertificateResult)iterator.next();
 			Access access = new Access();
@@ -395,7 +390,7 @@ public class DicomMessageServiceImpl implements MessageService {
 		return accesses;
 	}
 	
-	private Iterator<ServiceIF> getServices(Date initialDate, Date finalDate, String messageID, int type) throws ServiceException {
+	private List<ServiceIF> getServices(Date initialDate, Date finalDate, String messageID, int type) throws ServiceException {
 		if(propertiesConfigPath == null){
 			String errMsg = "Could not get links: invalid properties's path ";
 			
@@ -413,18 +408,18 @@ public class DicomMessageServiceImpl implements MessageService {
 		iap.load(propertiesConfigPath);
 		
 		try {
-			return ServiceProcessor.receiveMessage(iap.getReceiveProperties(), mailAuthenticator, null, null, filter);
+			return ServiceProcessor.receiveServices(iap.getReceiveProperties(), mailAuthenticator, null, null, filter);
 		} catch (ServiceCreationException e) {
 			e.printStackTrace();
 		} catch (PropertyNotFoundException e) {
 			e.printStackTrace();
 		}
-		return new ArrayList<ServiceIF>().iterator();
+		return new ArrayList<ServiceIF>();
 		
 		
 	}
 	
-	private List<Message> getMessage(Date initialDate, Date finalDate, String messageID, int type) throws ServiceException {
+	private List<MessageIF> getMessage(Date initialDate, Date finalDate, String messageID, int type) throws ServiceException {
 		if(propertiesConfigPath == null){
 			String errMsg = "Could not get links: invalid properties's path ";
 			
@@ -448,7 +443,7 @@ public class DicomMessageServiceImpl implements MessageService {
 		} catch (PropertyNotFoundException e) {
 			e.printStackTrace();
 		}
-		return new ArrayList<Message>();
+		return new ArrayList<MessageIF>();
 		
 		
 	}
