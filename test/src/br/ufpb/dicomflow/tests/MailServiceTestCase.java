@@ -48,21 +48,17 @@ public class MailServiceTestCase {
 		
 		
 		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
-		iap.load("C:/home/dicomflow/repos/dicomMove2/WebContent/WEB-INF/config.properties");
+		iap.load("WebContent/WEB_INF/classes/config.properties");
 		
-		Properties props = new Properties();
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.port", "587");
+		Properties props = iap.getSendProperties();
 		
 		MailContentBuilderIF mailContentBuilder = MailContentBuilderFactory.createContentStrategy(MailContentBuilderIF.SMTP_SIMPLE_CONTENT_STRATEGY);
 		MailHeadBuilderIF mailHeadBuilder = MailHeadBuilderFactory.createHeadStrategy(MailHeadBuilderIF.SMTP_HEAD_STRATEGY);
-		mailHeadBuilder.setFrom("protocolointegracao@gmail.com");
+		mailHeadBuilder.setFrom(iap.getProperty("authentication.login"));
 		
-		MailAuthenticatorIF mailAuthenticator = MailAuthenticatorFactory.createHeadStrategy(MailAuthenticatorIF.SMTP_AUTHENTICATOR, "protocolointegracao@gmail.com", "pr0t0c0l0ap1d1c0m");	
+		MailAuthenticatorIF mailAuthenticator = MailAuthenticatorFactory.createHeadStrategy(MailAuthenticatorIF.SMTP_AUTHENTICATOR, iap.getProperty("authentication.login"), iap.getProperty("authentication.password"));	
 		
-		ServiceProcessor.sendMessage(sharingPut, "protocolointegracao@gmail.com", props, mailAuthenticator, mailHeadBuilder, mailContentBuilder);					
+		ServiceProcessor.sendMessage(sharingPut, iap.getProperty("authentication.login"), props, mailAuthenticator, mailHeadBuilder, mailContentBuilder);					
 			
 	}		
 }

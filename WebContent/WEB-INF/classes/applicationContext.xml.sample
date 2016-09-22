@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+    <!-- ========================= Start of PERSISTENCE DEFINITIONS ========================= -->
+    <context:annotation-config />
+    <!-- DataSource Definition -->
+    <bean id="dataSource"
+      	class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName">
+			<value>BD_PACS_DRIVER</value>
+		</property>
+		<property name="url">
+			<value>BD_PACS_URL</value>
+		</property>
+		<property name="username">
+			<value>BD_PACS_USERNAME</value>
+		</property>
+		<property name="password">
+			<value>BD_PACS_PASSWORD</value>
+		</property>
+	</bean>
+	
+	<bean id="dataSource2"
+      	class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName">
+			<value>BD_DICOMFLOW_DRIVER</value>
+		</property>
+		<property name="url">
+			<value>BD_DICOMFLOW_URL</value>
+		</property>
+		<property name="username">
+			<value>BD_DICOMFLOW_USERNAME</value>
+		</property>
+		<property name="password">
+			<value>BD_DICOMFLOW_PASSWORD</value>
+		</property>
+	</bean>
+    <!-- Hibernate SessionFactory Definition -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="annotatedClasses">
+            <list>
+                <value>br.ufpb.dicomflow.bean.File</value>
+                <value>br.ufpb.dicomflow.bean.FileSystem</value>
+                <value>br.ufpb.dicomflow.bean.Instance</value>
+                <value>br.ufpb.dicomflow.bean.Patient</value>
+                <value>br.ufpb.dicomflow.bean.Series</value>
+                <value>br.ufpb.dicomflow.bean.Study</value>
+                <value>br.ufpb.dicomflow.bean.StudyOnFileSystem</value>
+            </list>
+        </property>
+                
+        <property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">BD_PACS_DIALECT_CLASS</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
+			</props>
+		</property>	
+        
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+    </bean>
+    
+    <bean id="sessionFactory2" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="annotatedClasses">
+            <list>
+                <value>br.ufpb.dicomflow.bean.Access</value>
+                <value>br.ufpb.dicomflow.bean.Registry</value>
+                <value>br.ufpb.dicomflow.bean.RegistryAccess</value>
+                <value>br.ufpb.dicomflow.bean.User</value>                                
+            </list>
+        </property>
+                
+      <property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">BD_DICOMFLOW_DIALECT_CLASS</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
+			</props>
+		</property>	
+        
+        <property name="dataSource">
+            <ref bean="dataSource2"/>
+        </property>
+    </bean>
+    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate"> 
+        <property name="sessionFactory"><ref bean="sessionFactory"/></property> 
+        <property name="jdbcExceptionTranslator"><ref bean="jdbcExceptionTranslator"/></property> 
+    </bean>
+    
+    <bean id="hibernateTemplate2" class="org.springframework.orm.hibernate3.HibernateTemplate"> 
+        <property name="sessionFactory"><ref bean="sessionFactory2"/></property> 
+        <property name="jdbcExceptionTranslator"><ref bean="jdbcExceptionTranslator2"/></property> 
+    </bean> 
+    
+    <bean id="persistentService" class="br.ufpb.dicomflow.service.impl.HibernatePersistentServiceImpl">
+        <property name="hibernateTemplate"><ref bean="hibernateTemplate"/></property> 
+    </bean>
+    
+    <bean id="persistentService2" class="br.ufpb.dicomflow.service.impl.HibernatePersistentServiceImpl">
+        <property name="hibernateTemplate"><ref bean="hibernateTemplate2"/></property> 
+    </bean>
+    <bean id="jdbcExceptionTranslator" class="org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator"> 
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property> 
+    </bean>
+    
+    <bean id="jdbcExceptionTranslator2" class="org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator"> 
+        <property name="dataSource">
+            <ref bean="dataSource2"/>
+        </property> 
+    </bean>
+    
+    <bean id="mailService" class="br.ufpb.dicomflow.service.impl.EmailServiceImpl">
+        <property name="smtp">
+            <value>SMTP_URL</value>
+        </property>
+        <property name="port">
+            <value>SMTO_PORT</value>
+        </property>
+        <property name="online">
+            <value>true</value>
+        </property>
+        <property name="user">
+            <value>USER_MAIL</value>
+        </property>
+        <property name="password">
+            <value>USER_PASSWORD</value>
+        </property>
+    </bean>
+    
+    <bean id="mailAuthenticator" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPAuthenticator" >
+        <constructor-arg type="java.lang.String" value="USER_MAIL"/>
+        <constructor-arg type="java.lang.String" value="USER_PASSWORD"/>
+    </bean>
+    <bean id="mailHeadBuilder" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPHeadBuilder">
+        <property name="from">
+            <value>USER_MAIL</value>
+        </property>
+        <property name="domain">
+            <value>DOMAIN_URL</value>
+        </property>
+    </bean>
+    <bean id="mailContentBuilder" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPContentBuilder">
+    </bean>
+    <bean id="urlGenerator" class="br.ufpb.dicomflow.service.impl.DefaultURLGenerator">
+    	<property name="host">
+            <value>DOMAIN_URL</value>
+        </property>
+        <property name="port">
+            <value>DOMIAN_PORT</value>
+        </property>
+        <property name="context">
+            <value>DOMAIN_APP_CONTEXT_NAME</value>
+        </property>
+         <property name="protocol">
+            <value>DOMAIN_PROTOCOL</value>
+        </property>
+    </bean> 
+    
+    
+    <bean id="messageService" class="br.ufpb.dicomflow.service.impl.DicomMessageServiceImpl"> 
+        <property name="mailAuthenticator">
+            <ref bean="mailAuthenticator"/>
+        </property> 
+        <property name="mailHeadBuilder">
+            <ref bean="mailHeadBuilder"/>
+        </property>
+        <property name="mailContentBuilder">
+            <ref bean="mailContentBuilder"/>
+        </property>
+        <property name="urlGenerator">
+            <ref bean="urlGenerator"/>
+        </property>
+        <property name="propertiesConfigPath">
+			<value>MESSAGE_PROPERTIES_CONFIG_FILE</value>
+		</property>
+		<property name="maxAttempts">
+			<value>3</value>
+		</property>
+    </bean>
+    
+    <bean id="fileService" class="br.ufpb.dicomflow.service.impl.FileServiceImpl"> 
+        <property name="archivePath">
+            <value>PACS_ARCHIVE_PATH</value>
+        </property>
+        <property name="eat">
+            <value>PACS_ENTITY_APPLICATION_TITLE</value>
+        </property>
+        <property name="host">
+            <value>PACS_ENTITY_APPLICATION_HOST</value>
+        </property>
+        <property name="port">
+            <value>PACS_ENTITY_APPLICATION_PORT</value>
+        </property>
+        <property name="extractDir">
+            <value>RECEIVED_FILES_EXTRACT_DIR</value>
+        </property>
+        <property name="keystore">
+			<value>KEYSTORE_FILE</value>
+		</property>
+		<property name="keystorePass">
+			<value>KEYSTORE_PASSWORD</value>
+		</property>
+		<property name="keyPass">
+			<value>KEYSTORE_KEY_PASSWORD</value>
+		</property>
+    </bean>
+</beans>

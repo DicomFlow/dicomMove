@@ -33,6 +33,9 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.client.ClientConfig;
 
+import br.ufpb.dicomflow.integrationAPI.conf.IntegrationAPIProperties;
+import br.ufpb.dicomflow.integrationAPI.exceptions.PropertyNotFoundException;
+
 /**
  * 
  * @author Danilo Alexandre
@@ -41,22 +44,29 @@ import org.glassfish.jersey.client.ClientConfig;
  */
 public class ConcurrentRequest implements Runnable {
 	
-	public String host = "150.165.202.39";
-	public String port = "8081";
-	//public String context = "dicomMove2/rest";
-	public String context = "dicomMove2/rest";
-	public String serviceName = "DownloadStudy";
-	public String StudyId = "2.16.840.1.113669.632.20.1211.10000324479";
-	
-	String resultPath = "C:/temp/dicomflow/";
 	
 	private WebTarget resourceWebTarget;
-	private Integer reqNumber;	
+	private Integer reqNumber;
 
 	@Override
 	public void run() {		
 		
 		try {
+			
+			IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+			iap.load("WebContent/WEB_INF/classes/config.properties");
+			
+		
+			
+			String host = iap.getProperty("host");
+			String port = iap.getProperty("port");
+			String context = iap.getProperty("context");
+			String serviceName = iap.getProperty("serviceName");
+			String studyId = iap.getProperty("studyId");
+			
+			String resultPath = iap.getProperty("resultPath");
+			
+			
 			ClientConfig clientConfig = new ClientConfig();
 //			clientConfig.register(MyClientResponseFilter.class);
 //			clientConfig.register(new AnotherClientFilter());				
@@ -65,7 +75,7 @@ public class ConcurrentRequest implements Runnable {
 			//http://localhost:8090/DicomMoveServer/rest/DownloadStudy
 			WebTarget webTarget = client.target("http://" + host + ":" + port + "/" + context + "/");
 //			webTarget.register(FilterForExampleCom.class);
-			WebTarget resourceWebTarget = webTarget.path(serviceName + "/" + StudyId);
+			WebTarget resourceWebTarget = webTarget.path(serviceName + "/" + studyId);
 //			WebTarget helloworldWebTarget = resourceWebTarget.path("helloworld");
 //			WebTarget helloworldWebTargetWithQueryParam = helloworldWebTarget.queryParam("greeting", "Hi World!");
 			
