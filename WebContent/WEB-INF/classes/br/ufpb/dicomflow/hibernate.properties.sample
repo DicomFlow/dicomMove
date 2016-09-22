@@ -1,0 +1,8 @@
+hibernate.connection.driver_class=BD_PACS_DRIVER
+hibernate.connection.url=BD_PACS_URL
+hibernate.connection.urlTest=BD_PACS_URL_TEST
+hibernate.connection.urlbase=BD_URL_BASE
+hibernate.connection.username=BD_PACS_USERNAME
+hibernate.connection.password=BD_PACS_PASSWORD
+hibernate.connection.pool_size=10
+hibernate.dialect=BD_PACS_DIALECT_CLASS
