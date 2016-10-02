@@ -44,7 +44,7 @@ public class MailServiceTestCase {
 		
 		urls.add(url2);
 		
-		sharingPut.setUrls(urls);
+		sharingPut.setUrl(urls);
 		
 		
 		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();

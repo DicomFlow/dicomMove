@@ -182,7 +182,7 @@ public class DicomMessageServiceImpl implements MessageService {
 		object.setType(Object.TYPE_STUDY);
 		object.setId(registry.getStudyIuid());
 		objects.add(object);
-		result.setObjects(objects);
+		result.setObject(objects);
 		
 		result.setOriginalMessageID(messageID);
 		result.setTimestamp(Util.singleton().getDataString(Calendar.getInstance().getTime()));
