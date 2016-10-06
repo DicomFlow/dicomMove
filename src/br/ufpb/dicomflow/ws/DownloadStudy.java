@@ -17,11 +17,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import br.ufpb.dicomflow.bean.File;
-import br.ufpb.dicomflow.bean.Instance;
-import br.ufpb.dicomflow.bean.Series;
-import br.ufpb.dicomflow.bean.Study;
-import br.ufpb.dicomflow.service.PersistentService;
+import br.ufpb.dicomflow.bean.dcm4che.File;
+import br.ufpb.dicomflow.bean.dcm4che.Instance;
+import br.ufpb.dicomflow.bean.dcm4che.Series;
+import br.ufpb.dicomflow.bean.dcm4che.Study;
+import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
@@ -42,7 +42,7 @@ public class DownloadStudy extends GenericWebService {
 		Date initialTime = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss.SSS");
 		Util.getLogger(this).debug("INICIANDO DOWNLOAD - " + format.format(initialTime) );
-		PersistentService persistentService = ServiceLocator.singleton().getPersistentService();
+		PacsPersistentServiceIF persistentService = ServiceLocator.singleton().getPacsPersistentService();
 		Study study = (Study) persistentService.select("studyIuid", studyIUID, Study.class);	
 		
 		if (study != null ) {

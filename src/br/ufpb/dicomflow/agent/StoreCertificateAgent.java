@@ -30,9 +30,9 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import br.ufpb.dicomflow.bean.Access;
-import br.ufpb.dicomflow.service.FileService;
-import br.ufpb.dicomflow.service.MessageService;
-import br.ufpb.dicomflow.service.PersistentService;
+import br.ufpb.dicomflow.service.CertificateServiceIF;
+import br.ufpb.dicomflow.service.MessageServiceIF;
+import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
@@ -45,9 +45,9 @@ public class StoreCertificateAgent implements Job {
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("STORE CERTIFICATES...");
 		
-		PersistentService persistentServiceDICOMMOVE = ServiceLocator.singleton().getPersistentService2();
-		MessageService messageService = ServiceLocator.singleton().getMessageService();
-		FileService fileService =  ServiceLocator.singleton().getFileService();
+		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
+		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
+		CertificateServiceIF certificateService =  ServiceLocator.singleton().getCertificateService();
 		
 		Map<Access, byte[]> map = new HashMap<Access, byte[]>();
 		try {
@@ -59,24 +59,24 @@ public class StoreCertificateAgent implements Job {
 		Iterator<Access> it = accesses.iterator();
 		while (it.hasNext()) {
 			Access access = (Access) it.next();
-			Access bdAccess = (Access) persistentServiceDICOMMOVE.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
+			Access bdAccess = (Access) persistentService.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
 			
 				byte[] certificate = map.get(access);
 				try {
-					if(fileService.storeCertificate(certificate, access.getHost())){
+					if(certificateService.storeCertificate(certificate, access.getHost())){
 						if(bdAccess == null){
 							access.setCertificateStatus(Access.CERIFICATE_OPEN);
 							access.setCredential(Util.getCredential());
 							access.save();
-							messageService.sendCertificateResult(access, MessageService.CERTIFICATE_RESULT_CREATED);
+							messageService.sendCertificateResult(access, MessageServiceIF.CERTIFICATE_RESULT_CREATED);
 						}else{
 							if(bdAccess.getCredential() == null || bdAccess.getCredential().isEmpty()){
 								bdAccess.setCredential(Util.getCredential());
 							}
-							messageService.sendCertificateResult(bdAccess, MessageService.CERTIFICATE_RESULT_UPDATED);
+							messageService.sendCertificateResult(bdAccess, MessageServiceIF.CERTIFICATE_RESULT_UPDATED);
 						}
 					}else{
-						messageService.sendCertificateResult(access, MessageService.CERTIFICATE_RESULT_ERROR);
+						messageService.sendCertificateResult(access, MessageServiceIF.CERTIFICATE_RESULT_ERROR);
 					}
 					
 				} catch (ServiceException e) {

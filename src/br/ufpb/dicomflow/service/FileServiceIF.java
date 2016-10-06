@@ -16,19 +16,34 @@
  * 
  */
 
+package br.ufpb.dicomflow.service;
 
-package br.ufpb.dicomflow.util;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.List;
 
+import br.ufpb.dicomflow.bean.FileIF;
 
+public interface FileServiceIF {
 
-
- public class Constants { 
+	public void createZipFile(List<FileIF> files, OutputStream os) throws IOException, FileNotFoundException, ServiceException;
 	
+	public void extractZipFile(URL url, String fileName) throws IOException, ServiceException;
 	
-
-
-
-
+	public void storeFile(java.io.File file) throws ServiceException;
 	
+	public String getArchivePath();
+	
+	public String getEat();
+
+	public String getHost();
+
+	public String getPort();
+	
+	public String getExtractDir();
+
+
 	
 }

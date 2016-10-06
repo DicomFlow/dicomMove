@@ -41,11 +41,11 @@ public class ServiceLocator  {
 	
 		
 	//the persistence service bean name
-	private static final String PERSISTENT_SERVICE_BEAN_NAME = "persistentService";
+	private static final String PACS_PERSISTENT_SERVICE_BEAN_NAME = "pacsPersistentService";
 	
-	private static final String PERSISTENT_SERVICE_BEAN_NAME_2 = "persistentService2";
+	private static final String PERSISTENT_SERVICE_BEAN_NAME = "persistentService";
 
-	private static final String MAIL_SERVICE_BEAN_NAME = "mailService";
+	private static final String CERTIFICATE_SERVICE_BEAN_NAME = "certificateService";
 	
 	private static final String MESSAGE_SERVICE_BEAN_NAME = "messageService";
 	
@@ -62,17 +62,17 @@ public class ServiceLocator  {
 	
 		
 	//the cached user service
-	private PersistentService persistentService;
+	private PacsPersistentServiceIF pacsPersistentService;
 	
-	private PersistentService persistentService2;
+	private PersistentServiceIF persistentService;
 	
-	private EmailService mailService;
+	private CertificateServiceIF certificateService;
 	
-	private MessageService messageService;
+	private MessageServiceIF messageService;
 	
 	private UrlGeneratorIF urlGenerator;
 	
-	private FileService fileService;
+	private FileServiceIF fileService;
 	
 	private static ServiceLocator singleton = null;
 	
@@ -92,11 +92,11 @@ public class ServiceLocator  {
 		
 		this.appContext = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
 		
-		this.persistentService = (PersistentService)this.lookupService(PERSISTENT_SERVICE_BEAN_NAME);
-		this.persistentService2 = (PersistentService)this.lookupService(PERSISTENT_SERVICE_BEAN_NAME_2);
-		this.mailService = (EmailService)this.lookupService(MAIL_SERVICE_BEAN_NAME);
-		this.messageService = (MessageService)this.lookupService(MESSAGE_SERVICE_BEAN_NAME);
-		this.fileService = (FileService)this.lookupService(FILE_SERVICE_BEAN_NAME);
+		this.pacsPersistentService = (PacsPersistentServiceIF)this.lookupService(PACS_PERSISTENT_SERVICE_BEAN_NAME);
+		this.persistentService = (PersistentServiceIF)this.lookupService(PERSISTENT_SERVICE_BEAN_NAME);
+		this.certificateService = (CertificateServiceIF) this.lookupService(CERTIFICATE_SERVICE_BEAN_NAME);
+		this.messageService = (MessageServiceIF)this.lookupService(MESSAGE_SERVICE_BEAN_NAME);
+		this.fileService = (FileServiceIF)this.lookupService(FILE_SERVICE_BEAN_NAME);
 		this.urlGenerator = (UrlGeneratorIF)this.lookupService(URL_GENERATOR_BEAN_NAME);
 		
 		this.logger.info("ServiceLocator is initialized");
@@ -110,28 +110,27 @@ public class ServiceLocator  {
 	}
 	
 	/**
-	 * Retorna o serviço de Persistência do DCM4CHE
+	 * Retorna o serviço de Persistência do PACS Server
 	 * @return PersistentService o serviço de persistência
 	 */
-	public PersistentService getPersistentService() {
-		return this.persistentService;
+	public PacsPersistentServiceIF getPacsPersistentService() {
+		return this.pacsPersistentService;
 	}
 	
 	/**
 	 * Retorna o serviço de Persistência do DICOMMOVE 
 	 * @return PersistentService o serviço de persistência
 	 */
-	public PersistentService getPersistentService2() {
-		return this.persistentService2;
+	public PersistentServiceIF getPersistentService() {
+		return this.persistentService;
 	}
-
 	
 	/**
-	 * Retorna o serviço de mail
-	 * @return EmailService o serviço de mail
+	 * Retorna o serviço de certificados 
+	 * @return PersistentService o serviço de persistência
 	 */
-	public EmailService getMailService() {
-		return mailService;
+	public CertificateServiceIF getCertificateService() {
+		return this.certificateService;
 	}
 
 	
@@ -139,7 +138,7 @@ public class ServiceLocator  {
 	 * Retorna o serviço de mensagens
 	 * @return MessageService o serviço de mensagens
 	 */
-	public MessageService getMessageService() {
+	public MessageServiceIF getMessageService() {
 		return messageService;
 	}
 	
@@ -147,7 +146,7 @@ public class ServiceLocator  {
 	 * Retorna o serviço de arquivamento PACS
 	 * @return FileService o serviço de arquivamento PACS
 	 */
-	public FileService getFileService() {
+	public FileServiceIF getFileService() {
 		return fileService;
 	}
 	

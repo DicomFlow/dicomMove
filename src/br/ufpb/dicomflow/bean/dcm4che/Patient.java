@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.bean;
+package br.ufpb.dicomflow.bean.dcm4che;
 
 import java.util.Date;
 import java.util.Set;
@@ -31,9 +31,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.ufpb.dicomflow.bean.AbstractPersistence;
+import br.ufpb.dicomflow.bean.PatientIF;
+
 @Entity
 @Table(name="patient")
-public class Patient extends AbstractPersistence {
+public class Patient extends AbstractPersistence implements PatientIF{
 
 	
 	/**

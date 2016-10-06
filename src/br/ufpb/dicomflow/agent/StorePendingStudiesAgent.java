@@ -30,9 +30,9 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import br.ufpb.dicomflow.bean.Registry;
-import br.ufpb.dicomflow.service.FileService;
-import br.ufpb.dicomflow.service.MessageService;
-import br.ufpb.dicomflow.service.PersistentService;
+import br.ufpb.dicomflow.service.FileServiceIF;
+import br.ufpb.dicomflow.service.MessageServiceIF;
+import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
@@ -44,8 +44,8 @@ public class StorePendingStudiesAgent implements Job {
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("SEARCHING PENDING RECEIVED REGISTRIES...");	
 		
-		PersistentService persistentService = ServiceLocator.singleton().getPersistentService2();
-		MessageService messageService = ServiceLocator.singleton().getMessageService();
+		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
+		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
 		
 		List<Registry> registries = persistentService.selectAllByParams(new Object[]{"type", "status"}, new Object[]{Registry.RECEIVED, Registry.PENDING}, Registry.class);
@@ -71,7 +71,7 @@ public class StorePendingStudiesAgent implements Job {
 				String url = registry.getLink();
 				Util.getLogger(this).debug("URL FOUND : " + url);
 				
-				FileService fileService = ServiceLocator.singleton().getFileService();
+				FileServiceIF fileService = ServiceLocator.singleton().getFileService();
 				try {
 					Util.getLogger(this).debug("DOWNLOADING DICOM OBJECT");
 					fileService.extractZipFile(new URL(url), registry.getStudyIuid()+".zip");

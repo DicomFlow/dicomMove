@@ -31,8 +31,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import br.ufpb.dicomflow.bean.Registry;
-import br.ufpb.dicomflow.service.MessageService;
-import br.ufpb.dicomflow.service.PersistentService;
+import br.ufpb.dicomflow.service.MessageServiceIF;
+import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
@@ -44,7 +44,7 @@ public class FindStudiesURLsAgent implements Job {
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("SEARCHING URLs...");	
 		
-		MessageService messageService = ServiceLocator.singleton().getMessageService();
+		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
 		Map<String,String> urls = new HashMap<String, String>(); 
 		try {
@@ -59,7 +59,7 @@ public class FindStudiesURLsAgent implements Job {
 			String url = urls.get(messageID);
 			Util.getLogger(this).debug("URL FOUND : " + url);
 			
-			PersistentService persistentService = ServiceLocator.singleton().getPersistentService2();
+			PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 			Registry registry = (Registry) persistentService.selectByParams(new Object[]{"link", "type"},new Object[]{url,Registry.RECEIVED}, Registry.class);
 			if(registry == null){
 				

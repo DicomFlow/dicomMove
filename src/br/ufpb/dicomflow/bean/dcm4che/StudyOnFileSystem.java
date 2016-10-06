@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.bean;
+package br.ufpb.dicomflow.bean.dcm4che;
 
 import java.util.Date;
 
@@ -30,10 +30,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.ufpb.dicomflow.bean.AbstractPersistence;
+import br.ufpb.dicomflow.bean.StudyOnFileSystemIF;
+
 
 @Entity
 @Table(name="study_on_fs")
-public class StudyOnFileSystem extends AbstractPersistence{
+public class StudyOnFileSystem extends AbstractPersistence implements StudyOnFileSystemIF{
 	
 	/**
 	 * 

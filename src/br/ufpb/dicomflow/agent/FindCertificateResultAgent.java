@@ -30,8 +30,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import br.ufpb.dicomflow.bean.Access;
-import br.ufpb.dicomflow.service.MessageService;
-import br.ufpb.dicomflow.service.PersistentService;
+import br.ufpb.dicomflow.service.MessageServiceIF;
+import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
@@ -44,8 +44,8 @@ public class FindCertificateResultAgent implements Job {
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("STORE CERTIFICATES...");
 		
-		PersistentService persistentServiceDICOMMOVE = ServiceLocator.singleton().getPersistentService2();
-		MessageService messageService = ServiceLocator.singleton().getMessageService();
+		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
+		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
 		Map<Access, String> map = new HashMap<Access, String>();
 		try {
@@ -60,8 +60,8 @@ public class FindCertificateResultAgent implements Job {
 			Access access = (Access) it.next();
 			String result = map.get(access);
 			
-			if(result.equals(MessageService.CERTIFICATE_RESULT_CREATED)|| result.equals(MessageService.CERTIFICATE_RESULT_UPDATED)){
-				Access bdAccess = (Access) persistentServiceDICOMMOVE.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
+			if(result.equals(MessageServiceIF.CERTIFICATE_RESULT_CREATED)|| result.equals(MessageServiceIF.CERTIFICATE_RESULT_UPDATED)){
+				Access bdAccess = (Access) persistentService.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
 				bdAccess.setCredential(access.getCredential());
 				bdAccess.setCertificateStatus(Access.CERIFICATE_CLOSED);
 				try {

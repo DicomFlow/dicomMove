@@ -124,12 +124,12 @@ public class Access extends AbstractPersistence {
 
 	@Override
 	public void save() throws ServiceException{
-		ServiceLocator.singleton().getPersistentService2().saveOrUpdate(this);
+		ServiceLocator.singleton().getPersistentService().saveOrUpdate(this);
 	}
 	
 	@Override
 	public void remove() throws ServiceException {
-		ServiceLocator.singleton().getPersistentService2().remove(this);
+		ServiceLocator.singleton().getPersistentService().remove(this);
 		
 	}
 

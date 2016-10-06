@@ -18,15 +18,21 @@
 
 package br.ufpb.dicomflow.service;
 
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+
+import br.ufpb.dicomflow.bean.StudyIF;
 
 
-public interface EmailService {
+
+public interface PacsPersistentServiceIF {
 	
-	public void sendEmail(String to, String from, String subject, String corpo) throws ServiceException;
+	public static final String ASC = "asc";
+	public static final String DESC = "desc";
 	
-	public void sendEmail(List toList, String from, String subject, String corpo) throws ServiceException;
-		
+	
+	
 	
 }

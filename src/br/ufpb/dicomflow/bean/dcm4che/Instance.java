@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.bean;
+package br.ufpb.dicomflow.bean.dcm4che;
 
 import java.util.Date;
 import java.util.Set;
@@ -33,10 +33,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.ufpb.dicomflow.bean.AbstractPersistence;
+import br.ufpb.dicomflow.bean.InstanceIF;
+
 
 @Entity
 @Table(name="instance")
-public class Instance extends AbstractPersistence {
+public class Instance extends AbstractPersistence implements InstanceIF{
 
 	/**
 	 * 

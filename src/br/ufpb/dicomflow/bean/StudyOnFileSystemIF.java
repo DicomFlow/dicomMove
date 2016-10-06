@@ -16,19 +16,34 @@
  * 
  */
 
+package br.ufpb.dicomflow.bean;
 
-package br.ufpb.dicomflow.util;
+import java.util.Date;
 
 
 
+public interface StudyOnFileSystemIF {
 
- public class Constants { 
+	public Long getId();
+	
+	public void setId(Long id);
+
+	public Date getAccessTime();
+
+	public void setAccessTime(Date accessTime);
+
+//	public StudyIF getStudy();
+//
+//	public void setStudy(StudyIF study);
+//
+//	public FileSystemIF getFileSystem();
+//
+//	public void setFileSystem(FileSystemIF fileSystem);
+
+	public Boolean getMarkedForDeletion();
+
+	public void setMarkedForDeletion(Boolean markedForDeletion);
 	
 	
 
-
-
-
-	
-	
 }

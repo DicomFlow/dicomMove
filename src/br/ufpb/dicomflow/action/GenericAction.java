@@ -28,17 +28,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.StrutsStatics;
 
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
+
 import br.ufpb.dicomflow.bean.Persistent;
-import br.ufpb.dicomflow.service.PersistentService;
+import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Constants;
-import br.ufpb.dicomflow.util.Pager;
-import br.ufpb.dicomflow.util.PagerIF;
 import br.ufpb.dicomflow.util.Util;
-
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * Basic abstract class for creating Managed Beans
@@ -52,7 +50,6 @@ public abstract class GenericAction extends  ActionSupport implements
 	private static final long serialVersionUID = 8904625383033058025L;
 	
 	protected String idEncript;
-	protected PagerIF pager;
 	protected String option;
 	protected List genericList = new ArrayList();
 	protected Map session;
@@ -306,30 +303,12 @@ public abstract class GenericAction extends  ActionSupport implements
 
 	public String listAction()  {
 		try {
-			updatePager();
-			this.genericList = ServiceLocator.singleton().getPersistentService().selectPagingOrderBy(pager.getFirst(),pager.getMax(), getClassBean(), PersistentService.DESC, "id");
-			this.pager.setSize(genericList.size());
-		} catch (ServiceException e) {
-			e.printStackTrace();
+			this.genericList = ServiceLocator.singleton().getPersistentService().selectAllOrderBy(getClassBean(), PersistentServiceIF.DESC, "id");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		return getForwardListAll();
-	}
-
-	protected void updatePager() {
-		this.pager = (PagerIF) getSession().get(Constants.PAGER);
-		if (pager == null) {
-			pager = Pager.createDefaultPager();
-			getSession().put(Constants.PAGER, pager);
-			
-		}
-		String option = (String) getRequest().getParameter("option");
-		if (option != null) {
-			System.out.println("pager update first "+ pager.getFirst() + " max " + pager.getMax());
-			pager.pageUpdate(option);
-		}
 	}
 
 	public String updateAction(){

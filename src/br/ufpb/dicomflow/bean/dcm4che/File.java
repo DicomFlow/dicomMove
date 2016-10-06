@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.bean;
+package br.ufpb.dicomflow.bean.dcm4che;
 
 import java.util.Date;
 
@@ -30,12 +30,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.ufpb.dicomflow.bean.AbstractPersistence;
+import br.ufpb.dicomflow.bean.FileIF;
 import br.ufpb.dicomflow.util.MD5;
 
 
 @Entity
 @Table(name="files")
-public class File extends AbstractPersistence {
+public class File extends AbstractPersistence implements FileIF{
 
 	
 	

@@ -31,8 +31,9 @@ import org.quartz.JobExecutionException;
 import br.ufpb.dicomflow.bean.Access;
 import br.ufpb.dicomflow.bean.Registry;
 import br.ufpb.dicomflow.bean.RegistryAccess;
-import br.ufpb.dicomflow.bean.Study;
-import br.ufpb.dicomflow.service.PersistentService;
+import br.ufpb.dicomflow.bean.dcm4che.Study;
+import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
+import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.service.UrlGeneratorIF;
@@ -47,21 +48,21 @@ public class FindStudiesAgent implements Job {
 		
 		Util.getLogger(this).debug("SEARCHING NEW STUDIES...");
 		
-		PersistentService persistentDCM4CHE = ServiceLocator.singleton().getPersistentService();
-		PersistentService persistentServiceDICOMMOVE = ServiceLocator.singleton().getPersistentService2();
+		PacsPersistentServiceIF pacsPersistentservice = ServiceLocator.singleton().getPacsPersistentService();
+		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		
-		List<Registry> registries = persistentServiceDICOMMOVE.selectAll("type", Registry.SENT, Registry.class);
+		List<Registry> registries = persistentService.selectAll("type", Registry.SENT, Registry.class);
 		
 		List<String> registredStudiesIuids = getStudiesIuids(registries);
 		List<Study> studies = new ArrayList<Study>();
 		
-		studies = persistentDCM4CHE.selectAllNotIn("studyIuid", registredStudiesIuids, Study.class);
+		studies = pacsPersistentservice.selectAllNotIn("studyIuid", registredStudiesIuids, Study.class);
 		Util.getLogger(this).debug("TOTAL STUDIES: " + studies.size());
 		
 		
 		List<Access> accesses = new ArrayList<Access>();
 		try {
-			accesses = persistentServiceDICOMMOVE.selectAll(Access.class);
+			accesses = persistentService.selectAll(Access.class);
 			Util.getLogger(this).debug("TOTAL ACCESSES: " + accesses.size());
 		} catch (ServiceException e) {
 			Util.getLogger(this).error("Could not possible select accesses",e);

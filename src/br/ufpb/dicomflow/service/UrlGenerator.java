@@ -19,10 +19,9 @@
  * 	Copyright © 2016 Universidade Federal da Paraiba. * 
  * 
  */
-package br.ufpb.dicomflow.service.impl;
+package br.ufpb.dicomflow.service;
 
-import br.ufpb.dicomflow.bean.Study;
-import br.ufpb.dicomflow.service.UrlGeneratorIF;
+import br.ufpb.dicomflow.bean.StudyIF;
 
 /**
  * 
@@ -30,7 +29,7 @@ import br.ufpb.dicomflow.service.UrlGeneratorIF;
  * @author Juracy Neto
  * 
  */
-public class DefaultURLGenerator implements UrlGeneratorIF {
+public class UrlGenerator implements UrlGeneratorIF {
 
 	private String protocol;
 	private String host;
@@ -38,7 +37,7 @@ public class DefaultURLGenerator implements UrlGeneratorIF {
 	private String context;
 	
 	@Override
-	public String getURL(Study study) {
+	public String getURL(StudyIF study) {
 		return protocol + "://" + host + ":" + port + "/" + context + "/rest/DownloadStudy/" + study.getStudyIuid();
 	}
 

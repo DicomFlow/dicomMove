@@ -29,9 +29,9 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import br.ufpb.dicomflow.bean.Access;
-import br.ufpb.dicomflow.service.FileService;
-import br.ufpb.dicomflow.service.MessageService;
-import br.ufpb.dicomflow.service.PersistentService;
+import br.ufpb.dicomflow.service.CertificateServiceIF;
+import br.ufpb.dicomflow.service.MessageServiceIF;
+import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
@@ -44,11 +44,11 @@ public class SendCertificateAgent implements Job {
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("REQUEST CERTIFICATES...");
 		
-		PersistentService persistentServiceDICOMMOVE = ServiceLocator.singleton().getPersistentService2();
-		MessageService messageService = ServiceLocator.singleton().getMessageService();
-		FileService fileService =  ServiceLocator.singleton().getFileService();
+		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
+		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
+		CertificateServiceIF certificateService =  ServiceLocator.singleton().getCertificateService();
 		
-		List<Access> accesses = persistentServiceDICOMMOVE.selectAll("certificateStatus", Access.CERIFICATE_OPEN, Access.class);
+		List<Access> accesses = persistentService.selectAll("certificateStatus", Access.CERIFICATE_OPEN, Access.class);
 		
 		
 		Util.getLogger(this).debug("TOTAL ACCESS: " + accesses.size());
@@ -57,7 +57,7 @@ public class SendCertificateAgent implements Job {
 			Access access = (Access) it.next();
 			
 			try {
-				File certificate = fileService.getCertificate();
+				File certificate = certificateService.getCertificate();
 				messageService.sendCertificate(certificate, access);
 				access.setCertificateStatus(Access.CERIFICATE_PENDING);
 				access.save();

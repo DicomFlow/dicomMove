@@ -31,12 +31,12 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import br.ufpb.dicomflow.action.GenericActionAdapter;
-import br.ufpb.dicomflow.bean.File;
-import br.ufpb.dicomflow.bean.Instance;
 import br.ufpb.dicomflow.bean.Persistent;
-import br.ufpb.dicomflow.bean.Series;
-import br.ufpb.dicomflow.bean.Study;
-import br.ufpb.dicomflow.service.PersistentService;
+import br.ufpb.dicomflow.bean.dcm4che.File;
+import br.ufpb.dicomflow.bean.dcm4che.Instance;
+import br.ufpb.dicomflow.bean.dcm4che.Series;
+import br.ufpb.dicomflow.bean.dcm4che.Study;
+import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.ForwardConstants;
@@ -100,7 +100,7 @@ public class StudyAction extends GenericActionAdapter {
 			return null;
 		}
 		
-		PersistentService persistentService = ServiceLocator.singleton().getPersistentService();
+		PacsPersistentServiceIF persistentService = ServiceLocator.singleton().getPacsPersistentService();
 		this.study = (Study) persistentService.select("studyIuid", studyIUID, Study.class);
 		Util.getLogger(this).debug("Study id: " + study.getId());
 		Util.getLogger(this).debug("Study date: " + Util.singleton().getDataString(study.getCreatedTime()));

@@ -29,8 +29,8 @@ import org.quartz.JobExecutionException;
 
 import br.ufpb.dicomflow.bean.Registry;
 import br.ufpb.dicomflow.bean.RegistryAccess;
-import br.ufpb.dicomflow.service.MessageService;
-import br.ufpb.dicomflow.service.PersistentService;
+import br.ufpb.dicomflow.service.MessageServiceIF;
+import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
@@ -43,10 +43,10 @@ public class SendStudiesURLsAgent implements Job {
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("SENDING NEW STUDIES...");
 		
-		PersistentService persistentServiceDICOMMOVE = ServiceLocator.singleton().getPersistentService2();
-		MessageService messageService = ServiceLocator.singleton().getMessageService();
+		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
+		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
-		List<RegistryAccess> ras = persistentServiceDICOMMOVE.selectAll("status", Registry.OPEN, RegistryAccess.class);
+		List<RegistryAccess> ras = persistentService.selectAll("status", Registry.OPEN, RegistryAccess.class);
 		Util.getLogger(this).debug("TOTAL REGISTRY-ACCESS: " + ras.size());
 		
 		Iterator<RegistryAccess> it = ras.iterator();
