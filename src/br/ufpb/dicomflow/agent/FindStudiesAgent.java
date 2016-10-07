@@ -31,7 +31,7 @@ import org.quartz.JobExecutionException;
 import br.ufpb.dicomflow.bean.Access;
 import br.ufpb.dicomflow.bean.Registry;
 import br.ufpb.dicomflow.bean.RegistryAccess;
-import br.ufpb.dicomflow.bean.dcm4che.Study;
+import br.ufpb.dicomflow.bean.StudyIF;
 import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
@@ -54,9 +54,9 @@ public class FindStudiesAgent implements Job {
 		List<Registry> registries = persistentService.selectAll("type", Registry.SENT, Registry.class);
 		
 		List<String> registredStudiesIuids = getStudiesIuids(registries);
-		List<Study> studies = new ArrayList<Study>();
+		List<StudyIF> studies = new ArrayList<StudyIF>();
 		
-		studies = pacsPersistentservice.selectAllNotIn("studyIuid", registredStudiesIuids, Study.class);
+		studies = pacsPersistentservice.selectAllStudiesNotIn(registredStudiesIuids);
 		Util.getLogger(this).debug("TOTAL STUDIES: " + studies.size());
 		
 		
@@ -89,13 +89,13 @@ public class FindStudiesAgent implements Job {
 		return iuids;
 	}
 
-	private void insertRegistries(List<Study> studies, List<Access> accesses) {
+	private void insertRegistries(List<StudyIF> studies, List<Access> accesses) {
 		UrlGeneratorIF urlGenerator = ServiceLocator.singleton().getUrlGenerator();
 		
-		Iterator<Study> it = studies.iterator();
+		Iterator<StudyIF> it = studies.iterator();
 		while (it.hasNext()) {
 			
-			Study study = (Study) it.next();
+			StudyIF study = (StudyIF) it.next();
 			
 			Registry registry = new Registry(urlGenerator.getURL(study));
 			registry.setType(Registry.SENT);

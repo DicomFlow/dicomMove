@@ -31,11 +31,10 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import br.ufpb.dicomflow.action.GenericActionAdapter;
-import br.ufpb.dicomflow.bean.Persistent;
-import br.ufpb.dicomflow.bean.dcm4che.File;
-import br.ufpb.dicomflow.bean.dcm4che.Instance;
-import br.ufpb.dicomflow.bean.dcm4che.Series;
-import br.ufpb.dicomflow.bean.dcm4che.Study;
+import br.ufpb.dicomflow.bean.FileIF;
+import br.ufpb.dicomflow.bean.InstanceIF;
+import br.ufpb.dicomflow.bean.SeriesIF;
+import br.ufpb.dicomflow.bean.StudyIF;
 import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
@@ -58,7 +57,7 @@ public class StudyAction extends GenericActionAdapter {
 	 */
 	private static final long serialVersionUID = -7911119497496121034L;
 
-	private Study study;
+	private StudyIF study;
 	
 	private String studyIUID;
 	
@@ -68,12 +67,11 @@ public class StudyAction extends GenericActionAdapter {
 	
 	private String extractDir;
 	
-	private String[] selectedObjects = {};
 	
 	// control attributes
 	
 	public StudyAction(){
-		this.study = new Study();
+		
 	}
 	
 	@SkipValidation
@@ -101,14 +99,14 @@ public class StudyAction extends GenericActionAdapter {
 		}
 		
 		PacsPersistentServiceIF persistentService = ServiceLocator.singleton().getPacsPersistentService();
-		this.study = (Study) persistentService.select("studyIuid", studyIUID, Study.class);
+		this.study = (StudyIF) persistentService.selectStudy(studyIUID);
 		Util.getLogger(this).debug("Study id: " + study.getId());
 		Util.getLogger(this).debug("Study date: " + Util.singleton().getDataString(study.getCreatedTime()));
 		
 		//TODO melhorar o resgate dos arquivos objetivando melhor desempenho
-		List<Series> series = persistentService.selectAll("study", study, Series.class);
-		List<Instance> instances =  persistentService.selectAll("series", series, Instance.class);
-		List<File> files =  persistentService.selectAll("instance", instances, File.class);
+		List<SeriesIF> series = persistentService.selectAllSeries(study);
+		List<InstanceIF> instances =  persistentService.selectAllInstances(series);
+		List<FileIF> files =  persistentService.selectAllFiles(instances);
 		
 		
 		try {
@@ -129,44 +127,16 @@ public class StudyAction extends GenericActionAdapter {
 		
 		return null;
 	}
-	
-	/* Interface methods */
-	
-	public Class getClassBean() {
-		return Study.class;
-	}
-	
-	
-	
-	public Persistent getPersistent() {
-		return this.study;
-	}
 
-	
-	public void setPersistent(Persistent p) {
-		this.study = (Study) p;
-	}
-
-	public Study getStudy() {
+	public StudyIF getStudy() {
 		return study;
 	}
 
 
 
-	public void setStudy(Study study) {
+	public void setStudy(StudyIF study) {
 		this.study = study;
 	}
-
-	@Override
-	public String[] getSelectedObjects() {
-		return selectedObjects;
-	}
-
-	@Override
-	public void setSelectedObjects(String[] objetosSelecionados) {
-		this.selectedObjects = selectedObjects;
-	}
-
 
 	public String getStudyIUID() {
 		return studyIUID;

@@ -18,11 +18,11 @@
 
 package br.ufpb.dicomflow.service;
 
-import java.util.Date;
 import java.util.List;
 
-import org.hibernate.HibernateException;
-
+import br.ufpb.dicomflow.bean.FileIF;
+import br.ufpb.dicomflow.bean.InstanceIF;
+import br.ufpb.dicomflow.bean.SeriesIF;
 import br.ufpb.dicomflow.bean.StudyIF;
 
 
@@ -32,7 +32,14 @@ public interface PacsPersistentServiceIF {
 	public static final String ASC = "asc";
 	public static final String DESC = "desc";
 	
-	
-	
+	List<StudyIF> selectAllStudiesNotIn(List<String> registredStudiesIuids);
+
+	StudyIF selectStudy(String studyIUID);
+
+	List<SeriesIF> selectAllSeries(StudyIF study);
+
+	List<InstanceIF> selectAllInstances(List<SeriesIF> series);
+
+	List<FileIF> selectAllFiles(List<InstanceIF> instances);
 	
 }

@@ -35,7 +35,6 @@ import br.ufpb.dicomflow.bean.Persistent;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
-import br.ufpb.dicomflow.util.Constants;
 import br.ufpb.dicomflow.util.Util;
 
 /**
