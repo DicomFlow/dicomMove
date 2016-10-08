@@ -31,7 +31,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import br.ufpb.dicomflow.action.GenericActionAdapter;
-import br.ufpb.dicomflow.bean.FileIF;
 import br.ufpb.dicomflow.bean.InstanceIF;
 import br.ufpb.dicomflow.bean.SeriesIF;
 import br.ufpb.dicomflow.bean.StudyIF;
@@ -100,13 +99,11 @@ public class StudyAction extends GenericActionAdapter {
 		
 		PacsPersistentServiceIF persistentService = ServiceLocator.singleton().getPacsPersistentService();
 		this.study = (StudyIF) persistentService.selectStudy(studyIUID);
-		Util.getLogger(this).debug("Study id: " + study.getId());
-		Util.getLogger(this).debug("Study date: " + Util.singleton().getDataString(study.getCreatedTime()));
+		Util.getLogger(this).debug("Study iuid: " + study.getStudyIuid());
 		
 		//TODO melhorar o resgate dos arquivos objetivando melhor desempenho
 		List<SeriesIF> series = persistentService.selectAllSeries(study);
-		List<InstanceIF> instances =  persistentService.selectAllInstances(series);
-		List<FileIF> files =  persistentService.selectAllFiles(instances);
+		List<InstanceIF> instances =  persistentService.selectAllFiles(series);
 		
 		
 		try {
@@ -114,7 +111,7 @@ public class StudyAction extends GenericActionAdapter {
 			getResponse().setHeader("Content-Disposition", "attachment; filename="+studyIUID+".zip");
 		    
 		    OutputStream os = getResponse().getOutputStream();
-		    ServiceLocator.singleton().getFileService().createZipFile(files, os);
+		    ServiceLocator.singleton().getFileService().createZipFile(instances, os);
 		    os.flush();
 		         
 		} catch (IOException e) {

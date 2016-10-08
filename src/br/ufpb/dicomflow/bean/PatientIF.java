@@ -18,19 +18,7 @@
 
 package br.ufpb.dicomflow.bean;
 
-import java.util.Date;
-import java.util.Set;
-
-
 public interface PatientIF  {
-	
-	public Long getId();
-
-	public void setId(Long id);
-
-//	public Set<StudyIF> getStudies();
-//
-//	public void setStudies(Set<StudyIF> studies);
 
 	public String getPatientId();
 
@@ -40,22 +28,6 @@ public interface PatientIF  {
 
 	public void setPatientName(String patientName);
 
-	public String getPatientFamilyNameSoundex();
-
-	public void setPatientFamilyNameSoundex(String patientFamilyNameSoundex);
-
-	public String getPatientGivenNameSoundex();
-
-	public void setPatientGivenNameSoundex(String patientGivenNameSoundex);
-
-	public String getPatientIdeographicName();
-
-	public void setPatientIdeographicName(String patientIdeographicName);
-
-	public String getPatientPhoneticName();
-
-	public void setPatientPhoneticName(String patientPhoneticName);
-
 	public String getPatientBirthDate();
 
 	public void setPatientBirthDate(String patientBirthDate);
@@ -63,21 +35,5 @@ public interface PatientIF  {
 	public String getPatientSex();
 
 	public void setPatientSex(String patientSex);
-
-	public Date getUpdatedTime();
-
-	public void setUpdatedTime(Date updatedTime);
-
-	public Date getCreatedTime();
-
-	public void setCreatedTime(Date createdTime);
-
-	public byte[] getEncodedAttributes();
-
-	public void setEncodedAttributes(byte[] encodedAttributes);
 	
-	
-	
-	
-
 }

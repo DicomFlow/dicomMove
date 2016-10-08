@@ -31,13 +31,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import br.ufpb.dicomflow.bean.AbstractPersistence;
-import br.ufpb.dicomflow.bean.FileIF;
 import br.ufpb.dicomflow.util.MD5;
 
 
 @Entity
 @Table(name="files")
-public class File extends AbstractPersistence implements FileIF{
+public class File extends AbstractPersistence {
 
 	
 	
@@ -123,7 +122,7 @@ public class File extends AbstractPersistence implements FileIF{
 	}
 
 	public String getFilePath() {
-		return filePath;
+		return this.getFileSystem().getDirectoryPath()+java.io.File.separator+filePath;
 	}
 
 	public void setFilePath(String filePath) {

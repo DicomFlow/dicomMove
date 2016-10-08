@@ -15,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import br.ufpb.dicomflow.bean.FileIF;
 import br.ufpb.dicomflow.bean.InstanceIF;
 import br.ufpb.dicomflow.bean.SeriesIF;
 import br.ufpb.dicomflow.bean.StudyIF;
@@ -27,7 +26,7 @@ import br.ufpb.dicomflow.util.Util;
 @Path("/DownloadStudy/{studyIUID}")
 public class DownloadStudy extends GenericWebService {
 	
-	static List<FileIF> files;
+	static List<InstanceIF> instances;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -46,14 +45,13 @@ public class DownloadStudy extends GenericWebService {
 		if (study != null ) {
 			//TODO melhorar o resgate dos arquivos objetivando melhor desempenho
 			List<SeriesIF> series = persistentService.selectAllSeries(study);
-			List<InstanceIF> instances =  persistentService.selectAllInstances(series);
-			files =  persistentService.selectAllFiles(instances);	
+			instances =  persistentService.selectAllFiles(series);	
 
 	        StreamingOutput stream = new StreamingOutput() {
 				@Override
 				public void write(OutputStream os) throws IOException, WebApplicationException {				
 					try {
-						ServiceLocator.singleton().getFileService().createZipFile(files, os);
+						ServiceLocator.singleton().getFileService().createZipFile(instances, os);
 					} catch (ServiceException e) {				
 						e.printStackTrace();
 					}                                				

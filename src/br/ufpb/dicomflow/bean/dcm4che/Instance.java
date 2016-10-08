@@ -228,6 +228,21 @@ public class Instance extends AbstractPersistence implements InstanceIF{
 	public void setFiles(Set<File> files) {
 		this.files = files;
 	}
+
+	@Override
+	public String getFilePath() {
+		if(files != null && files.size() > 0 ){
+			return files.iterator().next().getFilePath();
+		}
+		return null;
+	}
+
+	@Override
+	public void setFilePath(String filePath) {
+		if(files != null && files.size() > 0 ){
+			files.iterator().next().setFilePath(filePath);
+		}
+	}
 	
 	
 

@@ -31,12 +31,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import br.ufpb.dicomflow.bean.AbstractPersistence;
-import br.ufpb.dicomflow.bean.StudyOnFileSystemIF;
 
 
 @Entity
 @Table(name="study_on_fs")
-public class StudyOnFileSystem extends AbstractPersistence implements StudyOnFileSystemIF{
+public class StudyOnFileSystem extends AbstractPersistence {
 	
 	/**
 	 * 

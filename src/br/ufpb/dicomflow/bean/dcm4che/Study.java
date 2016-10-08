@@ -101,6 +101,12 @@ public class Study extends AbstractPersistence implements StudyIF{
 	@Column(name="study_attrs")
     private byte[] encodedAttributes;
 	
+	@Column(name="study_desc")
+	private String studyDescription;
+
+	@Column(name="ref_physician")
+	private String referedPhysician;
+	
 	
 	@Override
 	public Long getId() {
@@ -239,6 +245,22 @@ public class Study extends AbstractPersistence implements StudyIF{
 
 	public void setSeries(Set<Series> series) {
 		this.series = series;
+	}
+
+	public String getStudyDescription() {
+		return studyDescription;
+	}
+
+	public void setStudyDescription(String studyDescription) {
+		this.studyDescription = studyDescription;
+	}
+
+	public String getReferedPhysician() {
+		return referedPhysician;
+	}
+
+	public void setReferedPhysician(String referedPhysician) {
+		this.referedPhysician = referedPhysician;
 	}
 	
 	

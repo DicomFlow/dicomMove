@@ -20,7 +20,6 @@ package br.ufpb.dicomflow.service;
 
 import java.util.List;
 
-import br.ufpb.dicomflow.bean.FileIF;
 import br.ufpb.dicomflow.bean.InstanceIF;
 import br.ufpb.dicomflow.bean.SeriesIF;
 import br.ufpb.dicomflow.bean.StudyIF;
@@ -38,8 +37,6 @@ public interface PacsPersistentServiceIF {
 
 	List<SeriesIF> selectAllSeries(StudyIF study);
 
-	List<InstanceIF> selectAllInstances(List<SeriesIF> series);
-
-	List<FileIF> selectAllFiles(List<InstanceIF> instances);
+	List<InstanceIF> selectAllFiles(List<SeriesIF> series);
 	
 }

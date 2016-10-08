@@ -33,11 +33,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.ufpb.dicomflow.bean.AbstractPersistence;
-import br.ufpb.dicomflow.bean.FileSystemIF;
 
 @Entity
 @Table(name="filesystem")
-public class FileSystem extends AbstractPersistence implements FileSystemIF {
+public class FileSystem extends AbstractPersistence {
 
 	/**
 	 * 

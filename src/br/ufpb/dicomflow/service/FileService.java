@@ -16,7 +16,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.dcm4che3.tool.storescu.StoreSCU;
 
-import br.ufpb.dicomflow.bean.FileIF;
+import br.ufpb.dicomflow.bean.InstanceIF;
 import br.ufpb.dicomflow.util.Util;
 
 public class FileService implements FileServiceIF {
@@ -33,7 +33,7 @@ public class FileService implements FileServiceIF {
 	private String extractDir;
 
 	@Override
-	public void createZipFile(List<FileIF> files, OutputStream os) throws IOException, FileNotFoundException, ServiceException {
+	public void createZipFile(List<InstanceIF> instances, OutputStream os) throws IOException, FileNotFoundException, ServiceException {
 		
 		if(archivePath == null || archivePath.equals("")){
 			String errMsg = "Could not create zip file: invalid archive's path.";
@@ -44,8 +44,8 @@ public class FileService implements FileServiceIF {
 		
 		ZipOutputStream zipOut = new ZipOutputStream( os );
 
-		for (FileIF file : files) {
-			java.io.File ioFile = new java.io.File(archivePath+file.getFileSystem().getDirectoryPath()+java.io.File.separator+file.getFilePath());
+		for (InstanceIF instance : instances) {
+			java.io.File ioFile = new java.io.File(archivePath+instance.getFilePath());
 			zipOut.putNextEntry( new ZipEntry( ioFile.getName().toString() )  );
 
 			FileInputStream fis = new FileInputStream( ioFile );

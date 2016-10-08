@@ -25,13 +25,6 @@ import java.util.Set;
 
 public interface InstanceIF {
 
-	public Long getId();
-	
-	public void setId(Long id);
-
-//	public SeriesIF getSeries();
-//
-//	public void setSeries(SeriesIF series);
 
 	public String getSopIuid();
 
@@ -45,48 +38,9 @@ public interface InstanceIF {
 
 	public void setInstanceNumber(String instanceNumber);
 
-	public Date getContentDateTime();
+	public String getFilePath();
 
-	public void setContentDateTime(Date contentDateTime);
+	public void setFilePath(String filePath);
 
-	public String getRetrieveAETs();
-
-	public void setRetrieveAETs(String retrieveAETs);
-
-	public Integer getAvailability();
-
-	public void setAvailability(Integer availability);
-
-	public Integer getInstanceStatus();
-
-	public void setInstanceStatus(Integer instanceStatus);
-
-	public Boolean getArchived();
-
-	public void setArchived(Boolean archived);
-
-	public Boolean getAllAttributes();
-
-	public void setAllAttributes(Boolean allAttributes);
-
-	public Boolean getCommitment();
-
-	public void setCommitment(Boolean commitment);
-
-	public Date getUpdatedTime();
-
-	public void setUpdatedTime(Date updatedTime) ;
-
-	public Date getCreatedTime();
-
-	public void setCreatedTime(Date createdTime);
-
-	public byte[] getEncodedAttributes();
-
-	public void setEncodedAttributes(byte[] encodedAttributes);
-
-//	public Set<FileIF> getFiles();
-//
-//	public void setFiles(Set<FileIF> files);
 	
 }

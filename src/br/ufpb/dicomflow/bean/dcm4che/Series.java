@@ -99,6 +99,15 @@ public class Series extends AbstractPersistence implements SeriesIF{
 	
 	@Column(name="series_attrs")
     private byte[] encodedAttributes;
+	
+	@Column(name="series_desc")
+	private String seriesDescription;
+	
+	@Column(name="station_name")
+	private String stationName;
+
+	@Column(name="institution")
+	private String institution;
 
 	@Override
 	public Long getId() {
@@ -237,6 +246,30 @@ public class Series extends AbstractPersistence implements SeriesIF{
 
 	public void setInstances(Set<Instance> instances) {
 		this.instances = instances;
+	}
+
+	public String getSeriesDescription() {
+		return seriesDescription;
+	}
+
+	public void setSeriesDescription(String seriesDescription) {
+		this.seriesDescription = seriesDescription;
+	}
+
+	public String getStationName() {
+		return stationName;
+	}
+
+	public void setStationName(String stationName) {
+		this.stationName = stationName;
+	}
+
+	public String getInstitution() {
+		return institution;
+	}
+
+	public void setInstitution(String institution) {
+		this.institution = institution;
 	}
 	
 	

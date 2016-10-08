@@ -24,11 +24,11 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
 
-import br.ufpb.dicomflow.bean.FileIF;
+import br.ufpb.dicomflow.bean.InstanceIF;
 
 public interface FileServiceIF {
 
-	public void createZipFile(List<FileIF> files, OutputStream os) throws IOException, FileNotFoundException, ServiceException;
+	public void createZipFile(List<InstanceIF> files, OutputStream os) throws IOException, FileNotFoundException, ServiceException;
 	
 	public void extractZipFile(URL url, String fileName) throws IOException, ServiceException;
 	

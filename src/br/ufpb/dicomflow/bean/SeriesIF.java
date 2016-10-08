@@ -18,33 +18,13 @@
 
 package br.ufpb.dicomflow.bean;
 
-import java.util.Date;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="series")
 public interface SeriesIF {
 
-	public Long getId();
-
-	
-	public void setId(Long id);
-
-//	public StudyIF getStudy();
-//
-//	public void setStudy(StudyIF study);
 
 	public String getSeriesIuid();
 
@@ -61,49 +41,19 @@ public interface SeriesIF {
 	public String getBodyPartExamined();
 
 	public void setBodyPartExamined(String bodyPartExamined);
+	
+	public String getSeriesDescription();
+	
+	public void setSeriesDescription(String seriesDescription);
+	
+	public String getStationName();
+	
+	public void setStationName(String stationName);
+	
+	public String getInstitution();
+	
+	public void setInstitution(String institution);
 
-	public Date getPpsStartDate();
-
-	public void setPpsStartDate(Date ppsStartDate);
-
-	public String getPpsIuid();
-
-	public void setPpsIuid(String ppsIuid);
-
-	public Integer getNumberOfSeriesRelatedInstances();
-
-	public void setNumberOfSeriesRelatedInstances(Integer numberOfSeriesRelatedInstances);
-
-	public String getSourceAET();
-
-	public void setSourceAET(String sourceAET);
-
-	public String getRetrieveAETs();
-
-	public void setRetrieveAETs(String retrieveAETs);
-
-	public Integer getAvailability();
-
-	public void setAvailability(Integer availability);
-
-	public Integer getSeriesStatus();
-
-	public void setSeriesStatus(Integer seriesStatus);
-
-	public Date getUpdatedTime();
-
-	public void setUpdatedTime(Date updatedTime);
-
-	public Date getCreatedTime();
-
-	public void setCreatedTime(Date createdTime);
-
-	public byte[] getEncodedAttributes();
-
-	public void setEncodedAttributes(byte[] encodedAttributes);
-
-//	public Set<InstanceIF> getInstances();
-//
-//	public void setInstances(Set<InstanceIF> instances);
+	
 	
 }
