@@ -134,7 +134,7 @@
     </bean>
     <bean id="mailContentBuilder" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPContentBuilder">
     </bean>
-    <bean id="urlGenerator" class="br.ufpb.dicomflow.service.impl.DefaultURLGenerator">
+    <bean id="urlGenerator" class="br.ufpb.dicomflow.service.UrlGenerator">
     	<property name="host">
             <value>DOMAIN_URL</value>
         </property>
@@ -150,7 +150,7 @@
     </bean> 
     
     
-    <bean id="messageService" class="br.ufpb.dicomflow.service.impl.DicomMessageServiceImpl"> 
+    <bean id="messageService" class="br.ufpb.dicomflow.service.MessageService"> 
         <property name="mailAuthenticator">
             <ref bean="mailAuthenticator"/>
         </property> 
@@ -171,7 +171,7 @@
 		</property>
     </bean>
     
-    <bean id="fileService" class="br.ufpb.dicomflow.service.impl.FileServiceImpl"> 
+    <bean id="fileService" class="br.ufpb.dicomflow.service.FileService"> 
         <property name="archivePath">
             <value>PACS_ARCHIVE_PATH</value>
         </property>
@@ -188,7 +188,7 @@
             <value>RECEIVED_FILES_EXTRACT_DIR</value>
         </property>
     </bean>
-    <bean id="certificateService" class="br.ufpb.dicomflow.service.impl.JSSECertificateServiceImplentation"> 
+    <bean id="certificateService" class="br.ufpb.dicomflow.service.CertificateService"> 
     	<property name="keystore">
 			<value>KEYSTORE_FILE</value>
 		</property>
