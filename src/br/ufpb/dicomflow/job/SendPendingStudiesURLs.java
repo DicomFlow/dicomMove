@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.agent;
+package br.ufpb.dicomflow.job;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,10 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 import br.ufpb.dicomflow.bean.Registry;
 import br.ufpb.dicomflow.bean.RegistryAccess;
@@ -38,9 +34,9 @@ import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
 
 
-public class SendPendingStudiesURLsAgent implements Job {
+public class SendPendingStudiesURLs {
 
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+	public void execute() {
 		
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("SENDING PENDING NEW STUDIES...");

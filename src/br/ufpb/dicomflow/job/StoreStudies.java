@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.agent;
+package br.ufpb.dicomflow.job;
 
 import java.io.File;
 import java.net.URL;
@@ -37,9 +37,9 @@ import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
 
-public class StoreStudiesAgent implements Job {
+public class StoreStudies {
 	
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+	public void execute() {
 		
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("SEARCHING OPEN RECEIVED REGISTRIES...");	

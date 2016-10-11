@@ -42,7 +42,7 @@ public class Patient extends AbstractPersistence implements PatientIF{
 
 
 	@Id
-	@Column(name="PatientID",unique=true)
+	@Column(name="patientID",unique=true)
     private String patientId;
 	
     
@@ -51,13 +51,13 @@ public class Patient extends AbstractPersistence implements PatientIF{
 	private Set<Study> studies;
 	
 	
-	@Column(name="PatientNam")
+	@Column(name="patientNam")
     private String patientName;
 	
-	@Column(name="PatientBir")
+	@Column(name="patientBir")
     private String patientBirthDate;
 	
-	@Column(name="PatientSex")
+	@Column(name="patientSex")
     private String patientSex;
 	
 	public String getPatientId() {

@@ -21,7 +21,6 @@ package br.ufpb.dicomflow;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import br.ufpb.dicomflow.agent.CronSchedule;
 import br.ufpb.dicomflow.util.Util;
 
 /**
@@ -41,7 +40,6 @@ public class ContextListener implements ServletContextListener {
 		
 		
 		try {
-			new CronSchedule();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

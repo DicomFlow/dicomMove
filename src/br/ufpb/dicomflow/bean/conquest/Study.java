@@ -44,34 +44,34 @@ public class Study extends AbstractPersistence implements StudyIF{
 	private static final long serialVersionUID = 8825435386193410947L;
 
 	@Id
-	@Column(name="StudyInsta",unique=true)
+	@Column(name="studyInsta",unique=true)
 	private String studyIuid;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="PatientID")
+	@JoinColumn(name="patientID")
 	private Patient patient;
 	
 	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="StudyInsta")
+	@JoinColumn(name="studyInsta")
 	private Set<Series> series;
 	
 	
-	@Column(name="StudyID")
+	@Column(name="studyID")
     private String studyId;
 	
-	@Column(name="StudyDate")
+	@Column(name="studyDate")
     private Date studyDateTime;
 	
-	@Column(name="AccessionN")
+	@Column(name="accessionN")
     private String accessionNumber;
 	
-	@Column(name="StudyModal")
+	@Column(name="studyModal")
     private String modalitiesInStudy;
 	
-	@Column(name="StudyDescr")
+	@Column(name="studyDescr")
 	private String studyDescription;
 	
-	@Column(name="ReferPhysi")
+	@Column(name="referPhysi")
 	private String referedPhysician;
 
 	public Patient getPatient() {

@@ -45,34 +45,34 @@ public class Series extends AbstractPersistence implements SeriesIF{
 	private static final long serialVersionUID = 2645400092973938894L;
 
 	@Id
-	@Column(name="SeriesInst",unique=true)
+	@Column(name="seriesInst",unique=true)
 	private String seriesIuid;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="StudyInsta")
+	@JoinColumn(name="studyInsta")
 	private Study study;
 	
 	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="SeriesInst")
+	@JoinColumn(name="seriesInst")
 	private Set<Instance> instances;
 	
 	
-	@Column(name="SeriesNumb")
+	@Column(name="seriesNumb")
 	private String seriesNumber;
 	
-	@Column(name="Modality")
+	@Column(name="modality")
 	private String modality;
 	
-	@Column(name="BodyPartEx")
+	@Column(name="bodyPartEx")
 	private String bodyPartExamined;
 	
-	@Column(name="SeriesDesc")
+	@Column(name="seriesDesc")
 	private String seriesDescription;
 	
-	@Column(name="StationNam")
+	@Column(name="stationNam")
 	private String stationName;
 	
-	@Column(name="Institutio")
+	@Column(name="institutio")
 	private String institution;
 
 	public Study getStudy() {

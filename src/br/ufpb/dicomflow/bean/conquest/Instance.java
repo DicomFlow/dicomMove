@@ -41,21 +41,21 @@ public class Instance extends AbstractPersistence implements InstanceIF {
 
 
 	@Id
-	@Column(name="SOPInstanc",unique=true)
+	@Column(name="sOPInstanc",unique=true)
 	private String sopIuid;
 	
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="SeriesInst")
+	@JoinColumn(name="seriesInst")
 	private Series series;
 	
-	@Column(name="SOPClassUI")
+	@Column(name="sOPClassUI")
 	private String sopCuid;
 	
-	@Column(name="ImageNumbe")
+	@Column(name="imageNumbe")
 	private String instanceNumber;
 	
-	@Column(name="ObjectFile")
+	@Column(name="objectFile")
 	private String filePath;
 	
 	public Series getSeries() {

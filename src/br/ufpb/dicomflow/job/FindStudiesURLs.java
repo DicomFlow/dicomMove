@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.agent;
+package br.ufpb.dicomflow.job;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,10 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 import br.ufpb.dicomflow.bean.Registry;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
@@ -37,9 +33,9 @@ import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
 
-public class FindStudiesURLsAgent implements Job {
+public class FindStudiesURLs {
 	
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+	public void execute() {
 		
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("SEARCHING URLs...");	

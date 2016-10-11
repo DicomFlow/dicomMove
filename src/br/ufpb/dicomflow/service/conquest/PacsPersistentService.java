@@ -24,12 +24,12 @@ public class PacsPersistentService extends PersistentService  implements PacsPer
 	@Override
 	public List<StudyIF> selectAllStudiesNotIn(List<String> studiesIuids) {
 		
-		return super.selectAllNotIn("StudyInsta", studiesIuids, Study.class);
+		return super.selectAllNotIn("studyIuid", studiesIuids, Study.class);
 	}
 
 	@Override
 	public StudyIF selectStudy(String studyIuid) {
-		return (StudyIF) super.select("StudyInsta", studyIuid, Study.class);
+		return (StudyIF) super.select("studyIuid", studyIuid, Study.class);
 	}
 
 	@Override

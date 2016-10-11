@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.agent;
+package br.ufpb.dicomflow.job;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,9 +40,9 @@ import br.ufpb.dicomflow.service.UrlGeneratorIF;
 import br.ufpb.dicomflow.util.Util;
 
 
-public class FindStudiesAgent implements Job {
+public class FindStudies {
 
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+	public void execute(){
 		
 		long start = System.currentTimeMillis();
 		

@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.agent;
+package br.ufpb.dicomflow.job;
 
 import java.io.File;
 import java.net.URL;
@@ -24,10 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 import br.ufpb.dicomflow.bean.Registry;
 import br.ufpb.dicomflow.service.FileServiceIF;
@@ -37,9 +33,9 @@ import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
 
-public class StorePendingStudiesAgent implements Job {
+public class StorePendingStudies {
 	
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+	public void execute() {
 		
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("SEARCHING PENDING RECEIVED REGISTRIES...");	

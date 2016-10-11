@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.agent;
+package br.ufpb.dicomflow.job;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,10 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 import br.ufpb.dicomflow.bean.Access;
 import br.ufpb.dicomflow.service.CertificateServiceIF;
@@ -38,9 +34,9 @@ import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
 
 
-public class StoreCertificateAgent implements Job {
+public class StoreCertificate {
 
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+	public void execute() {
 		
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("STORE CERTIFICATES...");
