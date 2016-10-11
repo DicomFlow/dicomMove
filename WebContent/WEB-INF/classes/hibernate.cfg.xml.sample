@@ -21,7 +21,7 @@
     	<mapping class="br.ufpb.dicomflow.bean.Access"/>
     	<mapping class="br.ufpb.dicomflow.bean.Registry"/>
     	<mapping class="br.ufpb.dicomflow.bean.RegistryAccess"/>
-    	<mapping class="br.ufpb.dicomflow.bean.User"/>
+    	<mapping class="br.ufpb.dicomflow.bean.Service"/>
  		
     </session-factory>
 

@@ -3,8 +3,10 @@ package br.ufpb.dicomflow.service.dcm4che;
 import java.util.List;
 
 import br.ufpb.dicomflow.bean.InstanceIF;
+import br.ufpb.dicomflow.bean.PatientIF;
 import br.ufpb.dicomflow.bean.SeriesIF;
 import br.ufpb.dicomflow.bean.StudyIF;
+import br.ufpb.dicomflow.bean.dcm4che.Patient;
 import br.ufpb.dicomflow.bean.dcm4che.Instance;
 import br.ufpb.dicomflow.bean.dcm4che.Series;
 import br.ufpb.dicomflow.bean.dcm4che.Study;
@@ -19,6 +21,11 @@ public class PacsPersistentService extends PersistentService  implements PacsPer
 	 */
 	public PacsPersistentService() {
 		super();
+	}
+	
+	@Override
+	public PatientIF selectPatient(String patientID) {
+		return (PatientIF) super.select("patientID", patientID, Patient.class);
 	}
 
 	@Override

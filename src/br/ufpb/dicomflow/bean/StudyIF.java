@@ -52,6 +52,8 @@ public interface StudyIF {
 	
 	public void setReferedPhysician(String referedPhysician);
 	
+	public PatientIF getPatientIF();
+	
 	
 
 }

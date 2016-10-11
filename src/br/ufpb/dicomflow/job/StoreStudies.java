@@ -29,7 +29,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import br.ufpb.dicomflow.bean.Registry;
+import br.ufpb.dicomflow.bean.StorageService;
 import br.ufpb.dicomflow.service.FileServiceIF;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
@@ -48,12 +48,12 @@ public class StoreStudies {
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
 		
-		List<Registry> registries = persistentService.selectAllByParams(new Object[]{"type", "status"}, new Object[]{Registry.RECEIVED, Registry.OPEN}, Registry.class);
+		List<StorageService> storageServices = persistentService.selectAllByParams(new Object[]{"type", "status", "action"}, new Object[]{StorageService.RECEIVED, StorageService.OPEN, StorageService.SAVE}, StorageService.class);
 		
-		Iterator<Registry> itRegistries = registries.iterator();
+		Iterator<StorageService> itRegistries = storageServices.iterator();
 		while (itRegistries.hasNext()) {
-			Registry registry = (Registry) itRegistries.next();
-			registry.setStatus(Registry.LOCK);
+			StorageService registry = (StorageService) itRegistries.next();
+			registry.setStatus(StorageService.LOCK);
 			try {
 				registry.save();
 			} catch (ServiceException e) {
@@ -63,9 +63,9 @@ public class StoreStudies {
 			
 		}
 		
-		Iterator<Registry> it = registries.iterator();
+		Iterator<StorageService> it = storageServices.iterator();
 		while (it.hasNext()) {
-			Registry registry = it.next();
+			StorageService storageService = it.next();
 			
 			//String url = registry.getLink();
 			//TODO - remover  - inserido para testes			
@@ -77,23 +77,23 @@ public class StoreStudies {
 			try {
 				Util.getLogger(this).debug("DOWNLOADING DICOM OBJECT");
 				
-				fileService.extractZipFile(new URL(url),registry.getId()+".zip");
+				fileService.extractZipFile(new URL(url),storageService.getId()+".zip");
 				Util.getLogger(this).debug("STORING DICOM OBJECT");
 				fileService.storeFile(new File(fileService.getExtractDir()));
 				
-				registry.setDownloadAttempt(registry.getDownloadAttempt()+1);
-				registry.setStatus(Registry.CLOSED);
+				storageService.setDownloadAttempt(storageService.getDownloadAttempt()+1);
+				storageService.setStatus(StorageService.CLOSED);
 				Util.getLogger(this).debug("STORED DICOM OBJECT");
 				
 			} catch (Exception e) {
-				registry.setDownloadAttempt(registry.getDownloadAttempt()+1);
-				registry.setStatus(Registry.PENDING);
+				storageService.setDownloadAttempt(storageService.getDownloadAttempt()+1);
+				storageService.setStatus(StorageService.PENDING);
 				Util.getLogger(this).error(e.getMessage(), e);
 				e.printStackTrace();
 			} 
 			try {
-				registry.save();
-				messageService.sendResult(registry.getMessageID(), registry);
+				storageService.save();
+				messageService.sendResult(storageService.getMessageID(), storageService);
 			} catch (ServiceException e) {
 				Util.getLogger(this).error(e.getMessage(), e);
 				e.printStackTrace();

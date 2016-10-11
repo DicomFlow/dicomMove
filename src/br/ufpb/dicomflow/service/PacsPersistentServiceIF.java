@@ -21,6 +21,7 @@ package br.ufpb.dicomflow.service;
 import java.util.List;
 
 import br.ufpb.dicomflow.bean.InstanceIF;
+import br.ufpb.dicomflow.bean.PatientIF;
 import br.ufpb.dicomflow.bean.SeriesIF;
 import br.ufpb.dicomflow.bean.StudyIF;
 
@@ -31,12 +32,16 @@ public interface PacsPersistentServiceIF {
 	public static final String ASC = "asc";
 	public static final String DESC = "desc";
 	
-	List<StudyIF> selectAllStudiesNotIn(List<String> registredStudiesIuids);
+	public PatientIF selectPatient(String patientID);
+	
+	public List<StudyIF> selectAllStudiesNotIn(List<String> registredStudiesIuids);
 
-	StudyIF selectStudy(String studyIUID);
+	public StudyIF selectStudy(String studyIUID);
 
-	List<SeriesIF> selectAllSeries(StudyIF study);
+	public List<SeriesIF> selectAllSeries(StudyIF study);
 
-	List<InstanceIF> selectAllFiles(List<SeriesIF> series);
+	public List<InstanceIF> selectAllFiles(List<SeriesIF> series);
+	
+	
 	
 }

@@ -23,8 +23,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import br.ufpb.dicomflow.bean.Registry;
-import br.ufpb.dicomflow.bean.RegistryAccess;
+import br.ufpb.dicomflow.bean.StorageService;
+import br.ufpb.dicomflow.bean.StorageServiceAccess;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
@@ -42,30 +42,35 @@ public class SendStudiesURLs {
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
-		List<RegistryAccess> ras = persistentService.selectAll("status", Registry.OPEN, RegistryAccess.class);
+		List<StorageServiceAccess> ras = persistentService.selectAll("status", StorageService.OPEN, StorageServiceAccess.class);
 		Util.getLogger(this).debug("TOTAL REGISTRY-ACCESS: " + ras.size());
 		
-		Iterator<RegistryAccess> it = ras.iterator();
+		Iterator<StorageServiceAccess> it = ras.iterator();
 		while (it.hasNext()) {
-			RegistryAccess registryAccess = (RegistryAccess) it.next();
-			try {
-				//TODO requisitar o certificado do dominio remoto
-				
-				String messageID = messageService.sendURL(registryAccess);
-				registryAccess.setMessageID(messageID);
-				registryAccess.setStatus(Registry.PENDING);
-				registryAccess.setUploadAttempt(registryAccess.getUploadAttempt()+1);
-				
-			} catch (ServiceException e) {
-				Util.getLogger(this).error("Could not send Studies: " + e.getMessage(),e);
-				e.printStackTrace();
-			}
-			try {
-				registryAccess.save();
-			} catch (ServiceException e) {
-				Util.getLogger(this).error("Could not save RegistryAccess: " + e.getMessage(),e);
-				e.printStackTrace();
-				e.printStackTrace();
+			StorageServiceAccess storageServiceAccess = (StorageServiceAccess) it.next();
+			
+			if(storageServiceAccess.getStorageService().getAction().equals(StorageService.SAVE)){
+				try {
+					//TODO requisitar o certificado do dominio remoto
+					
+					
+					String messageID = messageService.sendURL(storageServiceAccess);
+					storageServiceAccess.setMessageID(messageID);
+					storageServiceAccess.setStatus(StorageService.PENDING);
+					storageServiceAccess.setUploadAttempt(storageServiceAccess.getUploadAttempt()+1);
+					
+					
+				} catch (ServiceException e) {
+					Util.getLogger(this).error("Could not send Studies: " + e.getMessage(),e);
+					e.printStackTrace();
+				}
+				try {
+					storageServiceAccess.save();
+				} catch (ServiceException e) {
+					Util.getLogger(this).error("Could not save RegistryAccess: " + e.getMessage(),e);
+					e.printStackTrace();
+					e.printStackTrace();
+				}
 			}
 			
 		}

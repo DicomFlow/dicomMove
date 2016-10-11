@@ -32,6 +32,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.ufpb.dicomflow.bean.AbstractPersistence;
+import br.ufpb.dicomflow.bean.PatientIF;
 import br.ufpb.dicomflow.bean.StudyIF;
 
 @Entity
@@ -146,7 +147,9 @@ public class Study extends AbstractPersistence implements StudyIF{
 		this.referedPhysician = referedPhysician;
 	}
 
-	
+	public PatientIF getPatientIF() {
+		return patient;
+	}
 	
 	
 

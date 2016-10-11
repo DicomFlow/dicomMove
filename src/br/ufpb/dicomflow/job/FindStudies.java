@@ -29,8 +29,9 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import br.ufpb.dicomflow.bean.Access;
-import br.ufpb.dicomflow.bean.Registry;
-import br.ufpb.dicomflow.bean.RegistryAccess;
+import br.ufpb.dicomflow.bean.StorageService;
+import br.ufpb.dicomflow.bean.StorageServiceAccess;
+import br.ufpb.dicomflow.bean.ServicePermission;
 import br.ufpb.dicomflow.bean.StudyIF;
 import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
@@ -51,9 +52,9 @@ public class FindStudies {
 		PacsPersistentServiceIF pacsPersistentservice = ServiceLocator.singleton().getPacsPersistentService();
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		
-		List<Registry> registries = persistentService.selectAll("type", Registry.SENT, Registry.class);
+		List<StorageService> storageServices = persistentService.selectAllByParams(new String[]{"type", "action"}, new Object[]{StorageService.SENT, StorageService.SAVE}, StorageService.class);
 		
-		List<String> registredStudiesIuids = getStudiesIuids(registries);
+		List<String> registredStudiesIuids = getStudiesIuids(storageServices);
 		List<StudyIF> studies = new ArrayList<StudyIF>();
 		
 		studies = pacsPersistentservice.selectAllStudiesNotIn(registredStudiesIuids);
@@ -78,11 +79,11 @@ public class FindStudies {
 		
 	}
 
-	private List<String> getStudiesIuids(List<Registry> registries) {
+	private List<String> getStudiesIuids(List<StorageService> registries) {
 		List<String> iuids = new ArrayList<String>();
-		Iterator<Registry> it = registries.iterator();
+		Iterator<StorageService> it = registries.iterator();
 		while (it.hasNext()) {
-			Registry registry = (Registry) it.next();
+			StorageService registry = (StorageService) it.next();
 			iuids.add(registry.getStudyIuid());
 			
 		}
@@ -97,12 +98,13 @@ public class FindStudies {
 			
 			StudyIF study = (StudyIF) it.next();
 			
-			Registry registry = new Registry(urlGenerator.getURL(study));
-			registry.setType(Registry.SENT);
-			registry.setStudyIuid(study.getStudyIuid());
-			registry.setStatus(Registry.OPEN);
+			StorageService storageService = new StorageService(urlGenerator.getURL(study));
+			storageService.setType(StorageService.SENT);
+			storageService.setAction(StorageService.SAVE);
+			storageService.setStudyIuid(study.getStudyIuid());
+			storageService.setStatus(StorageService.OPEN);
 			try {
-				registry.save();
+				storageService.save();
 			} catch (ServiceException e) {
 				Util.getLogger(this).error("Could not possible save registry", e);
 				e.printStackTrace();
@@ -112,21 +114,32 @@ public class FindStudies {
 			
 			while (it2.hasNext()) {
 				Access access = (Access) it2.next();
-				RegistryAccess ra = new RegistryAccess(registry, access);
-				ra.setStatus(Registry.OPEN);
-				ra.setUploadAttempt(0);
-				ra.setValidity("");
-//				ra.setCredential(credential);
-				try {
-					ra.save();
-				} catch (ServiceException e) {
-					Util.getLogger(this).error("Could not possible save registry-access biding", e);
-					e.printStackTrace();
+				
+				
+				if(verifyAccess(access, study, ServicePermission.STORAGE_SERVICE)){
+					StorageServiceAccess ra = new StorageServiceAccess(storageService, access);
+					ra.setStatus(StorageService.OPEN);
+					ra.setUploadAttempt(0);
+					ra.setValidity("");
+	//				ra.setCredential(credential);
+					try {
+						ra.save();
+					} catch (ServiceException e) {
+						Util.getLogger(this).error("Could not possible save registry-access biding", e);
+						e.printStackTrace();
+					}
 				}
 				
 			}														
 		}
 		
+	}
+
+	private boolean verifyAccess(Access access, StudyIF study, String serviceType) {
+		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
+		ServicePermission servicePermission = (ServicePermission) persistentService.selectByParams(new String[]{"description", "access"}, new Object[]{serviceType, access} , ServicePermission.class);
+		//verifica se o acesso tem permissão ao serviço e ao estudo especificados
+		return servicePermission != null && (servicePermission.getModalities().contains(study.getModalitiesInStudy()) || servicePermission.getModalities().contains("*"));
 	}
 
 }

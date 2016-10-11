@@ -3,9 +3,11 @@ package br.ufpb.dicomflow.service.conquest;
 import java.util.List;
 
 import br.ufpb.dicomflow.bean.InstanceIF;
+import br.ufpb.dicomflow.bean.PatientIF;
 import br.ufpb.dicomflow.bean.SeriesIF;
 import br.ufpb.dicomflow.bean.StudyIF;
 import br.ufpb.dicomflow.bean.conquest.Instance;
+import br.ufpb.dicomflow.bean.conquest.Patient;
 import br.ufpb.dicomflow.bean.conquest.Series;
 import br.ufpb.dicomflow.bean.conquest.Study;
 import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
@@ -19,6 +21,11 @@ public class PacsPersistentService extends PersistentService  implements PacsPer
 	 */
 	public PacsPersistentService() {
 		super();
+	}
+	
+	@Override
+	public PatientIF selectPatient(String patientID) {
+		return (PatientIF) super.select("patientID", patientID, Patient.class);
 	}
 
 	@Override
@@ -41,5 +48,7 @@ public class PacsPersistentService extends PersistentService  implements PacsPer
 	public List<InstanceIF> selectAllFiles(List<SeriesIF> series) {
 		return super.selectAll("series", series, Instance.class);
 	}
+
+	
 	
 }

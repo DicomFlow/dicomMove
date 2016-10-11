@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import br.ufpb.dicomflow.bean.Registry;
+import br.ufpb.dicomflow.bean.StorageService;
 import br.ufpb.dicomflow.service.FileServiceIF;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
@@ -44,12 +44,12 @@ public class StorePendingStudies {
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
 		
-		List<Registry> registries = persistentService.selectAllByParams(new Object[]{"type", "status"}, new Object[]{Registry.RECEIVED, Registry.PENDING}, Registry.class);
+		List<StorageService> storageServices = persistentService.selectAllByParams(new Object[]{"type", "status", "action"}, new Object[]{StorageService.RECEIVED, StorageService.PENDING, StorageService.SAVE}, StorageService.class);
 		
-		Iterator<Registry> itRegistries = registries.iterator();
+		Iterator<StorageService> itRegistries = storageServices.iterator();
 		while (itRegistries.hasNext()) {
-			Registry registry = (Registry) itRegistries.next();
-			registry.setStatus(Registry.LOCK);
+			StorageService registry = (StorageService) itRegistries.next();
+			registry.setStatus(StorageService.LOCK);
 			try {
 				registry.save();
 			} catch (ServiceException e) {
@@ -59,37 +59,37 @@ public class StorePendingStudies {
 			
 		}
 		
-		Iterator<Registry> it = registries.iterator();
+		Iterator<StorageService> it = storageServices.iterator();
 		while (it.hasNext()) {
-			Registry registry = it.next();
-			registry.setDownloadAttempt(registry.getDownloadAttempt()+1);
-			if(registry.getDownloadAttempt() <= messageService.getMaxAttempts()){
-				String url = registry.getLink();
+			StorageService storagService = it.next();
+			storagService.setDownloadAttempt(storagService.getDownloadAttempt()+1);
+			if(storagService.getDownloadAttempt() <= messageService.getMaxAttempts()){
+				String url = storagService.getLink();
 				Util.getLogger(this).debug("URL FOUND : " + url);
 				
 				FileServiceIF fileService = ServiceLocator.singleton().getFileService();
 				try {
 					Util.getLogger(this).debug("DOWNLOADING DICOM OBJECT");
-					fileService.extractZipFile(new URL(url), registry.getStudyIuid()+".zip");
+					fileService.extractZipFile(new URL(url), storagService.getStudyIuid()+".zip");
 					Util.getLogger(this).debug("STORING DICOM OBJECT");
 					fileService.storeFile(new File(fileService.getExtractDir()));
 					
-					registry.setStatus(Registry.CLOSED);
+					storagService.setStatus(StorageService.CLOSED);
 					Util.getLogger(this).debug("STORED DICOM OBJECT");
 					
 				} catch (Exception e) {
-					String status = registry.getDownloadAttempt() == messageService.getMaxAttempts() ? Registry.ERROR : Registry.PENDING;
-					registry.setStatus(status);
+					String status = storagService.getDownloadAttempt() == messageService.getMaxAttempts() ? StorageService.ERROR : StorageService.PENDING;
+					storagService.setStatus(status);
 					Util.getLogger(this).error(e.getMessage(), e);
 					e.printStackTrace();
 				} 
 				
 			}else{
-				registry.setStatus(Registry.ERROR);
+				storagService.setStatus(StorageService.ERROR);
 			}
 			try {
-				registry.save();
-				messageService.sendResult(registry.getMessageID(), registry);
+				storagService.save();
+				messageService.sendResult(storagService.getMessageID(), storagService);
 			} catch (ServiceException e) {
 				Util.getLogger(this).error(e.getMessage(), e);
 				e.printStackTrace();

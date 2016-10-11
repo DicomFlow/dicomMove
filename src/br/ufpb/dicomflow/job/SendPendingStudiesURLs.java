@@ -25,8 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import br.ufpb.dicomflow.bean.Registry;
-import br.ufpb.dicomflow.bean.RegistryAccess;
+import br.ufpb.dicomflow.bean.StorageService;
+import br.ufpb.dicomflow.bean.StorageServiceAccess;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
@@ -44,69 +44,71 @@ public class SendPendingStudiesURLs {
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
-		List<RegistryAccess> ras = persistentService.selectAll("status", Registry.PENDING, RegistryAccess.class);
+		List<StorageServiceAccess> ras = persistentService.selectAll("status", StorageService.PENDING, StorageServiceAccess.class);
 		Util.getLogger(this).debug("TOTAL REGISTRY-ACCESS: " + ras.size());
 		
-		Iterator<RegistryAccess> it = ras.iterator();
+		Iterator<StorageServiceAccess> it = ras.iterator();
 		while (it.hasNext()) {
-			RegistryAccess registryAccess = (RegistryAccess) it.next();
-			registryAccess.setUploadAttempt(registryAccess.getUploadAttempt()+1);
-			if(registryAccess.getUploadAttempt() <= messageService.getMaxAttempts()){
-				
-				Map<String, String> results = new HashMap<String, String>();
-				
-				try {
-					results = messageService.getResults(null, null, registryAccess.getMessageID());
-				} catch (ServiceException e1) {
-					Util.getLogger(this).error("Could not get results: " + e1.getMessage(),e1);
-					e1.printStackTrace();
-					//TODO verificar se avançar para o próximo é uma estratégia melhor
-					//continue;
-				}
-				
-				
+			StorageServiceAccess storageServiceAccess = (StorageServiceAccess) it.next();
+			if(storageServiceAccess.getStorageService().getAction().equals(StorageService.SAVE)){
+				storageServiceAccess.setUploadAttempt(storageServiceAccess.getUploadAttempt()+1);
+				if(storageServiceAccess.getUploadAttempt() <= messageService.getMaxAttempts()){
 					
-				Iterator<String> itDomain = results.keySet().iterator();
-				String domainStatus = null;
-				while (itDomain.hasNext()) {
-					String domain = (String) itDomain.next();
-					if(registryAccess.getAccess().getHost().equals(domain)){
-						domainStatus = results.get(domain);
-						break;
-					}
-				}
-				//se domainStatus diferente de null, o domain recebeu a URL 
-				if(domainStatus != null){
-					registryAccess.setStatus(Registry.CLOSED);
-					treatDomainStatus(domainStatus);
-				} else {
+					Map<String, String> results = new HashMap<String, String>();
+					
 					try {
-						messageService.sendURL(registryAccess.getRegistry(), registryAccess.getAccess());
-						registryAccess.setStatus(Registry.PENDING);
+						results = messageService.getResults(null, null, storageServiceAccess.getMessageID());
+					} catch (ServiceException e1) {
+						Util.getLogger(this).error("Could not get results: " + e1.getMessage(),e1);
+						e1.printStackTrace();
+						//TODO verificar se avançar para o próximo é uma estratégia melhor
+						//continue;
+					}
+					
+					
+						
+					Iterator<String> itDomain = results.keySet().iterator();
+					String domainStatus = null;
+					while (itDomain.hasNext()) {
+						String domain = (String) itDomain.next();
+						if(storageServiceAccess.getAccess().getHost().equals(domain)){
+							domainStatus = results.get(domain);
+							break;
+						}
+					}
+					//se domainStatus diferente de null, o domain recebeu a URL 
+					if(domainStatus != null){
+						storageServiceAccess.setStatus(StorageService.CLOSED);
+						treatDomainStatus(domainStatus);
+					} else {
+						try {
+							messageService.sendURL(storageServiceAccess.getStorageService(), storageServiceAccess.getAccess());
+							storageServiceAccess.setStatus(StorageService.PENDING);
+						} catch (ServiceException e) {
+							String status = storageServiceAccess.getUploadAttempt() == messageService.getMaxAttempts() ? StorageService.ERROR : StorageService.PENDING;
+							storageServiceAccess.setStatus(status);
+							Util.getLogger(this).error("Could not send Studies: " + e.getMessage(),e);
+							e.printStackTrace();
+						}
+					}
+					
+					try {
+						storageServiceAccess.save();
 					} catch (ServiceException e) {
-						String status = registryAccess.getUploadAttempt() == messageService.getMaxAttempts() ? Registry.ERROR : Registry.PENDING;
-						registryAccess.setStatus(status);
-						Util.getLogger(this).error("Could not send Studies: " + e.getMessage(),e);
+						Util.getLogger(this).error("Could not save RegistryAccess: " + e.getMessage(),e);
+						e.printStackTrace();
+					}							
+					
+				} else {
+					storageServiceAccess.setStatus(StorageService.CLOSED);
+					try {
+						storageServiceAccess.save();
+					} catch (ServiceException e) {
+						Util.getLogger(this).error("Could not save RegistryAccess: " + e.getMessage(),e);
 						e.printStackTrace();
 					}
 				}
-				
-				try {
-					registryAccess.save();
-				} catch (ServiceException e) {
-					Util.getLogger(this).error("Could not save RegistryAccess: " + e.getMessage(),e);
-					e.printStackTrace();
-				}							
-				
-			} else {
-				registryAccess.setStatus(Registry.CLOSED);
-				try {
-					registryAccess.save();
-				} catch (ServiceException e) {
-					Util.getLogger(this).error("Could not save RegistryAccess: " + e.getMessage(),e);
-					e.printStackTrace();
-				}
-			}						
+			}
 		}
 		
 		Util.getLogger(this).debug("DONE!!");

@@ -24,8 +24,10 @@ import java.util.List;
 import java.util.Map;
 
 import br.ufpb.dicomflow.bean.Access;
-import br.ufpb.dicomflow.bean.Registry;
-import br.ufpb.dicomflow.bean.RegistryAccess;
+import br.ufpb.dicomflow.bean.RequestService;
+import br.ufpb.dicomflow.bean.RequestServiceAccess;
+import br.ufpb.dicomflow.bean.StorageService;
+import br.ufpb.dicomflow.bean.StorageServiceAccess;
 
 public interface MessageServiceIF {
 	
@@ -33,13 +35,13 @@ public interface MessageServiceIF {
 	public static final String CERTIFICATE_RESULT_UPDATED = "UPDATED";
 	public static final String CERTIFICATE_RESULT_ERROR = "ERROR";
 	
-	public String sendURL(RegistryAccess registryAccess) throws ServiceException;
+	public String sendURL(StorageServiceAccess storageServiceAccess) throws ServiceException;
 	
-	public void sendURL(Registry registry, Access access) throws ServiceException;
+	public void sendURL(StorageService storageService, Access access) throws ServiceException;
 	
-	public void sendURL(Registry registry, List<Access> accesses) throws ServiceException ;
+	public void sendURL(StorageService storageService, List<Access> accesses) throws ServiceException ;
 	
-	public void sendURLs(List<Registry> registries, List<Access> accesses) throws ServiceException ;		
+	public void sendURLs(List<StorageService> storageServices, List<Access> accesses) throws ServiceException ;		
 
 	/**
 	 * 
@@ -51,7 +53,7 @@ public interface MessageServiceIF {
 	 */
 	public Map<String, String> getURLs(Date initialDate, Date finalDate, String messageID) throws ServiceException ;
 
-	public void sendResult(String messageID, Registry registry) throws ServiceException;
+	public void sendResult(String messageID, StorageService storageService) throws ServiceException;
 	
 	/**
 	 * 
@@ -86,6 +88,39 @@ public interface MessageServiceIF {
 	 * @throws ServiceException
 	 */
 	public Map<Access, String>  getCertificateResults(Date initialDate, Date finalDate, String messageID) throws ServiceException;
+	
+	
+	
+	public String sendRequest(RequestServiceAccess requestServiceAccess) throws ServiceException;
+	
+	public void sendRequest(RequestService requestService, Access access) throws ServiceException;
+	
+	public void sendRequest(RequestService requestService, List<Access> accesses) throws ServiceException ;
+	
+	public void sendRequests(List<RequestService> requestService, List<Access> accesses) throws ServiceException ;		
+
+	/**
+	 * 
+	 * @param initialDate
+	 * @param finalDate
+	 * @param messageID
+	 * @return Map<String, String> contains <messageID, url>
+	 * @throws ServiceException
+	 */
+	public Map<String, String> getRequests(Date initialDate, Date finalDate, String messageID) throws ServiceException ;
+	
+	public void sendRequestResult(String messageID, RequestService requestService) throws ServiceException;
+	
+	/**
+	 * 
+	 * @param initialDate
+	 * @param finalDate
+	 * @param idMessage
+	 * @return Map<String, String> contains <domain, status>
+	 * @throws ServiceException
+	 */
+	public Map<String, String> getRequestResults(Date initialDate, Date finalDate, String originalMessageID) throws ServiceException;
+	
 	
 	public int getMaxAttempts();
 

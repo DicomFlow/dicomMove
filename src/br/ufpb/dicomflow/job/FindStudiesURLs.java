@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import br.ufpb.dicomflow.bean.Registry;
+import br.ufpb.dicomflow.bean.StorageService;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
@@ -56,29 +56,30 @@ public class FindStudiesURLs {
 			Util.getLogger(this).debug("URL FOUND : " + url);
 			
 			PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
-			Registry registry = (Registry) persistentService.selectByParams(new Object[]{"link", "type"},new Object[]{url,Registry.RECEIVED}, Registry.class);
-			if(registry == null){
+			StorageService storageService = (StorageService) persistentService.selectByParams(new Object[]{"link", "type", "action"},new Object[]{url,StorageService.RECEIVED, StorageService.SAVE}, StorageService.class);
+			if(storageService == null){
 				
-				registry = new Registry();
-				registry.setLink(url);
+				storageService = new StorageService();
+				storageService.setLink(url);
 				try {
 					URL aURL = new URL(url);
-					registry.setMessageID(messageID);
-					registry.setHost(aURL.getHost());
-					registry.setPort(aURL.getPort());
+					storageService.setMessageID(messageID);
+					storageService.setHost(aURL.getHost());
+					storageService.setPort(aURL.getPort());
 				} catch (MalformedURLException e) {
 					Util.getLogger(this).error(e.getMessage(), e);
 					e.printStackTrace();
 				}
-				registry.setStatus(Registry.OPEN);
-				registry.setType(Registry.RECEIVED);
-				registry.setDownloadAttempt(0);
+				storageService.setStatus(StorageService.OPEN);
+				storageService.setAction(StorageService.SAVE);
+				storageService.setType(StorageService.RECEIVED);
+				storageService.setDownloadAttempt(0);
 				
 			}
 
 			try {
-				registry.save();
-				messageService.sendResult(messageID, registry);
+				storageService.save();
+				messageService.sendResult(messageID, storageService);
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
