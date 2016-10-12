@@ -203,80 +203,80 @@
 		</property>
     </bean>
     
-    <bean id="sendCertificateJob" class="br.ufpb.dicomflow.job.SendCertificate"/>
-    <bean id="sendCertificateJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	    <property name="targetObject" ref="sendCertificateJob"/>
+    <bean id="sendCertificatesJob" class="br.ufpb.dicomflow.job.SendCertificates"/>
+    <bean id="sendCertificatesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="sendCertificatesJob"/>
 	    <property name="targetMethod" value="execute"/>
 	    <property name="concurrent" value="false"/>
 	</bean>
-	<bean id="sendCertificateCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-	    <property name="jobDetail" ref="sendCertificateJobDetail"/>
+	<bean id="sendCertificatesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="sendCertificatesJobDetail"/>
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="storeCertificateJob" class="br.ufpb.dicomflow.job.StoreCertificate"/>
-    <bean id="storeCertificateJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	    <property name="targetObject" ref="storeCertificateJob"/>
+	<bean id="findCertificatesJob" class="br.ufpb.dicomflow.job.FindCertificates"/>
+    <bean id="findCertificatesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="findCertificatesJob"/>
 	    <property name="targetMethod" value="execute"/>
 	    <property name="concurrent" value="false"/>
 	</bean>
-	<bean id="storeCertificateCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-	    <property name="jobDetail" ref="storeCertificateJobDetail"/>
+	<bean id="findCertificatesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="findCertificatesJobDetail"/>
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="findCertificateResultJob" class="br.ufpb.dicomflow.job.FindCertificateResult"/>
-    <bean id="findCertificateResultJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	    <property name="targetObject" ref="findCertificateResultJob"/>
+	<bean id="verifyCertificateResultJob" class="br.ufpb.dicomflow.job.VerifyCertificateResult"/>
+    <bean id="verifyCertificateResultJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="verifyCertificateResultJob"/>
 	    <property name="targetMethod" value="execute"/>
 	    <property name="concurrent" value="false"/>
 	</bean>
-	<bean id="findCertificateResultCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-	    <property name="jobDetail" ref="findCertificateResultJobDetail"/>
+	<bean id="verifyCertificateResultCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="verifyCertificateResultJobDetail"/>
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="findStudiesJob" class="br.ufpb.dicomflow.job.FindStudies"/>
-    <bean id="findStudiesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	    <property name="targetObject" ref="findStudiesJob"/>
+	<bean id="prepareStoragesJob" class="br.ufpb.dicomflow.job.PrepareStorages"/>
+    <bean id="prepareStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="prepareStoragesJob"/>
 	    <property name="targetMethod" value="execute"/>
 	    <property name="concurrent" value="false"/>
 	</bean>
-	<bean id="findStudiesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-	    <property name="jobDetail" ref="findStudiesJobDetail"/>
+	<bean id="prepareStoragesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="prepareStoragesJobDetail"/>
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="sendStudiesURLsJob" class="br.ufpb.dicomflow.job.SendStudiesURLs"/>
-    <bean id="sendStudiesURLsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	    <property name="targetObject" ref="sendStudiesURLsJob"/>
+	<bean id="sendStoragesJob" class="br.ufpb.dicomflow.job.SendStorages"/>
+    <bean id="sendStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="sendStoragesJob"/>
 	    <property name="targetMethod" value="execute"/>
 	    <property name="concurrent" value="false"/>
 	</bean>
-	<bean id="sendStudiesURLsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-	    <property name="jobDetail" ref="sendStudiesURLsJobDetail"/>
+	<bean id="sendStoragesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="sendStoragesJobDetail"/>
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="findStudiesURLsJob" class="br.ufpb.dicomflow.job.FindStudiesURLs"/>
-    <bean id="findStudiesURLsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	    <property name="targetObject" ref="findStudiesURLsJob"/>
+	<bean id="findStoragesJob" class="br.ufpb.dicomflow.job.FindStorages"/>
+    <bean id="findStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="findStoragesJob"/>
 	    <property name="targetMethod" value="execute"/>
 	    <property name="concurrent" value="false"/>
 	</bean>
-	<bean id="findStudiesURLsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-	    <property name="jobDetail" ref="findStudiesURLsJobDetail"/>
+	<bean id="findStoragesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="findStoragesJobDetail"/>
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="sendPendingStudiesURLsJob" class="br.ufpb.dicomflow.job.SendPendingStudiesURLs"/>
-    <bean id="sendPendingStudiesURLsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	    <property name="targetObject" ref="sendPendingStudiesURLsJob"/>
+	<bean id="verifyStorageResultsJob" class="br.ufpb.dicomflow.job.VerifyStorageResults"/>
+    <bean id="verifyStorageResultsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="verifyStorageResultsJob"/>
 	    <property name="targetMethod" value="execute"/>
 	    <property name="concurrent" value="false"/>
 	</bean>
-	<bean id="sendPendingStudiesURLsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-	    <property name="jobDetail" ref="sendPendingStudiesURLsJobDetail"/>
+	<bean id="verifyStorageResultsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="verifyStorageResultsJobDetail"/>
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
@@ -324,21 +324,22 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="sendPendingRequestsJob" class="br.ufpb.dicomflow.job.SendPendingRequests"/>
-    <bean id="sendPendingRequestsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	    <property name="targetObject" ref="sendPendingRequestsJob"/>
+	<bean id="verifyRequestResultsJob" class="br.ufpb.dicomflow.job.VerifyRequestResults"/>
+    <bean id="verifyRequestResultsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="verifyRequestResultsJob"/>
 	    <property name="targetMethod" value="execute"/>
 	    <property name="concurrent" value="false"/>
 	</bean>
-	<bean id="sendPendingRequestsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-	    <property name="jobDetail" ref="sendPendingRequestsJobDetail"/>
+	<bean id="verifyRequestResultsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="verifyRequestResultsJobDetail"/>
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	    <property name="triggers">
 	        <list>
-	            <ref bean="findStudiesCronTrigger"/>
+	            <ref bean="prepareRequestsCronTrigger"/>
+	            <ref bean="sendRequestsCronTrigger"/>
 	        </list>
 	    </property>
 	</bean>

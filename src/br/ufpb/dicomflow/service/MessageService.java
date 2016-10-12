@@ -54,7 +54,7 @@ public class MessageService implements MessageServiceIF {
 	
 	
 	@Override
-	public String sendURL(StorageServiceAccess storageServiceAccess) throws ServiceException {
+	public String sendStorage(StorageServiceAccess storageServiceAccess) throws ServiceException {
 		if(propertiesConfigPath == null){
 			String errMsg = "Could not send study: invalid properties's path ";
 			
@@ -87,7 +87,7 @@ public class MessageService implements MessageServiceIF {
 	}
 
 	@Override
-	public void sendURL(StorageService storageService, List<Access> accesses) throws ServiceException {
+	public void sendStorage(StorageService storageService, List<Access> accesses) throws ServiceException {
 		if(propertiesConfigPath == null){
 			String errMsg = "Could not send study: invalid properties's path ";
 			
@@ -123,26 +123,26 @@ public class MessageService implements MessageServiceIF {
 	}
 
 	@Override
-	public void sendURLs(List<StorageService> storageServices, List<Access> accesses) throws ServiceException {
+	public void sendStorages(List<StorageService> storageServices, List<Access> accesses) throws ServiceException {
 		Iterator<StorageService> it = storageServices.iterator();
 		while (it.hasNext()) {
 
 			StorageService registry = it.next();
 
-			sendURL(registry, accesses);
+			sendStorage(registry, accesses);
 
 		}
 	}
 	
 	@Override
-	public void sendURL(StorageService storageService, Access access) throws ServiceException {
+	public void sendStorage(StorageService storageService, Access access) throws ServiceException {
 		List<Access> accesses = new ArrayList<Access>();
-		sendURL(storageService, accesses);
+		sendStorage(storageService, accesses);
 	}
 	
 	
 	@Override
-	public Map<String,String> getURLs(Date initialDate, Date finalDate, String messageID) throws ServiceException {
+	public Map<String,String> getStorages(Date initialDate, Date finalDate, String messageID) throws ServiceException {
 		
 		Map<String,String> urls = new HashMap<String,String>();
 		
@@ -157,7 +157,7 @@ public class MessageService implements MessageServiceIF {
 	}
 	
 	@Override
-	public void sendResult(String messageID, StorageService storageService) throws ServiceException {
+	public void sendStorageResult(String messageID, StorageService storageService) throws ServiceException {
 		if(propertiesConfigPath == null){
 			String errMsg = "Could not send study: invalid properties's path ";
 			
@@ -214,7 +214,7 @@ public class MessageService implements MessageServiceIF {
 	}
 	
 	@Override
-	public Map<String,String> getResults(Date initialDate, Date finalDate, String originalMessageID) throws ServiceException {
+	public Map<String,String> getStorageResults(Date initialDate, Date finalDate, String originalMessageID) throws ServiceException {
 		
 		Map<String,String> map = new HashMap<String, String>();
 		

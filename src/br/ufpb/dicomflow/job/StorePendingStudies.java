@@ -89,7 +89,7 @@ public class StorePendingStudies {
 			}
 			try {
 				storagService.save();
-				messageService.sendResult(storagService.getMessageID(), storagService);
+				messageService.sendStorageResult(storagService.getMessageID(), storagService);
 			} catch (ServiceException e) {
 				Util.getLogger(this).error(e.getMessage(), e);
 				e.printStackTrace();

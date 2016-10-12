@@ -32,7 +32,7 @@ import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
 
 
-public class SendStudiesURLs {
+public class SendStorages {
 
 	public void execute() {
 		
@@ -54,7 +54,7 @@ public class SendStudiesURLs {
 					//TODO requisitar o certificado do dominio remoto
 					
 					
-					String messageID = messageService.sendURL(storageServiceAccess);
+					String messageID = messageService.sendStorage(storageServiceAccess);
 					storageServiceAccess.setMessageID(messageID);
 					storageServiceAccess.setStatus(StorageService.PENDING);
 					storageServiceAccess.setUploadAttempt(storageServiceAccess.getUploadAttempt()+1);

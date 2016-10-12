@@ -35,13 +35,13 @@ public interface MessageServiceIF {
 	public static final String CERTIFICATE_RESULT_UPDATED = "UPDATED";
 	public static final String CERTIFICATE_RESULT_ERROR = "ERROR";
 	
-	public String sendURL(StorageServiceAccess storageServiceAccess) throws ServiceException;
+	public String sendStorage(StorageServiceAccess storageServiceAccess) throws ServiceException;
 	
-	public void sendURL(StorageService storageService, Access access) throws ServiceException;
+	public void sendStorage(StorageService storageService, Access access) throws ServiceException;
 	
-	public void sendURL(StorageService storageService, List<Access> accesses) throws ServiceException ;
+	public void sendStorage(StorageService storageService, List<Access> accesses) throws ServiceException ;
 	
-	public void sendURLs(List<StorageService> storageServices, List<Access> accesses) throws ServiceException ;		
+	public void sendStorages(List<StorageService> storageServices, List<Access> accesses) throws ServiceException ;		
 
 	/**
 	 * 
@@ -51,9 +51,9 @@ public interface MessageServiceIF {
 	 * @return Map<String, String> contains <messageID, url>
 	 * @throws ServiceException
 	 */
-	public Map<String, String> getURLs(Date initialDate, Date finalDate, String messageID) throws ServiceException ;
+	public Map<String, String> getStorages(Date initialDate, Date finalDate, String messageID) throws ServiceException ;
 
-	public void sendResult(String messageID, StorageService storageService) throws ServiceException;
+	public void sendStorageResult(String messageID, StorageService storageService) throws ServiceException;
 	
 	/**
 	 * 
@@ -63,7 +63,7 @@ public interface MessageServiceIF {
 	 * @return Map<String, String> contains <domain, status>
 	 * @throws ServiceException
 	 */
-	public Map<String, String> getResults(Date initialDate, Date finalDate, String originalMessageID) throws ServiceException;
+	public Map<String, String> getStorageResults(Date initialDate, Date finalDate, String originalMessageID) throws ServiceException;
 	
 	public String sendCertificate(File certificate, Access access) throws ServiceException;
 	
@@ -123,15 +123,5 @@ public interface MessageServiceIF {
 	
 	
 	public int getMaxAttempts();
-
-	
-
-	
-
-	
-
-	
-
-	
 	
 }

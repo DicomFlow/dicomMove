@@ -93,7 +93,7 @@ public class StoreStudies {
 			} 
 			try {
 				storageService.save();
-				messageService.sendResult(storageService.getMessageID(), storageService);
+				messageService.sendStorageResult(storageService.getMessageID(), storageService);
 			} catch (ServiceException e) {
 				Util.getLogger(this).error(e.getMessage(), e);
 				e.printStackTrace();

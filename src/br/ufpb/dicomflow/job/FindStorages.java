@@ -33,7 +33,7 @@ import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
 
-public class FindStudiesURLs {
+public class FindStorages {
 	
 	public void execute() {
 		
@@ -44,7 +44,7 @@ public class FindStudiesURLs {
 		
 		Map<String,String> urls = new HashMap<String, String>(); 
 		try {
-			urls = messageService.getURLs(null, null, null);
+			urls = messageService.getStorages(null, null, null);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -79,7 +79,7 @@ public class FindStudiesURLs {
 
 			try {
 				storageService.save();
-				messageService.sendResult(messageID, storageService);
+				messageService.sendStorageResult(messageID, storageService);
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}

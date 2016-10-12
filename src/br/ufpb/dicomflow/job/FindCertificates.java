@@ -34,7 +34,7 @@ import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
 
 
-public class StoreCertificate {
+public class FindCertificates {
 
 	public void execute() {
 		

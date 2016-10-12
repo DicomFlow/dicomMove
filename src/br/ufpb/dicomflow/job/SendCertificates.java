@@ -33,7 +33,7 @@ import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.Util;
 
 
-public class SendCertificate {
+public class SendCertificates {
 
 	public void execute() {
 		

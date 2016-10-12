@@ -41,7 +41,7 @@ import br.ufpb.dicomflow.service.UrlGeneratorIF;
 import br.ufpb.dicomflow.util.Util;
 
 
-public class FindStudies {
+public class PrepareStorages {
 
 	public void execute(){
 		
