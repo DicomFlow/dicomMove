@@ -479,6 +479,7 @@ public class MessageService implements MessageServiceIF {
 		url.addPatient(patient);
 		
 		requestPut.setUrl(url);
+		requestPut.setRequestType(RequestPut.TYPE_REPORT);
 		requestPut.setTimeout(requestServiceAccess.getValidity());
 			
 		try {
@@ -533,6 +534,7 @@ public class MessageService implements MessageServiceIF {
 			url.addPatient(patient);
 			
 			requestPut.setUrl(url);
+			requestPut.setRequestType(RequestPut.TYPE_REPORT);
 			requestPut.setTimeout("");
 			
 			try {
