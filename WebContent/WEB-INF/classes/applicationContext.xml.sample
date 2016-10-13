@@ -9,7 +9,7 @@
     <!-- ========================= Start of PERSISTENCE DEFINITIONS ========================= -->
     <context:annotation-config />
     <!-- DataSource Definition -->
-    <bean id="dataSource"
+    <bean id="pacsDataSource"
       	class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName">
 			<value>BD_PACS_DRIVER</value>
@@ -25,7 +25,7 @@
 		</property>
 	</bean>
 	
-	<bean id="dataSource2"
+	<bean id="dicomflowDataSource"
       	class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName">
 			<value>BD_DICOMFLOW_DRIVER</value>
@@ -41,16 +41,13 @@
 		</property>
 	</bean>
     <!-- Hibernate SessionFactory Definition -->
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+    <bean id="pacsSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="annotatedClasses">
             <list>
-                <value>br.ufpb.dicomflow.bean.File</value>
-                <value>br.ufpb.dicomflow.bean.FileSystem</value>
-                <value>br.ufpb.dicomflow.bean.Instance</value>
-                <value>br.ufpb.dicomflow.bean.Patient</value>
-                <value>br.ufpb.dicomflow.bean.Series</value>
-                <value>br.ufpb.dicomflow.bean.Study</value>
-                <value>br.ufpb.dicomflow.bean.StudyOnFileSystem</value>
+          		<value>INSTANCE_BEAN_CLASS</value>
+                <value>PATIENT_BEAN_CLASS</value>
+                <value>SERIES_BEAN_CLASS</value>
+                <value>STUDY_BEAN_CLASS</value>
             </list>
         </property>
                 
@@ -64,17 +61,19 @@
 		</property>	
         
         <property name="dataSource">
-            <ref bean="dataSource"/>
+            <ref bean="pacsDataSource"/>
         </property>
     </bean>
     
-    <bean id="sessionFactory2" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+    <bean id="dicomflowSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="annotatedClasses">
             <list>
                 <value>br.ufpb.dicomflow.bean.Access</value>
-                <value>br.ufpb.dicomflow.bean.Registry</value>
-                <value>br.ufpb.dicomflow.bean.RegistryAccess</value>
-                <value>br.ufpb.dicomflow.bean.User</value>                                
+                <value>br.ufpb.dicomflow.bean.RequestService</value>
+                <value>br.ufpb.dicomflow.bean.RequestServiceAccess</value>
+                <value>br.ufpb.dicomflow.bean.StorageService</value>
+                <value>br.ufpb.dicomflow.bean.StorageServiceAccess</value>
+                <value>br.ufpb.dicomflow.bean.ServicePermission</value>                              
             </list>
         </property>
                 
@@ -84,58 +83,41 @@
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
 				<prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>	
         
         <property name="dataSource">
-            <ref bean="dataSource2"/>
+            <ref bean="dicomflowDataSource"/>
         </property>
     </bean>
-    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate"> 
-        <property name="sessionFactory"><ref bean="sessionFactory"/></property> 
-        <property name="jdbcExceptionTranslator"><ref bean="jdbcExceptionTranslator"/></property> 
+    <bean id="pacsHibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate"> 
+        <property name="sessionFactory"><ref bean="pacsSessionFactory"/></property> 
+        <property name="jdbcExceptionTranslator"><ref bean="pacsJdbcExceptionTranslator"/></property> 
     </bean>
     
-    <bean id="hibernateTemplate2" class="org.springframework.orm.hibernate3.HibernateTemplate"> 
-        <property name="sessionFactory"><ref bean="sessionFactory2"/></property> 
-        <property name="jdbcExceptionTranslator"><ref bean="jdbcExceptionTranslator2"/></property> 
+    <bean id="dicomflowHibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate"> 
+        <property name="sessionFactory"><ref bean="dicomflowSessionFactory"/></property> 
+        <property name="jdbcExceptionTranslator"><ref bean="dicomflowJdbcExceptionTranslator"/></property> 
     </bean> 
     
-    <bean id="persistentService" class="br.ufpb.dicomflow.service.impl.HibernatePersistentServiceImpl">
-        <property name="hibernateTemplate"><ref bean="hibernateTemplate"/></property> 
+    <bean id="pacsPersistentService" class="PACS_PERSISTENT_SERVICE_CLASS">
+        <property name="hibernateTemplate"><ref bean="pacsHibernateTemplate"/></property> 
     </bean>
     
-    <bean id="persistentService2" class="br.ufpb.dicomflow.service.impl.HibernatePersistentServiceImpl">
-        <property name="hibernateTemplate"><ref bean="hibernateTemplate2"/></property> 
+    <bean id="persistentService" class="br.ufpb.dicomflow.service.PersistentService">
+        <property name="hibernateTemplate"><ref bean="dicomflowHibernateTemplate"/></property> 
     </bean>
-    <bean id="jdbcExceptionTranslator" class="org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator"> 
+    <bean id="pacsJdbcExceptionTranslator" class="org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator"> 
         <property name="dataSource">
-            <ref bean="dataSource"/>
+            <ref bean="pacsDataSource"/>
         </property> 
     </bean>
     
-    <bean id="jdbcExceptionTranslator2" class="org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator"> 
+    <bean id="dicomflowJdbcExceptionTranslator" class="org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator"> 
         <property name="dataSource">
-            <ref bean="dataSource2"/>
+            <ref bean="dicomflowDataSource"/>
         </property> 
-    </bean>
-    
-    <bean id="mailService" class="br.ufpb.dicomflow.service.impl.EmailServiceImpl">
-        <property name="smtp">
-            <value>SMTP_URL</value>
-        </property>
-        <property name="port">
-            <value>SMTO_PORT</value>
-        </property>
-        <property name="online">
-            <value>true</value>
-        </property>
-        <property name="user">
-            <value>USER_MAIL</value>
-        </property>
-        <property name="password">
-            <value>USER_PASSWORD</value>
-        </property>
     </bean>
     
     <bean id="mailAuthenticator" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPAuthenticator" >
@@ -152,7 +134,7 @@
     </bean>
     <bean id="mailContentBuilder" class="br.ufpb.dicomflow.integrationAPI.mail.impl.SMTPContentBuilder">
     </bean>
-    <bean id="urlGenerator" class="br.ufpb.dicomflow.service.impl.DefaultURLGenerator">
+    <bean id="urlGenerator" class="br.ufpb.dicomflow.service.UrlGenerator">
     	<property name="host">
             <value>DOMAIN_URL</value>
         </property>
@@ -167,8 +149,7 @@
         </property>
     </bean> 
     
-    
-    <bean id="messageService" class="br.ufpb.dicomflow.service.impl.DicomMessageServiceImpl"> 
+    <bean id="messageService" class="br.ufpb.dicomflow.service.MessageService"> 
         <property name="mailAuthenticator">
             <ref bean="mailAuthenticator"/>
         </property> 
@@ -189,7 +170,7 @@
 		</property>
     </bean>
     
-    <bean id="fileService" class="br.ufpb.dicomflow.service.impl.FileServiceImpl"> 
+    <bean id="fileService" class="br.ufpb.dicomflow.service.FileService"> 
         <property name="archivePath">
             <value>PACS_ARCHIVE_PATH</value>
         </property>
@@ -205,14 +186,162 @@
         <property name="extractDir">
             <value>RECEIVED_FILES_EXTRACT_DIR</value>
         </property>
-        <property name="keystore">
+    </bean>
+    
+    <bean id="certificateService" class="br.ufpb.dicomflow.service.CertificateService"> 
+    	<property name="keystore">
 			<value>KEYSTORE_FILE</value>
 		</property>
 		<property name="keystorePass">
 			<value>KEYSTORE_PASSWORD</value>
 		</property>
+		<property name="keyAlias">
+			<value>KEYSTORE_KEY_ALIAS</value>
+		</property>
 		<property name="keyPass">
 			<value>KEYSTORE_KEY_PASSWORD</value>
 		</property>
     </bean>
+    
+    <bean id="sendCertificatesJob" class="br.ufpb.dicomflow.job.SendCertificates"/>
+    <bean id="sendCertificatesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="sendCertificatesJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="sendCertificatesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="sendCertificatesJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="findCertificatesJob" class="br.ufpb.dicomflow.job.FindCertificates"/>
+    <bean id="findCertificatesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="findCertificatesJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="findCertificatesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="findCertificatesJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="verifyCertificateResultJob" class="br.ufpb.dicomflow.job.VerifyCertificateResult"/>
+    <bean id="verifyCertificateResultJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="verifyCertificateResultJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="verifyCertificateResultCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="verifyCertificateResultJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="prepareStoragesJob" class="br.ufpb.dicomflow.job.PrepareStorages"/>
+    <bean id="prepareStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="prepareStoragesJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="prepareStoragesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="prepareStoragesJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="sendStoragesJob" class="br.ufpb.dicomflow.job.SendStorages"/>
+    <bean id="sendStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="sendStoragesJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="sendStoragesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="sendStoragesJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="findStoragesJob" class="br.ufpb.dicomflow.job.FindStorages"/>
+    <bean id="findStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="findStoragesJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="findStoragesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="findStoragesJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="verifyStorageResultsJob" class="br.ufpb.dicomflow.job.VerifyStorageResults"/>
+    <bean id="verifyStorageResultsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="verifyStorageResultsJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="verifyStorageResultsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="verifyStorageResultsJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="storeStudiesJob" class="br.ufpb.dicomflow.job.StoreStudies"/>
+    <bean id="storeStudiesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="storeStudiesJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="storeStudiesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="storeStudiesJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="storePendingStudiesJob" class="br.ufpb.dicomflow.job.StorePendingStudies"/>
+    <bean id="storePendingStudiesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="storePendingStudiesJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="storePendingStudiesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="storePendingStudiesJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="prepareRequestsJob" class="br.ufpb.dicomflow.job.PrepareRequests"/>
+    <bean id="prepareRequestsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="prepareRequestsJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="prepareRequestsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="prepareRequestsJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="sendRequestsJob" class="br.ufpb.dicomflow.job.SendRequests"/>
+    <bean id="sendRequestsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="sendRequestsJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="sendRequestsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="sendRequestsJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="verifyRequestResultsJob" class="br.ufpb.dicomflow.job.VerifyRequestResults"/>
+    <bean id="verifyRequestResultsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="verifyRequestResultsJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="verifyRequestResultsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="verifyRequestResultsJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	    <property name="triggers">
+	        <list>
+	            <ref bean="prepareRequestsCronTrigger"/>
+	            <ref bean="sendRequestsCronTrigger"/>
+	        </list>
+	    </property>
+	</bean>
+    
 </beans>

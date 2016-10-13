@@ -1,3 +1,6 @@
+INSERT INTO `dicomflow`.`access` SET `id`=0, `certificateStatus`='CLOSED', `host`='150.165.250.181', `mail`='protocolointegracao@gmail.com', `port`=8081;
+INSERT INTO `dicomflow`.`service_permission` SET `id`=0, `description`='Storage', `modalities`='*', `id_access`=1;
+
 INSERT INTO pacsdb.study VALUES (100,null,null,100,100,'2004-03-05 08:59:22',0,null,null,null,null,null,'CT1 ABDOMEN',null,null,null,'SCHEDULED','CT',100,1,100,null,'DCM4CHEE',null,null,0,0,null,'2004-03-05 08:59:22','2004-03-05 08:59:22','atributes');
 INSERT INTO pacsdb.study VALUES (101,null,null,101,101,'2004-03-05 08:59:22',0,null,null,null,null,null,'CT1 ABDOMEN',null,null,null,'SCHEDULED','CT',101,1,100,null,'DCM4CHEE',null,null,0,0,null,'2004-03-05 08:59:22','2004-03-05 08:59:22','atributes');
 INSERT INTO pacsdb.study VALUES (102,null,null,102,102,'2004-03-05 08:59:22',0,null,null,null,null,null,'CT1 ABDOMEN',null,null,null,'SCHEDULED','CT',102,1,100,null,'DCM4CHEE',null,null,0,0,null,'2004-03-05 08:59:22','2004-03-05 08:59:22','atributes');

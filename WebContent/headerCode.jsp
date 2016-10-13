@@ -5,8 +5,6 @@
 
 <%@ page import="br.ufpb.dicomflow.business.*"%>
 <%@ page import="br.ufpb.dicomflow.service.*"%>
-<%@ page import="br.ufpb.dicomflow.service.impl.*"%>
-
 <%@ page import="br.ufpb.dicomflow.bean.*"%>
 
 <%

@@ -18,13 +18,20 @@
 
 package br.ufpb.dicomflow.action;
 
+import br.ufpb.dicomflow.bean.Persistent;
 
 /**
  * Managed Bean Adapter
  */
 public abstract class GenericActionAdapter extends GenericAction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4941216932701511379L;
 	
+	private String[] selectedObjects = {};
+
 	
 	/* (non-Javadoc)
 	 * @see br.org.paqtc.siri.action.GenericAction#getCollectionLabelRemove()
@@ -53,6 +60,30 @@ public abstract class GenericActionAdapter extends GenericAction {
 	protected String getFormNameUpdate() {
 
 		return null;
+	}
+	
+	@Override
+	public String[] getSelectedObjects() {
+		return selectedObjects;
+	}
+
+	@Override
+	public void setSelectedObjects(String[] selectedObjects) {
+		this.selectedObjects = selectedObjects;
+	}
+	
+	public Class getClassBean() {
+		return null;
+	}
+	
+	
+	
+	public Persistent getPersistent() {
+		return null;
+	}
+
+	
+	public void setPersistent(Persistent p) {
 	}
 
 	 

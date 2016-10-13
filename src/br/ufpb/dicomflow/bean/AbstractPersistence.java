@@ -32,6 +32,13 @@ import br.ufpb.dicomflow.util.CriptografiaBase64;
 
 public abstract class AbstractPersistence implements Serializable, Persistent {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4989439144406532043L;
+	
+	private Long id;
+
 	public void save() throws ServiceException{
 		ServiceLocator.singleton().getPersistentService().saveOrUpdate(this);
 	}
@@ -97,9 +104,13 @@ public abstract class AbstractPersistence implements Serializable, Persistent {
 	}
 
 	
-	public abstract Long getId();
+	public Long getId(){
+		return id;
+	}
 	
-	public abstract void setId(Long id);
+	public void setId(Long id){
+		this.id = id;
+	}
 
 	
 }

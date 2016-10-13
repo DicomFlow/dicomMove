@@ -18,11 +18,11 @@
 
 package br.ufpb.dicomflow.service;
 
-import br.ufpb.dicomflow.bean.Study;
+import br.ufpb.dicomflow.bean.StudyIF;
 
 public interface UrlGeneratorIF {
 	
-	public String getURL(Study study);
+	public String getURL(StudyIF study);
 	
 	public String getHost();
 	

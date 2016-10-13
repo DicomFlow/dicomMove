@@ -62,7 +62,15 @@ public class Access extends AbstractPersistence {
 	
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="id_access")
-	private Set<RegistryAccess> accessRegistries;
+	private Set<StorageServiceAccess> accessStorageServices;
+	
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="id_access")
+	private Set<RequestServiceAccess> accessRequestServices;
+	
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="id_access")
+	private Set<ServicePermission> servicePermissions;
 	
 	@Override
 	public Long getId() {
@@ -89,15 +97,23 @@ public class Access extends AbstractPersistence {
 	public void setCredential(String credential) {
 		this.credential = credential;
 	}
-
-	public Set<RegistryAccess> getAccessRegistries() {
-		return accessRegistries;
+	
+	public Set<StorageServiceAccess> getAccessStorageServices() {
+		return accessStorageServices;
 	}
 
-	public void setAccessRegistries(Set<RegistryAccess> accessRegistries) {
-		this.accessRegistries = accessRegistries;
+	public void setAccessStorageServices(Set<StorageServiceAccess> accessStorageServices) {
+		this.accessStorageServices = accessStorageServices;
 	}
 	
+	public Set<RequestServiceAccess> getAccessRequestServices() {
+		return accessRequestServices;
+	}
+
+	public void setAccessRequestServices(Set<RequestServiceAccess> accessRequestServices) {
+		this.accessRequestServices = accessRequestServices;
+	}
+
 	public String getHost() {
 		return host;
 	}
@@ -121,15 +137,24 @@ public class Access extends AbstractPersistence {
 	public void setCertificateStatus(String certificateStatus) {
 		this.certificateStatus = certificateStatus;
 	}
+	
+
+	public Set<ServicePermission> getServicePermissions() {
+		return servicePermissions;
+	}
+
+	public void setServicePermissions(Set<ServicePermission> servicePermissions) {
+		this.servicePermissions = servicePermissions;
+	}
 
 	@Override
 	public void save() throws ServiceException{
-		ServiceLocator.singleton().getPersistentService2().saveOrUpdate(this);
+		ServiceLocator.singleton().getPersistentService().saveOrUpdate(this);
 	}
 	
 	@Override
 	public void remove() throws ServiceException {
-		ServiceLocator.singleton().getPersistentService2().remove(this);
+		ServiceLocator.singleton().getPersistentService().remove(this);
 		
 	}
 
