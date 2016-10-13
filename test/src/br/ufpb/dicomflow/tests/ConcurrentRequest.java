@@ -70,12 +70,12 @@ public class ConcurrentRequest implements Runnable {
 			ClientConfig clientConfig = new ClientConfig();
 //			clientConfig.register(MyClientResponseFilter.class);
 //			clientConfig.register(new AnotherClientFilter());				
-			Client client = ClientBuilder.newClient(clientConfig);
+			//Client client = ClientBuilder.newClient(clientConfig);
 //			client.register(ThirdClientFilter.class);
 			//http://localhost:8090/DicomMoveServer/rest/DownloadStudy
-			WebTarget webTarget = client.target("http://" + host + ":" + port + "/" + context + "/");
+			//WebTarget webTarget = client.target("http://" + host + ":" + port + "/" + context + "/");
 //			webTarget.register(FilterForExampleCom.class);
-			WebTarget resourceWebTarget = webTarget.path(serviceName + "/" + studyId);
+			//WebTarget resourceWebTarget = webTarget.path(serviceName + "/" + studyId);
 //			WebTarget helloworldWebTarget = resourceWebTarget.path("helloworld");
 //			WebTarget helloworldWebTargetWithQueryParam = helloworldWebTarget.queryParam("greeting", "Hi World!");
 			
