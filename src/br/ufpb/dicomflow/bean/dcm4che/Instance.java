@@ -56,7 +56,7 @@ public class Instance extends AbstractPersistence implements InstanceIF{
 	@JoinColumn(name="series_fk")
 	private Series series;
 	
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name="instance_fk")
 	private Set<File> files;
 	

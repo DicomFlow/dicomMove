@@ -7,6 +7,6 @@
 <title>DicomMove</title>
 </head>
 <body>
-Dicom, we have a problem. <a href="index.jsp">Back to index</a>
+Igor, it´s alive!
 </body>
 </html>
