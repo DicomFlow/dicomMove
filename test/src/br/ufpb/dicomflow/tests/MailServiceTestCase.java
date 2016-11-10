@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import br.ufpb.dicomflow.integrationAPI.conf.IntegrationAPIProperties;
+import br.ufpb.dicomflow.integrationAPI.conf.DicomMessageProperties;
 import br.ufpb.dicomflow.integrationAPI.mail.MailAuthenticatorIF;
 import br.ufpb.dicomflow.integrationAPI.mail.MailContentBuilderIF;
 import br.ufpb.dicomflow.integrationAPI.mail.MailHeadBuilderIF;
@@ -47,7 +47,7 @@ public class MailServiceTestCase {
 		sharingPut.setUrl(urls);
 		
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load("WebContent/WEB_INF/classes/config.properties");
 		
 		Properties props = iap.getSendProperties();

@@ -15,7 +15,7 @@ import br.ufpb.dicomflow.bean.RequestService;
 import br.ufpb.dicomflow.bean.RequestServiceAccess;
 import br.ufpb.dicomflow.bean.StorageService;
 import br.ufpb.dicomflow.bean.StorageServiceAccess;
-import br.ufpb.dicomflow.integrationAPI.conf.IntegrationAPIProperties;
+import br.ufpb.dicomflow.integrationAPI.conf.DicomMessageProperties;
 import br.ufpb.dicomflow.integrationAPI.exceptions.PropertyNotFoundException;
 import br.ufpb.dicomflow.integrationAPI.exceptions.ServiceCreationException;
 import br.ufpb.dicomflow.integrationAPI.mail.FilterIF;
@@ -64,7 +64,7 @@ public class MessageService implements MessageServiceIF {
 		
 		StorageSave storageSave = (StorageSave) ServiceFactory.createService(ServiceIF.STORAGE_SAVE);
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
 		storageSave.setUrl(new URL(storageServiceAccess.getStorageService().getLink(), new Credentials(storageServiceAccess.getAccess().getCredential())));
@@ -97,7 +97,7 @@ public class MessageService implements MessageServiceIF {
 		
 		StorageSave storageSave = (StorageSave) ServiceFactory.createService(ServiceIF.STORAGE_SAVE);
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
 		Iterator<Access> it = accesses.iterator();
@@ -189,7 +189,7 @@ public class MessageService implements MessageServiceIF {
 		storageResult.setResult(results);
 
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
 		
@@ -264,7 +264,7 @@ public class MessageService implements MessageServiceIF {
 		certificateRequest.setPort(getUrlGenerator().getPort());
 
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
 		
@@ -299,7 +299,7 @@ public class MessageService implements MessageServiceIF {
 		filter.setIdMessage(messageID);
 		filter.setServiceType(ServiceIF.CERTIFICATE_REQUEST);
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
 		Map<Access,byte[]> servicesAndAttachs = new HashMap<Access,byte[]>();
@@ -350,7 +350,7 @@ public class MessageService implements MessageServiceIF {
 		certificateResult.setCredential(access.getCredential());
 		certificateResult.setStatus(status);
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
 		
@@ -401,7 +401,7 @@ public class MessageService implements MessageServiceIF {
 		filter.setIdMessage(messageID);
 		filter.setServiceType(type);
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
 		try {
@@ -430,7 +430,7 @@ public class MessageService implements MessageServiceIF {
 		filter.setIdMessage(messageID);
 		filter.setServiceType(type);
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
 		try {
@@ -458,7 +458,7 @@ public class MessageService implements MessageServiceIF {
 		
 		RequestPut requestPut = (RequestPut) ServiceFactory.createService(ServiceIF.REQUEST_PUT);
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
 		URL url = new URL(requestServiceAccess.getRequestService().getLink(), new Credentials(requestServiceAccess.getAccess().getCredential()));
@@ -509,7 +509,7 @@ public class MessageService implements MessageServiceIF {
 		
 		RequestPut requestPut = (RequestPut) ServiceFactory.createService(ServiceIF.REQUEST_PUT);
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
 		Iterator<Access> it = accesses.iterator();
@@ -618,7 +618,7 @@ public class MessageService implements MessageServiceIF {
 		requestResult.setResult(results);
 
 		
-		IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
 		

@@ -33,7 +33,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.client.ClientConfig;
 
-import br.ufpb.dicomflow.integrationAPI.conf.IntegrationAPIProperties;
+import br.ufpb.dicomflow.integrationAPI.conf.DicomMessageProperties;
 import br.ufpb.dicomflow.integrationAPI.exceptions.PropertyNotFoundException;
 
 /**
@@ -53,7 +53,7 @@ public class ConcurrentRequest implements Runnable {
 		
 		try {
 			
-			IntegrationAPIProperties iap = IntegrationAPIProperties.getInstance();
+			DicomMessageProperties iap = DicomMessageProperties.getInstance();
 			iap.load("WebContent/WEB_INF/classes/config.properties");
 			
 		
