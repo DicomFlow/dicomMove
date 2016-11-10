@@ -18,7 +18,47 @@
 package br.ufpb.dicomflow.service;
 
 public class AccessService {
+	static String mailRegex = "[A-Za-z0-9\\._-]+@[A-Za-z0-9]+(\\.[A-Za-z]+)*";
+	static String hostRegex = "[A-Za-z0-9]+(\\.[A-Za-z0-9]+)+";
+	static String portRegex = "[0-9]+";
+	static String modalityRegex = "[A-Z]{2}(,[A-Z]{2})*";
+	static String permissionRegex =          "(Sharing|Storage|Request|Find|Discovery) (\\*|"+modalityRegex+");";
+	static String multiplePermissionRegex = "((Sharing|Storage|Request|Find|Discovery) (\\*|"+modalityRegex+");)+";
+	static String acessRegex = mailRegex+"#"+hostRegex+"#"+portRegex+"#"+multiplePermissionRegex;
 	
-	String regex = "[A-Za-z0-9\\._-]+@[A-Za-z0-9]+(\\.[A-Za-z]+)*#[A-Za-z0-9]+(\\.[A-Za-z0-9]+)+#[0-9]+#([Sharing|Storage|Request|Find|Discovery] *|([A-Za-z]{2}(,[A-Za-z]{2})+)+";
+	
+	
+	
+	public static void main(String[] args) {
+		
+		String mail = "daniloalexandre@gmail.com";
+		String host = "ufpb.br";
+		String port = "8080";
+		String modality = "CT,MR";
+		String permission = "Sharing *;";
+		String permissions = "Sharing *;Storage CT,MR;Find *;";
+		String example = "daniloalexandre@gmail.com#ufpb.br#8080#Sharing *;Storage CT,MR;Find *;";
+		
+		boolean matches = mail.matches(mailRegex);
+		System.out.println("mail matches: " + matches);
+		
+		matches = host.matches(hostRegex);
+		System.out.println("host matches: " + matches);
+		
+		matches = port.matches(portRegex);
+		System.out.println("port matches: " + matches);
+		
+		matches = modality.matches(modalityRegex);
+		System.out.println("modality matches: " + matches);
+		
+		matches = permission.matches(permissionRegex);
+		System.out.println("permission matches: " + matches);
+		
+		matches = permissions.matches(multiplePermissionRegex);
+		System.out.println("permissions matches: " + matches);
+		
+		matches = example.matches(acessRegex);
+		System.out.println("example matches: " + matches);
+	}
 
 }
