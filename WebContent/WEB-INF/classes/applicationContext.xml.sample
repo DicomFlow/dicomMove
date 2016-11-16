@@ -338,8 +338,26 @@
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	    <property name="triggers">
 	        <list>
-	            <ref bean="prepareRequestsCronTrigger"/>
-	            <ref bean="sendRequestsCronTrigger"/>
+	            <!-- JOBS PARA ENVIO E RECEBIMENTO DE CERTIFICADOS -->
+            	<ref bean="sendCertificatesCronTrigger"/>
+                <ref bean="findCertificatesCronTrigger"/>
+                <ref bean="verifyCertificateResultCronTrigger"/>
+                
+               
+                <!-- JOBS PARA ENVIO DE STORAGE SAVE -->
+                <ref bean="prepareStoragesCronTrigger"/>
+                <ref bean="sendStoragesCronTrigger"/>
+                <ref bean="verifyStorageResultsCronTrigger"/>
+                
+                <!-- JOBS PARA RECEBIMENTO DE STORAGE SAVE -->
+                <ref bean="findStoragesCronTrigger"/>
+                <ref bean="storeStudiesCronTrigger"/>
+                <ref bean="storePendingStudiesCronTrigger"/>
+                
+                <!-- JOBS PARA ENVIO DE REQUEST PUT -->
+                <ref bean="prepareRequestsCronTrigger"/>
+                <ref bean="sendRequestsCronTrigger"/>
+                <ref bean="verifyRequestResultsCronTrigger"/>
 	        </list>
 	    </property>
 	</bean>

@@ -57,7 +57,7 @@ public class StoreStudies {
 			try {
 				registry.save();
 			} catch (ServiceException e) {
-				Util.getLogger(this).error("Não foi possível bloquear o registro"+e.getMessage(), e);
+				Util.getLogger(this).error("Nï¿½o foi possï¿½vel bloquear o registro"+e.getMessage(), e);
 				e.printStackTrace();
 			}
 			
@@ -67,9 +67,9 @@ public class StoreStudies {
 		while (it.hasNext()) {
 			StorageService storageService = it.next();
 			
-			//String url = registry.getLink();
+			String url = storageService.getLink();
 			//TODO - remover  - inserido para testes			
-			String url = "http://150.165.250.242:8081/dicomMove2/rest/DownloadStudy/2.16.840.1.113669.632.20.1211.10000324479";
+			//String url = "http://150.165.250.242:8081/dicomMove2/rest/DownloadStudy/2.16.840.1.113669.632.20.1211.10000324479";
 			
 			Util.getLogger(this).debug("URL FOUND : " + url);
 			
