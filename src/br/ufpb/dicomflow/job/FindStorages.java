@@ -79,7 +79,7 @@ public class FindStorages {
 
 			try {
 				storageService.save();
-				messageService.sendStorageResult(messageID, storageService);
+				messageService.sendStorageResult(messageID+"@"+storageService.getHost(), storageService);
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
