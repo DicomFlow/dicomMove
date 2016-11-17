@@ -57,7 +57,7 @@ public class StoreStudies {
 			try {
 				registry.save();
 			} catch (ServiceException e) {
-				Util.getLogger(this).error("Nï¿½o foi possï¿½vel bloquear o registro"+e.getMessage(), e);
+				Util.getLogger(this).error("Não foi possível bloquear o registro "+e.getMessage(), e);
 				e.printStackTrace();
 			}
 			

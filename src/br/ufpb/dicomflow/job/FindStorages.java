@@ -75,14 +75,16 @@ public class FindStorages {
 				storageService.setType(StorageService.RECEIVED);
 				storageService.setDownloadAttempt(0);
 				
+				try {
+					storageService.save();
+					messageService.sendStorageResult(messageID+"@"+storageService.getHost(), storageService);
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+				
 			}
 
-			try {
-				storageService.save();
-				messageService.sendStorageResult(messageID+"@"+storageService.getHost(), storageService);
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
+			
 			
 			
 			
