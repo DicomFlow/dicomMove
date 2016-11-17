@@ -81,11 +81,11 @@ public class PersistentService extends HibernateDaoSupport  implements Persisten
 		try {
 			trans = session.beginTransaction();		
 			if (!((Persistent)object).saveOnDb()) {
-				logger.debug("enrei no save");
+//				logger.debug("enrei no save");
 				x =  session.save(object);
 //				((Persistent) object).setId(((Integer)x).intValue());
 			}else {
-				logger.debug("entrei no update");
+//				logger.debug("entrei no update");
 				session.update(object);
 			}		
 			
@@ -734,7 +734,7 @@ String query = "from " + type.getName() + " type1 ";
 		if(values == null || values.isEmpty()){
 			return;
 		}
-		System.err.println("entrei no m�todo que vai remover todos os registros selecionados!!!!!");
+//		System.err.println("entrei no m�todo que vai remover todos os registros selecionados!!!!!");
 		Session session = getSession();	
 		Transaction trans = null;
 		try {
