@@ -203,6 +203,21 @@
 		</property>
     </bean>
     
+    <bean id="findAccessJob" class="br.ufpb.dicomflow.job.FindAccesses"> 
+        <property name="accessConfigFile">
+			<value>ACCESSES_PROPERTIES_CONFIG_FILE</value>
+		</property>
+    </bean>
+    <bean id="findAccessJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="findAccessJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="findAccessCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="findAccessJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+    
     <bean id="sendCertificatesJob" class="br.ufpb.dicomflow.job.SendCertificates"/>
     <bean id="sendCertificatesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="sendCertificatesJob"/>
@@ -338,26 +353,29 @@
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	    <property name="triggers">
 	        <list>
-	            <!-- JOBS PARA ENVIO E RECEBIMENTO DE CERTIFICADOS -->
+	        	<!-- JOBS PARA ATUALIZACAO DE ACCESSES E SERVICE PERMISSIONS 
+            	<ref bean="findAccessCronTrigger"/> -->
+	        
+	            <!-- JOBS PARA ENVIO E RECEBIMENTO DE CERTIFICADOS 
             	<ref bean="sendCertificatesCronTrigger"/>
                 <ref bean="findCertificatesCronTrigger"/>
-                <ref bean="verifyCertificateResultCronTrigger"/>
+                <ref bean="verifyCertificateResultCronTrigger"/> -->
                 
                
-                <!-- JOBS PARA ENVIO DE STORAGE SAVE -->
+                <!-- JOBS PARA ENVIO DE STORAGE SAVE 
                 <ref bean="prepareStoragesCronTrigger"/>
                 <ref bean="sendStoragesCronTrigger"/>
-                <ref bean="verifyStorageResultsCronTrigger"/>
+                <ref bean="verifyStorageResultsCronTrigger"/> -->
                 
-                <!-- JOBS PARA RECEBIMENTO DE STORAGE SAVE -->
+                <!-- JOBS PARA RECEBIMENTO DE STORAGE SAVE 
                 <ref bean="findStoragesCronTrigger"/>
                 <ref bean="storeStudiesCronTrigger"/>
-                <ref bean="storePendingStudiesCronTrigger"/>
+                <ref bean="storePendingStudiesCronTrigger"/> -->
                 
-                <!-- JOBS PARA ENVIO DE REQUEST PUT -->
+                <!-- JOBS PARA ENVIO DE REQUEST PUT 
                 <ref bean="prepareRequestsCronTrigger"/>
                 <ref bean="sendRequestsCronTrigger"/>
-                <ref bean="verifyRequestResultsCronTrigger"/>
+                <ref bean="verifyRequestResultsCronTrigger"/> -->
 	        </list>
 	    </property>
 	</bean>
