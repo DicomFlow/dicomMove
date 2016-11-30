@@ -77,7 +77,7 @@ public class FindStorages {
 				
 				try {
 					storageService.save();
-					messageService.sendStorageResult(messageID+"@"+storageService.getHost(), storageService);
+					messageService.sendStorageResult(messageID, storageService);
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
