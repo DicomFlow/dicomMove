@@ -45,6 +45,10 @@ public class Access extends AbstractPersistence {
 	 */
 	private static final long serialVersionUID = 8784986036008582117L;
 	
+	public static final String IN = "IN";
+	public static final String OUT = "OUT";
+	
+	
 	public static final String CERIFICATE_OPEN = "OPEN";
 	public static final String CERIFICATE_PENDING = "PENDING";
 	public static final String CERIFICATE_CLOSED = "CLOSED";
@@ -57,8 +61,17 @@ public class Access extends AbstractPersistence {
 	private String mail;
 	private String host;
 	private Integer port;
-	private String credential;
 	private String certificateStatus;
+	private String type;
+	
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="id_owner")
+	private Set<Credential> ownerCredentials;
+	
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="id_domain")
+	private Set<Credential> domainCredentials;
+	
 	
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="id_access")
@@ -68,9 +81,7 @@ public class Access extends AbstractPersistence {
 	@JoinColumn(name="id_access")
 	private Set<RequestServiceAccess> accessRequestServices;
 	
-	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="id_access")
-	private Set<ServicePermission> servicePermissions;
+	
 	
 	@Override
 	public Long getId() {
@@ -88,14 +99,6 @@ public class Access extends AbstractPersistence {
 
 	public void setMail(String mail) {
 		this.mail = mail;
-	}
-
-	public String getCredential() {
-		return credential;
-	}
-
-	public void setCredential(String credential) {
-		this.credential = credential;
 	}
 	
 	public Set<StorageServiceAccess> getAccessStorageServices() {
@@ -138,13 +141,12 @@ public class Access extends AbstractPersistence {
 		this.certificateStatus = certificateStatus;
 	}
 	
-
-	public Set<ServicePermission> getServicePermissions() {
-		return servicePermissions;
+	public String getType() {
+		return type;
 	}
 
-	public void setServicePermissions(Set<ServicePermission> servicePermissions) {
-		this.servicePermissions = servicePermissions;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	@Override
@@ -158,4 +160,22 @@ public class Access extends AbstractPersistence {
 		
 	}
 
+	public Set<Credential> getOwnerCredentials() {
+		return ownerCredentials;
+	}
+
+	public void setOwnerCredentials(Set<Credential> ownerCredentials) {
+		this.ownerCredentials = ownerCredentials;
+	}
+
+	public Set<Credential> getDomainCredentials() {
+		return domainCredentials;
+	}
+
+	public void setDomainCredentials(Set<Credential> domainCredentials) {
+		this.domainCredentials = domainCredentials;
+	}
+
+	
+	
 }

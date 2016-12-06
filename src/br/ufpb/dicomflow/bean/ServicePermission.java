@@ -59,15 +59,15 @@ public class ServicePermission extends AbstractPersistence {
 	private String modalities;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="id_access")
-	private Access access;
+	@JoinColumn(name="id_credential")
+	private Credential credential;
 
-	public Access getAccess() {
-		return access;
+	public Credential getCredential() {
+		return credential;
 	}
 
-	public void setAccess(Access access) {
-		this.access = access;
+	public void setCredential(Credential credential) {
+		this.credential = credential;
 	}
 
 	public Long getId() {

@@ -31,6 +31,7 @@ import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
@@ -62,12 +63,12 @@ public class FindCertificates {
 					if(certificateService.storeCertificate(certificate, access.getHost())){
 						if(bdAccess == null){
 							access.setCertificateStatus(Access.CERIFICATE_OPEN);
-							access.setCredential(Util.getCredential());
+							access.setCredential(CredentialUtil.generateCredentialKey());
 							access.save();
 							messageService.sendCertificateResult(access, MessageServiceIF.CERTIFICATE_RESULT_CREATED);
 						}else{
-							if(bdAccess.getCredential() == null || bdAccess.getCredential().isEmpty()){
-								bdAccess.setCredential(Util.getCredential());
+							if(bdAccess.generateCredentialKey() == null || bdAccess.generateCredentialKey().isEmpty()){
+								bdAccess.setCredential(CredentialUtil.generateCredentialKey());
 							}
 							messageService.sendCertificateResult(bdAccess, MessageServiceIF.CERTIFICATE_RESULT_UPDATED);
 						}

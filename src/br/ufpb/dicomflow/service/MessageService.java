@@ -84,7 +84,7 @@ public class MessageService implements MessageServiceIF {
 		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
-		storageSave.setUrl(new URL(storageServiceAccess.getStorageService().getLink(), new Credentials(storageServiceAccess.getAccess().getCredential())));
+		storageSave.setUrl(new URL(storageServiceAccess.getStorageService().getLink(), new Credentials(storageServiceAccess.getAccess().generateCredentialKey())));
 		storageSave.setTimeout(storageServiceAccess.getValidity());
 			
 		try {
@@ -121,7 +121,7 @@ public class MessageService implements MessageServiceIF {
 		while (it.hasNext()) {
 			Access access = it.next();
 			
-			storageSave.setUrl(new URL(storageService.getLink(), new Credentials(access.getCredential())));
+			storageSave.setUrl(new URL(storageService.getLink(), new Credentials(access.generateCredentialKey())));
 			storageSave.setTimeout("");
 			
 			try {
@@ -364,7 +364,7 @@ public class MessageService implements MessageServiceIF {
 		certificateResult.setMail(access.getMail());
 		certificateResult.setDomain(access.getHost());
 		certificateResult.setPort(access.getPort());
-		certificateResult.setCredential(access.getCredential());
+		certificateResult.setCredential(access.generateCredentialKey());
 		certificateResult.setStatus(status);
 		
 		DicomMessageProperties iap = DicomMessageProperties.getInstance();
@@ -478,7 +478,7 @@ public class MessageService implements MessageServiceIF {
 		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
-		URL url = new URL(requestServiceAccess.getRequestService().getLink(), new Credentials(requestServiceAccess.getAccess().getCredential()));
+		URL url = new URL(requestServiceAccess.getRequestService().getLink(), new Credentials(requestServiceAccess.getAccess().generateCredentialKey()));
 		
 		Patient patient = new Patient();
 		patient.setId(requestServiceAccess.getRequestService().getPatientID());
@@ -533,7 +533,7 @@ public class MessageService implements MessageServiceIF {
 		while (it.hasNext()) {
 			Access access = it.next();
 			
-			URL url = new URL(requestService.getLink(), new Credentials(access.getCredential()));
+			URL url = new URL(requestService.getLink(), new Credentials(access.generateCredentialKey()));
 			
 			Patient patient = new Patient();
 			patient.setId(requestService.getPatientID());

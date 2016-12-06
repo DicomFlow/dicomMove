@@ -58,7 +58,7 @@ public class VerifyCertificateResult {
 			
 			if(result.equals(MessageServiceIF.CERTIFICATE_RESULT_CREATED)|| result.equals(MessageServiceIF.CERTIFICATE_RESULT_UPDATED)){
 				Access bdAccess = (Access) persistentService.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
-				bdAccess.setCredential(access.getCredential());
+				bdAccess.setCredential(access.generateCredentialKey());
 				bdAccess.setCertificateStatus(Access.CERIFICATE_CLOSED);
 				try {
 					bdAccess.save();
