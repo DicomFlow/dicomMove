@@ -82,11 +82,11 @@ public class FindAccesses {
 					//if access does not exists, create new access and permissions
 					if(access == null){
 
-						access = createAccess(mail, host, port, type);
+						access = CredentialUtil.createAccess(mail, host, port, type);
 						access.save();
 						//create credential and permissions for Access with type equals OUT
 						if(access.getType().equals(Access.OUT)){
-							Credential credential = createCredential(access);
+							Credential credential = CredentialUtil.createCredential(access);
 							credential.save();
 
 							List<ServicePermission> newPermissions = readPermissions(credential, accessLine);
@@ -101,10 +101,10 @@ public class FindAccesses {
 					//Update the existing permissions that are in the new permissions list, remove the ones that are not in the list
 					//Create the remaining permissions that are list of new permissions
 					}else if(access.getType().equals(Access.OUT)){
-						
-						Credential credential = (Credential) persistentService.selectByParams(new Object[]{"owner", "domain" }, new Object[]{access, CredentialUtil.getDomain()}, Credential.class);
+						Credential credential = CredentialUtil.getCredential(access, CredentialUtil.getDomain());
+
 						if(credential == null){
-							credential = createCredential(access);
+							credential = CredentialUtil.createCredential(access);
 							credential.save();
 						}
 						List<ServicePermission> newPermissions = readPermissions(credential, accessLine);
@@ -211,31 +211,8 @@ public class FindAccesses {
 		return servicePermissions;
 	}
 
-	private Access createAccess(String mail, String host, String port, String type) {
-
-		Access access = new Access();
-		access.setMail(mail);
-		access.setHost(host);
-		access.setPort(new Integer(port));
-		access.setType(type);
-		access.setCertificateStatus(Access.CERIFICATE_OPEN);
-
-		return access;
-	}
-	/**
-	 * Create a credential for Access with type equals OUT. Other case returns NULL.
-	 * @param access
-	 * @return
-	 */
-	private Credential createCredential(Access access) {
-		
-		Credential credential = new Credential();
-		credential.setKey(CredentialUtil.generateCredentialKey());
-		credential.setOwner(access);
-		credential.setDomain(CredentialUtil.getDomain());
-		return credential;
-		
-	}
+	
+	
 
 	private ServicePermission createServicePermission(Credential credential, String permission) {
 

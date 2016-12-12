@@ -20,6 +20,7 @@ package br.ufpb.dicomflow.util;
 import java.util.UUID;
 
 import br.ufpb.dicomflow.bean.Access;
+import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.service.ServiceLocator;
 
 public class CredentialUtil {
@@ -28,10 +29,42 @@ public class CredentialUtil {
 		return UUID.randomUUID().toString();
 		
 	}
-
+	
 	public static Access getDomain(){
-		
 		return (Access) ServiceLocator.singleton().getPersistentService().select("type", Access.IN, Access.class);
 	}
+	
+	/**
+	 * Create a credential for Access with type equals OUT. Other case returns NULL.
+	 * @param access
+	 * @return
+	 */
+	public static Credential createCredential(Access access) {
+		
+		Credential credential = new Credential();
+		credential.setKey(generateCredentialKey());
+		credential.setOwner(access);
+		credential.setDomain(getDomain());
+		return credential;
+		
+	}
+	
+	public static Access createAccess(String mail, String host, String port, String type) {
+
+		Access access = new Access();
+		access.setMail(mail);
+		access.setHost(host);
+		access.setPort(new Integer(port));
+		access.setType(type);
+		access.setCertificateStatus(Access.CERIFICATE_OPEN);
+
+		return access;
+	}
+	
+	public static Credential getCredential(Access owner, Access domain){
+		return (Credential) ServiceLocator.singleton().getPersistentService().selectByParams(new Object[]{"owner", "domain" }, new Object[]{owner, domain}, Credential.class);
+	}
+
+	
 
 }

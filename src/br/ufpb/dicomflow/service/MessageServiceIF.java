@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.ufpb.dicomflow.bean.Access;
+import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.bean.RequestService;
 import br.ufpb.dicomflow.bean.RequestServiceAccess;
 import br.ufpb.dicomflow.bean.StorageService;
@@ -35,13 +36,13 @@ public interface MessageServiceIF {
 	public static final String CERTIFICATE_RESULT_UPDATED = "UPDATED";
 	public static final String CERTIFICATE_RESULT_ERROR = "ERROR";
 	
-	public String sendStorage(StorageServiceAccess storageServiceAccess) throws ServiceException;
+	public String sendStorage(StorageServiceAccess storageServiceAccess, Credential credential) throws ServiceException;
 	
-	public void sendStorage(StorageService storageService, Access access) throws ServiceException;
+	public void sendStorage(StorageService storageService, Access access, Credential credential) throws ServiceException;
 	
-	public void sendStorage(StorageService storageService, List<Access> accesses) throws ServiceException ;
+	public void sendStorage(StorageService storageService, List<Access> accesses, Credential credential) throws ServiceException ;
 	
-	public void sendStorages(List<StorageService> storageServices, List<Access> accesses) throws ServiceException ;		
+	public void sendStorages(List<StorageService> storageServices, List<Access> accesses, Credential credential) throws ServiceException ;		
 
 	/**
 	 * 
@@ -77,7 +78,9 @@ public interface MessageServiceIF {
 	 */
 	public Map<Access,byte[]> getCertificates(Date initialDate, Date finalDate, String messageID) throws ServiceException;
 	
-	public String sendCertificateResult(Access access, String status) throws ServiceException;
+	public String sendCertificateResult(File certificate, Access access, String status, Credential credential) throws ServiceException;
+	
+	public String sendCertificateError(Access access, String certificateResultError) throws ServiceException;
 	
 	/**
 	 * 
@@ -91,13 +94,13 @@ public interface MessageServiceIF {
 	
 	
 	
-	public String sendRequest(RequestServiceAccess requestServiceAccess) throws ServiceException;
+	public String sendRequest(RequestServiceAccess requestServiceAccess, Credential credential) throws ServiceException;
 	
-	public void sendRequest(RequestService requestService, Access access) throws ServiceException;
+	public void sendRequest(RequestService requestService, Access access, Credential credential) throws ServiceException;
 	
-	public void sendRequest(RequestService requestService, List<Access> accesses) throws ServiceException ;
+	public void sendRequest(RequestService requestService, List<Access> accesses, Credential credential) throws ServiceException ;
 	
-	public void sendRequests(List<RequestService> requestService, List<Access> accesses) throws ServiceException ;		
+	public void sendRequests(List<RequestService> requestService, List<Access> accesses, Credential credential) throws ServiceException ;		
 
 	/**
 	 * 
@@ -123,5 +126,7 @@ public interface MessageServiceIF {
 	
 	
 	public int getMaxAttempts();
+
+	
 	
 }

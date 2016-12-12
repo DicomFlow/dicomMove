@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import br.ufpb.dicomflow.bean.Access;
+import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.bean.RequestService;
 import br.ufpb.dicomflow.bean.RequestServiceAccess;
 import br.ufpb.dicomflow.bean.StorageService;
@@ -58,6 +59,7 @@ import br.ufpb.dicomflow.integrationAPI.message.xml.StorageResult;
 import br.ufpb.dicomflow.integrationAPI.message.xml.StorageSave;
 import br.ufpb.dicomflow.integrationAPI.message.xml.Study;
 import br.ufpb.dicomflow.integrationAPI.message.xml.URL;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 public class MessageService implements MessageServiceIF {
@@ -71,7 +73,7 @@ public class MessageService implements MessageServiceIF {
 	
 	
 	@Override
-	public String sendStorage(StorageServiceAccess storageServiceAccess) throws ServiceException {
+	public String sendStorage(StorageServiceAccess storageServiceAccess, Credential credential) throws ServiceException {
 		if(propertiesConfigPath == null){
 			String errMsg = "Could not send study: invalid properties's path ";
 			
@@ -84,7 +86,11 @@ public class MessageService implements MessageServiceIF {
 		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
-		storageSave.setUrl(new URL(storageServiceAccess.getStorageService().getLink(), new Credentials(storageServiceAccess.getAccess().generateCredentialKey())));
+		Credentials credentials = new Credentials();
+		if(credential != null)
+			credentials.setValue(credential.getKey());
+		
+		storageSave.setUrl(new URL(storageServiceAccess.getStorageService().getLink(), credentials));
 		storageSave.setTimeout(storageServiceAccess.getValidity());
 			
 		try {
@@ -104,7 +110,7 @@ public class MessageService implements MessageServiceIF {
 	}
 
 	@Override
-	public void sendStorage(StorageService storageService, List<Access> accesses) throws ServiceException {
+	public void sendStorage(StorageService storageService, List<Access> accesses, Credential credential) throws ServiceException {
 		if(propertiesConfigPath == null){
 			String errMsg = "Could not send study: invalid properties's path ";
 			
@@ -117,11 +123,17 @@ public class MessageService implements MessageServiceIF {
 		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
+		Credentials credentials = new Credentials();
+		if(credential != null)
+			credentials.setValue(credential.getKey());
+		
+		URL url = new URL(storageService.getLink(), credentials);
+		
 		Iterator<Access> it = accesses.iterator();
 		while (it.hasNext()) {
 			Access access = it.next();
 			
-			storageSave.setUrl(new URL(storageService.getLink(), new Credentials(access.generateCredentialKey())));
+			storageSave.setUrl(url);
 			storageSave.setTimeout("");
 			
 			try {
@@ -140,21 +152,21 @@ public class MessageService implements MessageServiceIF {
 	}
 
 	@Override
-	public void sendStorages(List<StorageService> storageServices, List<Access> accesses) throws ServiceException {
+	public void sendStorages(List<StorageService> storageServices, List<Access> accesses, Credential credential) throws ServiceException {
 		Iterator<StorageService> it = storageServices.iterator();
 		while (it.hasNext()) {
 
 			StorageService registry = it.next();
 
-			sendStorage(registry, accesses);
+			sendStorage(registry, accesses, credential);
 
 		}
 	}
 	
 	@Override
-	public void sendStorage(StorageService storageService, Access access) throws ServiceException {
+	public void sendStorage(StorageService storageService, Access access, Credential credential) throws ServiceException {
 		List<Access> accesses = new ArrayList<Access>();
-		sendStorage(storageService, accesses);
+		sendStorage(storageService, accesses, credential);
 	}
 	
 	
@@ -352,7 +364,7 @@ public class MessageService implements MessageServiceIF {
 	}
 	
 	@Override
-	public String sendCertificateResult(Access access, String status) throws ServiceException {
+	public String sendCertificateResult(File certificate, Access access, String status, Credential credential) throws ServiceException {
 		if(propertiesConfigPath == null){
 			String errMsg = "Could not send study: invalid properties's path ";
 			
@@ -364,7 +376,43 @@ public class MessageService implements MessageServiceIF {
 		certificateResult.setMail(access.getMail());
 		certificateResult.setDomain(access.getHost());
 		certificateResult.setPort(access.getPort());
-		certificateResult.setCredential(access.generateCredentialKey());
+		if(credential != null)
+			certificateResult.setCredential(credential.getKey());
+		
+		certificateResult.setStatus(status);
+		
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
+		iap.load(propertiesConfigPath);
+		
+		
+			
+		try {
+			return ServiceProcessor.sendMessage(certificateResult, certificate, access.getMail(), iap.getSendProperties(), mailAuthenticator, mailHeadBuilder, mailContentBuilder);
+		
+		} catch (ServiceCreationException e) {
+			e.printStackTrace();
+		} catch (PropertyNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+			
+		
+	}
+	
+	@Override
+	public String sendCertificateError(Access access, String status) throws ServiceException {
+		if(propertiesConfigPath == null){
+			String errMsg = "Could not send study: invalid properties's path ";
+			
+			Util.getLogger(this).error(errMsg);
+			throw new ServiceException(new Exception(errMsg));
+		}
+		
+		CertificateResult certificateResult = (CertificateResult) ServiceFactory.createService(ServiceIF.CERTIFICATE_RESULT);
+		certificateResult.setMail(access.getMail());
+		certificateResult.setDomain(access.getHost());
+		certificateResult.setPort(access.getPort());
 		certificateResult.setStatus(status);
 		
 		DicomMessageProperties iap = DicomMessageProperties.getInstance();
@@ -398,7 +446,12 @@ public class MessageService implements MessageServiceIF {
 			access.setHost(certificateResult.getDomain());
 			access.setPort(certificateResult.getPort());
 			access.setMail(certificateResult.getMail());
-			access.setCredential(certificateResult.getCredential());
+			
+			Credential credential = new Credential();
+			credential.setKey(certificateResult.getCredential());
+			credential.setOwner(CredentialUtil.getDomain());
+			credential.setDomain(access);
+			access.getDomainCredentials().add(credential);
 			accesses.put(access, certificateResult.getStatus());
 		}
 		return accesses;
@@ -465,7 +518,7 @@ public class MessageService implements MessageServiceIF {
 	
 	
 	@Override
-	public String sendRequest(RequestServiceAccess requestServiceAccess) throws ServiceException {
+	public String sendRequest(RequestServiceAccess requestServiceAccess, Credential credential) throws ServiceException {
 		if(propertiesConfigPath == null){
 			String errMsg = "Could not send study: invalid properties's path ";
 			
@@ -478,7 +531,11 @@ public class MessageService implements MessageServiceIF {
 		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
-		URL url = new URL(requestServiceAccess.getRequestService().getLink(), new Credentials(requestServiceAccess.getAccess().generateCredentialKey()));
+		Credentials credentials = new Credentials();
+		if(credential != null)
+			credentials.setValue(credential.getKey());
+		
+		URL url = new URL(requestServiceAccess.getRequestService().getLink(), credentials);
 		
 		Patient patient = new Patient();
 		patient.setId(requestServiceAccess.getRequestService().getPatientID());
@@ -516,7 +573,7 @@ public class MessageService implements MessageServiceIF {
 	}
 
 	@Override
-	public void sendRequest(RequestService requestService, List<Access> accesses) throws ServiceException {
+	public void sendRequest(RequestService requestService, List<Access> accesses, Credential credential) throws ServiceException {
 		if(propertiesConfigPath == null){
 			String errMsg = "Could not send study: invalid properties's path ";
 			
@@ -529,30 +586,34 @@ public class MessageService implements MessageServiceIF {
 		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
 		
+		Credentials credentials = new Credentials();
+		if(credential != null)
+			credentials.setValue(credential.getKey());
+		
+		URL url = new URL(requestService.getLink(), credentials);
+		
+		Patient patient = new Patient();
+		patient.setId(requestService.getPatientID());
+		patient.setName(requestService.getPatientName());
+		patient.setGender(requestService.getPatientGender());
+		patient.setBirthdate(requestService.getPatientBirth());
+		
+		Study study = new Study();
+		study.setId(requestService.getStudyIuid());
+		study.setType(requestService.getStudyModality());
+		study.setDescription(requestService.getStudyDescription());
+		
+		patient.addStudy(study);
+		
+		url.addPatient(patient);
+		
+		requestPut.setUrl(url);
+		requestPut.setRequestType(RequestPut.TYPE_REPORT);
+		requestPut.setTimeout("");
+		
 		Iterator<Access> it = accesses.iterator();
 		while (it.hasNext()) {
 			Access access = it.next();
-			
-			URL url = new URL(requestService.getLink(), new Credentials(access.generateCredentialKey()));
-			
-			Patient patient = new Patient();
-			patient.setId(requestService.getPatientID());
-			patient.setName(requestService.getPatientName());
-			patient.setGender(requestService.getPatientGender());
-			patient.setBirthdate(requestService.getPatientBirth());
-			
-			Study study = new Study();
-			study.setId(requestService.getStudyIuid());
-			study.setType(requestService.getStudyModality());
-			study.setDescription(requestService.getStudyDescription());
-			
-			patient.addStudy(study);
-			
-			url.addPatient(patient);
-			
-			requestPut.setUrl(url);
-			requestPut.setRequestType(RequestPut.TYPE_REPORT);
-			requestPut.setTimeout("");
 			
 			try {
 				ServiceProcessor.sendMessage(requestPut, access.getMail(), iap.getSendProperties(), mailAuthenticator, mailHeadBuilder, mailContentBuilder);
@@ -570,21 +631,21 @@ public class MessageService implements MessageServiceIF {
 	}
 
 	@Override
-	public void sendRequests(List<RequestService> requestServices, List<Access> accesses) throws ServiceException {
+	public void sendRequests(List<RequestService> requestServices, List<Access> accesses, Credential credential) throws ServiceException {
 		Iterator<RequestService> it = requestServices.iterator();
 		while (it.hasNext()) {
 
 			RequestService registry = it.next();
 
-			sendRequest(registry, accesses);
+			sendRequest(registry, accesses, credential);
 
 		}
 	}
 	
 	@Override
-	public void sendRequest(RequestService requestService, Access access) throws ServiceException {
+	public void sendRequest(RequestService requestService, Access access, Credential credential) throws ServiceException {
 		List<Access> accesses = new ArrayList<Access>();
-		sendRequest(requestService, accesses);
+		sendRequest(requestService, accesses, credential);
 	}
 	
 	@Override
