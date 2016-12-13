@@ -34,6 +34,7 @@ import br.ufpb.dicomflow.bean.RequestServiceAccess;
 import br.ufpb.dicomflow.bean.StorageService;
 import br.ufpb.dicomflow.bean.StorageServiceAccess;
 import br.ufpb.dicomflow.integrationAPI.conf.DicomMessageProperties;
+import br.ufpb.dicomflow.integrationAPI.exceptions.ContentBuilderException;
 import br.ufpb.dicomflow.integrationAPI.exceptions.PropertyNotFoundException;
 import br.ufpb.dicomflow.integrationAPI.exceptions.ServiceCreationException;
 import br.ufpb.dicomflow.integrationAPI.mail.FilterIF;
@@ -70,129 +71,109 @@ public class MessageService implements MessageServiceIF {
 	private String propertiesConfigPath;
 	private UrlGeneratorIF urlGenerator;
 	private int maxAttempts;
+	private String messageValidity;
 	
 	
 	@Override
-	public String sendStorage(StorageServiceAccess storageServiceAccess, Credential credential) throws ServiceException {
-		if(propertiesConfigPath == null){
-			String errMsg = "Could not send study: invalid properties's path ";
-			
-			Util.getLogger(this).error(errMsg);
-			throw new ServiceException(new Exception(errMsg));
-		}
+	public String sendStorage(StorageServiceAccess storageServiceAccess, Credential accessCredential) throws ServiceException {
 		
 		StorageSave storageSave = (StorageSave) ServiceFactory.createService(ServiceIF.STORAGE_SAVE);
 		
-		DicomMessageProperties iap = DicomMessageProperties.getInstance();
-		iap.load(propertiesConfigPath);
-		
 		Credentials credentials = new Credentials();
-		if(credential != null)
-			credentials.setValue(credential.getKey());
+		if(accessCredential != null)
+			credentials.setValue(accessCredential.getKey());
 		
 		storageSave.setUrl(new URL(storageServiceAccess.getStorageService().getLink(), credentials));
 		storageSave.setTimeout(storageServiceAccess.getValidity());
 			
-		try {
-			return ServiceProcessor.sendMessage(storageSave, storageServiceAccess.getAccess().getMail(), iap.getSendProperties(), mailAuthenticator, mailHeadBuilder, mailContentBuilder);
-		
-		} catch (ServiceCreationException e) {
-			Util.getLogger(this).error("Could not send study.", e);
-			e.printStackTrace();
-		} catch (PropertyNotFoundException e) {
-			Util.getLogger(this).error("Could not send study.", e);
-			e.printStackTrace();
-		}
-		
-		return null;
-			
+		return sendMessage(storageSave, storageServiceAccess.getAccess().getMail());		
 		
 	}
-
+	
 	@Override
-	public void sendStorage(StorageService storageService, List<Access> accesses, Credential credential) throws ServiceException {
-		if(propertiesConfigPath == null){
-			String errMsg = "Could not send study: invalid properties's path ";
-			
-			Util.getLogger(this).error(errMsg);
-			throw new ServiceException(new Exception(errMsg));
-		}
+	public String sendStorage(StorageService storageService, Access access, Credential accessCredential) throws ServiceException {
 		
 		StorageSave storageSave = (StorageSave) ServiceFactory.createService(ServiceIF.STORAGE_SAVE);
 		
-		DicomMessageProperties iap = DicomMessageProperties.getInstance();
-		iap.load(propertiesConfigPath);
+		Credentials credentials = new Credentials();
+		if(accessCredential != null)
+			credentials.setValue(accessCredential.getKey());
+		
+		storageSave.setUrl(new URL(storageService.getLink(), credentials));
+		storageSave.setTimeout(getMessageValidity());
+		
+		return sendMessage(storageSave, access.getMail());
+	}
+
+	@Override
+	public List<String> sendStorage(StorageService storageService, List<Access> accesses, Credential credential) throws ServiceException {
+		
+		List<String> messageIDs = new ArrayList<>();
+		
+		StorageSave storageSave = (StorageSave) ServiceFactory.createService(ServiceIF.STORAGE_SAVE);
 		
 		Credentials credentials = new Credentials();
 		if(credential != null)
 			credentials.setValue(credential.getKey());
 		
 		URL url = new URL(storageService.getLink(), credentials);
+		storageSave.setUrl(url);
+		storageSave.setTimeout(getMessageValidity());
 		
 		Iterator<Access> it = accesses.iterator();
 		while (it.hasNext()) {
+			
 			Access access = it.next();
 			
-			storageSave.setUrl(url);
-			storageSave.setTimeout("");
+			messageIDs.add(sendMessage(storageSave, access.getMail()));
 			
-			try {
-				ServiceProcessor.sendMessage(storageSave, access.getMail(), iap.getSendProperties(), mailAuthenticator, mailHeadBuilder, mailContentBuilder);
-			
-				
-			} catch (ServiceCreationException e) {
-				Util.getLogger(this).error("Could not send study.", e);
-				e.printStackTrace();
-			} catch (PropertyNotFoundException e) {
-				Util.getLogger(this).error("Could not send study.", e);
-				e.printStackTrace();
-			}
 			
 		}
+		
+		return messageIDs;
 	}
 
 	@Override
-	public void sendStorages(List<StorageService> storageServices, List<Access> accesses, Credential credential) throws ServiceException {
+	public List<String> sendStorages(List<StorageService> storageServices, List<Access> accesses, Credential credential) throws ServiceException {
+		List<String> messageIDs = new ArrayList<>();
+		
 		Iterator<StorageService> it = storageServices.iterator();
 		while (it.hasNext()) {
 
 			StorageService registry = it.next();
 
-			sendStorage(registry, accesses, credential);
+			messageIDs.addAll(sendStorage(registry, accesses, credential));
 
 		}
-	}
-	
-	@Override
-	public void sendStorage(StorageService storageService, Access access, Credential credential) throws ServiceException {
-		List<Access> accesses = new ArrayList<Access>();
-		sendStorage(storageService, accesses, credential);
-	}
-	
-	
-	@Override
-	public Map<String,String> getStorages(Date initialDate, Date finalDate, String messageID) throws ServiceException {
 		
-		Map<String,String> urls = new HashMap<String,String>();
+		return messageIDs;
+	}
+	
+	
+	
+	
+	@Override
+	public List<StorageService> getStorages(Date initialDate, Date finalDate, String messageID) throws ServiceException {
+		
+		List<StorageService> services = new ArrayList<>();
 		
 		Iterator<ServiceIF> iterator = getServices(initialDate, finalDate, messageID, ServiceIF.STORAGE_SAVE).iterator();
 		while (iterator.hasNext()) {
+			
 			StorageSave storage = (StorageSave) iterator.next();
+			
 			if(storage.getUrl() != null && !storage.getUrl().equals("")){
-				urls.put(storage.getMessageID(), storage.getUrl().getValue());
+				StorageService service = new StorageService();
+				service.setMessageID(storage.getMessageID());
+				service.setLink(storage.getUrl().getValue());
+				services.add(service);
 			}
 		}
-		return urls;
+		return services;
 	}
 	
 	@Override
-	public void sendStorageResult(String messageID, StorageService storageService) throws ServiceException {
-		if(propertiesConfigPath == null){
-			String errMsg = "Could not send study: invalid properties's path ";
-			
-			Util.getLogger(this).error(errMsg);
-			throw new ServiceException(new Exception(errMsg));
-		}
+	public void sendStorageResult(String originalMessageID, StorageService storageService) throws ServiceException {
 		
 		StorageResult storageResult = (StorageResult) ServiceFactory.createService(ServiceIF.STORAGE_RESULT);
 		
@@ -210,32 +191,17 @@ public class MessageService implements MessageServiceIF {
 		objects.add(object);
 		result.setObject(objects);
 		
-		result.setOriginalMessageID(messageID);
+		result.setOriginalMessageID(originalMessageID);
 		result.setTimestamp(Util.singleton().getDataString(Calendar.getInstance().getTime()));
 		
 		List<Result> results = new ArrayList<Result>();
 		results.add(result);
 		storageResult.setResult(results);
 
-		
-		DicomMessageProperties iap = DicomMessageProperties.getInstance();
-		iap.load(propertiesConfigPath);
-		
-		
-		List<MessageIF> messages = getMessage(null, null, messageID, ServiceIF.STORAGE_SAVE);
-		Iterator<MessageIF> it = messages.iterator();
-	
-		while (it.hasNext()) {
-			MessageIF message = (MessageIF) it.next();
+		MessageIF message = getMessage(originalMessageID);
+		if(message != null){
 			String mailTo = (String) message.getMailTag(MailXTags.DISPOSITION_NOTIFICATION_TO_X_TAG);
-			try {
-				ServiceProcessor.sendMessage(storageResult, mailTo, iap.getSendProperties(), mailAuthenticator, mailHeadBuilder, mailContentBuilder);
-			
-			} catch (ServiceCreationException e) {
-				e.printStackTrace();
-			} catch (PropertyNotFoundException e) {
-				e.printStackTrace();
-			}
+			sendMessage(storageResult, mailTo);
 			
 		}
 		
@@ -243,11 +209,11 @@ public class MessageService implements MessageServiceIF {
 	}
 	
 	@Override
-	public Map<String,String> getStorageResults(Date initialDate, Date finalDate, String originalMessageID) throws ServiceException {
+	public List<StorageService> getStorageResults(Date initialDate, Date finalDate, String messageID, String originalMessageID) throws ServiceException {
 		
-		Map<String,String> map = new HashMap<String, String>();
+		List<StorageService> services = new ArrayList<>();
 		
-		List<MessageIF> messages = getMessage(null, null, null, ServiceIF.STORAGE_RESULT);
+		List<MessageIF> messages = getMessages(initialDate, finalDate, messageID, ServiceIF.STORAGE_RESULT);
 		Iterator<MessageIF> it = messages.iterator();
 		while (it.hasNext()) {
 			MessageIF message = (MessageIF) it.next();
@@ -258,24 +224,28 @@ public class MessageService implements MessageServiceIF {
 			Iterator<Result> resultIt = results.iterator();
 			while (resultIt.hasNext()) {
 				Result result = (Result) resultIt.next();
+				
 				if(result.getOriginalMessageID() != null && result.getOriginalMessageID().equals(originalMessageID)){
-					map.put(getDomain(xMessageID), result.getCompleted().getStatus());
+					
+					try {
+						StorageService service = new StorageService();
+						service.setHost(MailXTags.getDomain(xMessageID));
+						service.setMessageID(xMessageID);
+						service.setStatus(result.getCompleted().getStatus());
+						services.add(service);
+					} catch (ContentBuilderException e) {
+						Util.getLogger(this).error(e.getMessage());
+						e.printStackTrace();
+					}
+					
 				}
+
 			}
 			
 		}
-		return map;
 		
-	}
-	
-	private String getDomain(String xMessageID) throws ServiceException{
-		StringTokenizer tokenizer = new StringTokenizer(xMessageID,"@");
-		if(tokenizer.countTokens() == 2){
-			tokenizer.nextToken();
-			return tokenizer.nextToken();
-		}else{
-			throw new ServiceException(new Exception("X-Message-ID invalid format"));
-		}
+		return services;
+		
 	}
 
 	@Override
@@ -286,17 +256,13 @@ public class MessageService implements MessageServiceIF {
 			Util.getLogger(this).error(errMsg);
 			throw new ServiceException(new Exception(errMsg));
 		}
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
+		iap.load(propertiesConfigPath);
 		
 		CertificateRequest certificateRequest = (CertificateRequest) ServiceFactory.createService(ServiceIF.CERTIFICATE_REQUEST);
 		certificateRequest.setMail(getMailHeadBuilder().getFrom());
 		certificateRequest.setDomain(getUrlGenerator().getHost());
 		certificateRequest.setPort(getUrlGenerator().getPort());
-
-		
-		DicomMessageProperties iap = DicomMessageProperties.getInstance();
-		iap.load(propertiesConfigPath);
-		
-		
 			
 		try {
 			return ServiceProcessor.sendMessage(certificateRequest, certificate, access.getMail(), iap.getSendProperties(), mailAuthenticator, mailHeadBuilder, mailContentBuilder);
@@ -486,13 +452,15 @@ public class MessageService implements MessageServiceIF {
 		
 	}
 	
-	private List<MessageIF> getMessage(Date initialDate, Date finalDate, String messageID, int type) throws ServiceException {
+	private List<MessageIF> getMessages(Date initialDate, Date finalDate, String messageID, int type) throws ServiceException {
 		if(propertiesConfigPath == null){
 			String errMsg = "Could not get links: invalid properties's path ";
 			
 			Util.getLogger(this).error(errMsg);
 			throw new ServiceException(new Exception(errMsg));
 		}
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
+		iap.load(propertiesConfigPath);
 		
 		FilterIF filter = new SMTPFilter();
 		filter.setInitialDate(initialDate);
@@ -500,8 +468,6 @@ public class MessageService implements MessageServiceIF {
 		filter.setIdMessage(messageID);
 		filter.setServiceType(type);
 		
-		DicomMessageProperties iap = DicomMessageProperties.getInstance();
-		iap.load(propertiesConfigPath);
 		
 		try {
 			return ServiceProcessor.receiveMessages(iap.getReceiveProperties(), mailAuthenticator, null, null, filter);
@@ -512,6 +478,56 @@ public class MessageService implements MessageServiceIF {
 		}
 		return new ArrayList<MessageIF>();
 		
+		
+	}
+	
+	private MessageIF getMessage(String originalMessageID) throws ServiceException {
+		if(propertiesConfigPath == null){
+			String errMsg = "Could not get links: invalid properties's path ";
+			
+			Util.getLogger(this).error(errMsg);
+			throw new ServiceException(new Exception(errMsg));
+		}
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
+		iap.load(propertiesConfigPath);
+		
+		FilterIF filter = new SMTPFilter();
+		filter.setIdMessage(originalMessageID);
+		
+		try {
+			List<MessageIF> messages = ServiceProcessor.receiveMessages(iap.getReceiveProperties(), mailAuthenticator, null, null, filter);
+			
+			if (messages.size() > 1) 
+				throw new ServiceException(new Exception("Found more than one message for ID: " + originalMessageID));
+			
+			if(messages.size() > 0)
+				return messages.get(0);
+			
+		} catch (ServiceCreationException | PropertyNotFoundException e) {
+			throw new ServiceException(e);
+		}
+		
+
+		return null;
+		
+		
+	}
+	
+	private String sendMessage(ServiceIF service, String mail) throws ServiceException{
+		if(propertiesConfigPath == null){
+			String errMsg = "Could not send study: invalid properties's path ";
+			
+			Util.getLogger(this).error(errMsg);
+			throw new ServiceException(new Exception(errMsg));
+		}
+		DicomMessageProperties iap = DicomMessageProperties.getInstance();
+		iap.load(propertiesConfigPath);
+		
+		try {
+			return ServiceProcessor.sendMessage(service, mail, iap.getSendProperties(), mailAuthenticator, mailHeadBuilder, mailContentBuilder);
+		} catch (ServiceCreationException | PropertyNotFoundException e) {
+			throw new ServiceException(e);
+		}
 		
 	}
 	
@@ -649,18 +665,21 @@ public class MessageService implements MessageServiceIF {
 	}
 	
 	@Override
-	public Map<String,String> getRequests(Date initialDate, Date finalDate, String messageID) throws ServiceException {
+	public List<RequestService> getRequests(Date initialDate, Date finalDate, String messageID) throws ServiceException {
 		
-		Map<String,String> urls = new HashMap<String,String>();
+		List<RequestService> services = new ArrayList<>();
 		
 		Iterator<ServiceIF> iterator = getServices(initialDate, finalDate, messageID, ServiceIF.REQUEST_PUT).iterator();
 		while (iterator.hasNext()) {
 			RequestPut request = (RequestPut) iterator.next();
 			if(request.getUrl() != null && !request.getUrl().equals("")){
-				urls.put(request.getMessageID(), request.getUrl().getValue());
+				RequestService service = new RequestService();
+				service.setMessageID(request.getMessageID());
+				service.setLink(request.getUrl().getValue());
+				services.add(service);
 			}
 		}
-		return urls;
+		return services;
 	}
 	
 	@Override
@@ -700,7 +719,7 @@ public class MessageService implements MessageServiceIF {
 		iap.load(propertiesConfigPath);
 		
 		
-		List<MessageIF> messages = getMessage(null, null, messageID, ServiceIF.REQUEST_PUT);
+		List<MessageIF> messages = getMessages(null, null, messageID, ServiceIF.REQUEST_PUT);
 		Iterator<MessageIF> it = messages.iterator();
 	
 		while (it.hasNext()) {
@@ -721,11 +740,11 @@ public class MessageService implements MessageServiceIF {
 	}
 	
 	@Override
-	public Map<String,String> getRequestResults(Date initialDate, Date finalDate, String originalMessageID) throws ServiceException {
+	public List<StorageService> getRequestResults(Date initialDate, Date finalDate, String messageID, String originalMessageID) throws ServiceException {
 		
-		Map<String,String> map = new HashMap<String, String>();
+		List<StorageService> services = new ArrayList<>();
 		
-		List<MessageIF> messages = getMessage(null, null, null, ServiceIF.REQUEST_RESULT);
+		List<MessageIF> messages = getMessages(initialDate, finalDate, messageID, ServiceIF.STORAGE_RESULT);
 		Iterator<MessageIF> it = messages.iterator();
 		while (it.hasNext()) {
 			MessageIF message = (MessageIF) it.next();
@@ -736,13 +755,27 @@ public class MessageService implements MessageServiceIF {
 			Iterator<Result> resultIt = results.iterator();
 			while (resultIt.hasNext()) {
 				Result result = (Result) resultIt.next();
+				
 				if(result.getOriginalMessageID() != null && result.getOriginalMessageID().equals(originalMessageID)){
-					map.put(getDomain(xMessageID), result.getCompleted().getStatus());
+					
+					try {
+						StorageService service = new StorageService();
+						service.setHost(MailXTags.getDomain(xMessageID));
+						service.setMessageID(xMessageID);
+						service.setStatus(result.getCompleted().getStatus());
+						services.add(service);
+					} catch (ContentBuilderException e) {
+						Util.getLogger(this).error(e.getMessage());
+						e.printStackTrace();
+					}
+					
 				}
+
 			}
 			
 		}
-		return map;
+		
+		return services;
 		
 	}
 	
@@ -794,6 +827,16 @@ public class MessageService implements MessageServiceIF {
 	public void setMaxAttempts(int maxAttempts) {
 		this.maxAttempts = maxAttempts;
 	}
+
+	public String getMessageValidity() {
+		return messageValidity;
+	}
+
+	public void setMessageValidity(String messageValidity) {
+		this.messageValidity = messageValidity;
+	}
+	
+	
 	
 	
 

@@ -36,60 +36,37 @@ public interface MessageServiceIF {
 	public static final String CERTIFICATE_RESULT_UPDATED = "UPDATED";
 	public static final String CERTIFICATE_RESULT_ERROR = "ERROR";
 	
+	
+	
 	public String sendStorage(StorageServiceAccess storageServiceAccess, Credential credential) throws ServiceException;
 	
-	public void sendStorage(StorageService storageService, Access access, Credential credential) throws ServiceException;
+	public String sendStorage(StorageService storageService, Access access, Credential credential) throws ServiceException;
 	
-	public void sendStorage(StorageService storageService, List<Access> accesses, Credential credential) throws ServiceException ;
+	public List<String> sendStorage(StorageService storageService, List<Access> accesses, Credential credential) throws ServiceException ;
 	
-	public void sendStorages(List<StorageService> storageServices, List<Access> accesses, Credential credential) throws ServiceException ;		
+	public List<String> sendStorages(List<StorageService> storageServices, List<Access> accesses, Credential credential) throws ServiceException ;		
 
-	/**
-	 * 
-	 * @param initialDate
-	 * @param finalDate
-	 * @param messageID
-	 * @return Map<String, String> contains <messageID, url>
-	 * @throws ServiceException
-	 */
-	public Map<String, String> getStorages(Date initialDate, Date finalDate, String messageID) throws ServiceException ;
+	public List<StorageService> getStorages(Date initialDate, Date finalDate, String messageID) throws ServiceException ;
 
-	public void sendStorageResult(String messageID, StorageService storageService) throws ServiceException;
 	
-	/**
-	 * 
-	 * @param initialDate
-	 * @param finalDate
-	 * @param idMessage
-	 * @return Map<String, String> contains <domain, status>
-	 * @throws ServiceException
-	 */
-	public Map<String, String> getStorageResults(Date initialDate, Date finalDate, String originalMessageID) throws ServiceException;
+	
+	
+	public void sendStorageResult(String originalMessageID, StorageService storageService) throws ServiceException;
+	
+	public List<StorageService> getStorageResults(Date initialDate, Date finalDate, String messageID, String originalMessageID) throws ServiceException;
+	
+	
 	
 	public String sendCertificate(File certificate, Access access) throws ServiceException;
 	
-	/**
-	 * 
-	 * @param initialDate
-	 * @param finalDate
-	 * @param idMessage
-	 * @return Map<Access, byte[]> contains <access,certificate>
-	 * @throws ServiceException
-	 */
 	public Map<Access,byte[]> getCertificates(Date initialDate, Date finalDate, String messageID) throws ServiceException;
+	
+	
 	
 	public String sendCertificateResult(File certificate, Access access, String status, Credential credential) throws ServiceException;
 	
 	public String sendCertificateError(Access access, String certificateResultError) throws ServiceException;
 	
-	/**
-	 * 
-	 * @param initialDate
-	 * @param finalDate
-	 * @param idMessage
-	 * @return Map<Acesso, String> contains <access, certificateStatus>
-	 * @throws ServiceException
-	 */
 	public Map<Access, String>  getCertificateResults(Date initialDate, Date finalDate, String messageID) throws ServiceException;
 	
 	
@@ -102,30 +79,23 @@ public interface MessageServiceIF {
 	
 	public void sendRequests(List<RequestService> requestService, List<Access> accesses, Credential credential) throws ServiceException ;		
 
-	/**
-	 * 
-	 * @param initialDate
-	 * @param finalDate
-	 * @param messageID
-	 * @return Map<String, String> contains <messageID, url>
-	 * @throws ServiceException
-	 */
-	public Map<String, String> getRequests(Date initialDate, Date finalDate, String messageID) throws ServiceException ;
+	public List<RequestService> getRequests(Date initialDate, Date finalDate, String messageID) throws ServiceException;
+	
+	
 	
 	public void sendRequestResult(String messageID, RequestService requestService) throws ServiceException;
 	
-	/**
-	 * 
-	 * @param initialDate
-	 * @param finalDate
-	 * @param idMessage
-	 * @return Map<String, String> contains <domain, status>
-	 * @throws ServiceException
-	 */
-	public Map<String, String> getRequestResults(Date initialDate, Date finalDate, String originalMessageID) throws ServiceException;
+	public List<StorageService> getRequestResults(Date initialDate, Date finalDate, String messageID, String originalMessageID) throws ServiceException;
+	
 	
 	
 	public int getMaxAttempts();
+	
+	public void setMaxAttempts(int maxAttempts);
+
+	public String getMessageValidity();
+
+	public void setMessageValidity(String messageValidity);
 
 	
 	
