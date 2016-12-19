@@ -18,6 +18,8 @@
 
 package br.ufpb.dicomflow.bean;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -29,6 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
@@ -63,6 +66,9 @@ public class Access extends AbstractPersistence {
 	private Integer port;
 	private String certificateStatus;
 	private String type;
+	
+	@Transient
+	private byte[] certificate;
 	
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="id_owner")
@@ -176,6 +182,56 @@ public class Access extends AbstractPersistence {
 		this.domainCredentials = domainCredentials;
 	}
 
+	public byte[] getCertificate() {
+		return certificate;
+	}
+
+	public void setCertificate(byte[] certificate) {
+		this.certificate = certificate;
+	}
 	
+	public Credential getDomainCredential(int index){
+		Credential credential = null;
+		
+		if (index < domainCredentials.size()) {
+			
+			Iterator<Credential> it = domainCredentials.iterator();
+			for (int i = 0; i <= index; i++) {
+				credential = it.next();
+			}
+			
+		}
+		
+		return credential;
+	}
 	
+	public Credential getOwnerCredential(int index){
+		Credential credential = null;
+		
+		if (index < ownerCredentials.size()) {
+			
+			Iterator<Credential> it = ownerCredentials.iterator();
+			for (int i = 0; i <= index; i++) {
+				credential = it.next();
+			}
+			
+		}
+		
+		return credential;
+	}
+	
+	public boolean addDomainCredential(Credential credential){
+		if(domainCredentials == null){
+			domainCredentials = new HashSet<>();
+		}
+		return credential != null ? domainCredentials.add(credential) : false;
+	}
+	
+	public boolean addOwnerCredential(Credential credential){
+		if(ownerCredentials == null){
+			ownerCredentials = new HashSet<>();
+		}
+		return credential != null ? ownerCredentials.add(credential) : false;
+	}
+
 }

@@ -38,20 +38,21 @@ public interface MessageServiceIF {
 	
 	
 	
-	public String sendStorage(StorageServiceAccess storageServiceAccess, Credential credential) throws ServiceException;
 	
-	public String sendStorage(StorageService storageService, Access access, Credential credential) throws ServiceException;
+	public String sendStorage(StorageServiceAccess storageServiceAccess, Credential accessCredential) throws ServiceException;
 	
-	public List<String> sendStorage(StorageService storageService, List<Access> accesses, Credential credential) throws ServiceException ;
+	public String sendStorage(StorageService storageService, Access access, Credential accessCredential) throws ServiceException;
 	
-	public List<String> sendStorages(List<StorageService> storageServices, List<Access> accesses, Credential credential) throws ServiceException ;		
+	public List<String> sendStorage(StorageService storageService, List<Access> accesses, Credential accessCredential) throws ServiceException ;
+	
+	public List<String> sendStorages(List<StorageService> storageServices, List<Access> accesses, Credential accessCredential) throws ServiceException ;		
 
 	public List<StorageService> getStorages(Date initialDate, Date finalDate, String messageID) throws ServiceException ;
 
 	
 	
 	
-	public void sendStorageResult(String originalMessageID, StorageService storageService) throws ServiceException;
+	public String sendStorageResult(String originalMessageID, StorageService storageService) throws ServiceException;
 	
 	public List<StorageService> getStorageResults(Date initialDate, Date finalDate, String messageID, String originalMessageID) throws ServiceException;
 	
@@ -59,33 +60,37 @@ public interface MessageServiceIF {
 	
 	public String sendCertificate(File certificate, Access access) throws ServiceException;
 	
-	public Map<Access,byte[]> getCertificates(Date initialDate, Date finalDate, String messageID) throws ServiceException;
+	public List<Access> getCertificates(Date initialDate, Date finalDate, String messageID) throws ServiceException;
 	
 	
 	
-	public String sendCertificateResult(File certificate, Access access, String status, Credential credential) throws ServiceException;
+	public String sendCertificateResult(File certificate, Access access, String status, Credential accessCredential) throws ServiceException;
 	
 	public String sendCertificateError(Access access, String certificateResultError) throws ServiceException;
 	
-	public Map<Access, String>  getCertificateResults(Date initialDate, Date finalDate, String messageID) throws ServiceException;
+	public String sendCertificateConfirm(Access domain, String certificateResultUpdated, Credential accessCredential) throws ServiceException;
+	
+	public List<Access> getCertificateResults(Date initialDate, Date finalDate, String messageID) throws ServiceException;
+	
+	public List<Access> getCertificateConfirms(Date initialDate, Date finalDate, String messageID) throws ServiceException;
 	
 	
 	
-	public String sendRequest(RequestServiceAccess requestServiceAccess, Credential credential) throws ServiceException;
+	public String sendRequest(RequestServiceAccess requestServiceAccess, Credential accessCredential) throws ServiceException;
 	
-	public void sendRequest(RequestService requestService, Access access, Credential credential) throws ServiceException;
+	public String sendRequest(RequestService requestService, Access access, Credential accessCredential) throws ServiceException;
 	
-	public void sendRequest(RequestService requestService, List<Access> accesses, Credential credential) throws ServiceException ;
+	public List<String> sendRequest(RequestService requestService, List<Access> accesses, Credential accessCredential) throws ServiceException ;
 	
-	public void sendRequests(List<RequestService> requestService, List<Access> accesses, Credential credential) throws ServiceException ;		
+	public List<String> sendRequests(List<RequestService> requestService, List<Access> accesses, Credential accessCredential) throws ServiceException ;		
 
 	public List<RequestService> getRequests(Date initialDate, Date finalDate, String messageID) throws ServiceException;
 	
 	
 	
-	public void sendRequestResult(String messageID, RequestService requestService) throws ServiceException;
+	public String sendRequestResult(String originalMessageID, RequestService requestService) throws ServiceException;
 	
-	public List<StorageService> getRequestResults(Date initialDate, Date finalDate, String messageID, String originalMessageID) throws ServiceException;
+	public List<RequestService> getRequestResults(Date initialDate, Date finalDate, String messageID, String originalMessageID) throws ServiceException;
 	
 	
 	
@@ -96,6 +101,8 @@ public interface MessageServiceIF {
 	public String getMessageValidity();
 
 	public void setMessageValidity(String messageValidity);
+
+	
 
 	
 	

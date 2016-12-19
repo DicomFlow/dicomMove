@@ -18,7 +18,6 @@
 
 package br.ufpb.dicomflow.job;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +26,6 @@ import java.util.List;
 
 import br.ufpb.dicomflow.bean.Access;
 import br.ufpb.dicomflow.bean.Credential;
-import br.ufpb.dicomflow.service.CertificateServiceIF;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
@@ -36,7 +34,7 @@ import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
-public class FindCertificates {
+public class VerifyCertificateConfirm {
 
 	public void execute() {
 		
@@ -45,64 +43,50 @@ public class FindCertificates {
 		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
-		CertificateServiceIF certificateService =  ServiceLocator.singleton().getCertificateService();
 		
-		//load the domain certificate. It can't load throws exception and return.
-		File domainCertificate;
-		try {
-			domainCertificate = certificateService.getCertificate();
-		} catch (ServiceException e2) {
-			e2.printStackTrace();
-			return;
-		}
 		Access domain = CredentialUtil.getDomain();
 		
 		List<Access> accesses = new ArrayList<Access>();
 		try {
-			accesses = messageService.getCertificates( null, null, null);
+			accesses = messageService.getCertificateConfirms(null, null, null);
 		} catch (ServiceException e1) {
 			e1.printStackTrace();
 		}
-		
 		Iterator<Access> it = accesses.iterator();
 		while (it.hasNext()) {
-			Access access = (Access) it.next();
-			Access bdAccess = (Access) persistentService.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
 			
-				byte[] accessCertificate = access.getCertificate();
+			Access access = (Access) it.next();
+			String result = access.getCertificateStatus();
+			
+			if(result.equals(MessageServiceIF.CERTIFICATE_RESULT_UPDATED)){
+				
+				
 				try {
+					Access bdAccess = (Access) persistentService.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
+					bdAccess.setCertificateStatus(Access.CERIFICATE_CLOSED);
+					bdAccess.save();
 					
-					if(certificateService.storeCertificate(accessCertificate, access.getHost())){
-						if(bdAccess == null){
-							
-							access.setCertificateStatus(Access.CERIFICATE_CLOSED);
-							access.save();
-							Credential credential = CredentialUtil.createCredential(access);
-							credential.save();
-							messageService.sendCertificateResult(domainCertificate, domain, MessageServiceIF.CERTIFICATE_RESULT_CREATED, credential);
-							
-						}else{
-							bdAccess.setCertificateStatus(Access.CERIFICATE_CLOSED);
-							bdAccess.save();
-							Credential credential = CredentialUtil.getCredential(bdAccess, domain);
-							messageService.sendCertificateResult(domainCertificate, domain, MessageServiceIF.CERTIFICATE_RESULT_UPDATED, credential);
-						}
-					}else{
-						messageService.sendCertificateError(access, MessageServiceIF.CERTIFICATE_RESULT_ERROR);
+					Credential credential = access.getDomainCredential(0);
+					if(credential != null){
+						credential.setOwner(domain);
+						credential.setDomain(bdAccess);
+						credential.save();
 					}
+					
 					
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
+			}
 			
 			
 			
 		}
 		
-		Util.getLogger(this).debug("DONE!!");	
+		Util.getLogger(this).debug("DONE!!");
 		long finish = System.currentTimeMillis();
 		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");						
-		System.out.println("JOB:STORE_CERTIFICATE - StartInMillis - " + start + " - FinishInMillis - " + finish + " - StartFormated - " + sdfDate.format(new Date(start)) + " - FinishFormated " +  sdfDate.format(new Date(finish)));	
+		System.out.println("JOB:FIND_SERTIFICATE_RESULT - StartInMillis - " + start + " - FinishInMillis - " + finish + " - StartFormated - " + sdfDate.format(new Date(start)) + " - FinishFormated " +  sdfDate.format(new Date(finish)));	
 		
 	}
 
