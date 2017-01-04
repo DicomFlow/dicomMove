@@ -42,7 +42,7 @@ public class CredentialUtil {
 	public static Credential createCredential(Access access) {
 		
 		Credential credential = new Credential();
-		credential.setKey(generateCredentialKey());
+		credential.setKeypass(generateCredentialKey());
 		credential.setOwner(access);
 		credential.setDomain(getDomain());
 		return credential;

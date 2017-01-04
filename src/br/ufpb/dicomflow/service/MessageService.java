@@ -79,7 +79,7 @@ public class MessageService implements MessageServiceIF {
 		
 		Credentials credentials = new Credentials();
 		if(accessCredential != null)
-			credentials.setValue(accessCredential.getKey());
+			credentials.setValue(accessCredential.getKeypass());
 		
 		storageSave.setUrl(new URL(storageServiceAccess.getStorageService().getLink(), credentials));
 		storageSave.setTimeout(storageServiceAccess.getValidity());
@@ -95,7 +95,7 @@ public class MessageService implements MessageServiceIF {
 		
 		Credentials credentials = new Credentials();
 		if(accessCredential != null)
-			credentials.setValue(accessCredential.getKey());
+			credentials.setValue(accessCredential.getKeypass());
 		
 		storageSave.setUrl(new URL(storageService.getLink(), credentials));
 		storageSave.setTimeout(getMessageValidity());
@@ -112,7 +112,7 @@ public class MessageService implements MessageServiceIF {
 		
 		Credentials credentials = new Credentials();
 		if(credential != null)
-			credentials.setValue(credential.getKey());
+			credentials.setValue(credential.getKeypass());
 		
 		URL url = new URL(storageService.getLink(), credentials);
 		storageSave.setUrl(url);
@@ -297,7 +297,7 @@ public class MessageService implements MessageServiceIF {
 		certificateResult.setDomain(access.getHost());
 		certificateResult.setPort(access.getPort());
 		if(credential != null)
-			certificateResult.setCredential(credential.getKey());
+			certificateResult.setCredential(credential.getKeypass());
 		
 		certificateResult.setStatus(status);
 		
@@ -331,7 +331,7 @@ public class MessageService implements MessageServiceIF {
 		certificateConfirm.setDomain(access.getHost());
 		certificateConfirm.setPort(access.getPort());
 		if(credential != null)
-			certificateConfirm.setCredential(credential.getKey());
+			certificateConfirm.setCredential(credential.getKeypass());
 		
 		certificateConfirm.setStatus(status);
 		
@@ -362,7 +362,7 @@ public class MessageService implements MessageServiceIF {
 				access.setCertificate(certificate);
 				
 				Credential credential = new Credential();
-				credential.setKey(certificateResult.getCredential());
+				credential.setKeypass(certificateResult.getCredential());
 				credential.setOwner(CredentialUtil.getDomain());
 				credential.setDomain(access);
 				access.addDomainCredential(credential);
@@ -392,7 +392,7 @@ public class MessageService implements MessageServiceIF {
 				access.setCertificateStatus(certificateConfirm.getStatus());
 				
 				Credential credential = new Credential();
-				credential.setKey(certificateConfirm.getCredential());
+				credential.setKeypass(certificateConfirm.getCredential());
 				credential.setOwner(CredentialUtil.getDomain());
 				credential.setDomain(access);
 				access.addDomainCredential(credential);
@@ -412,7 +412,7 @@ public class MessageService implements MessageServiceIF {
 		
 		Credentials credentials = new Credentials();
 		if(accessCredential != null)
-			credentials.setValue(accessCredential.getKey());
+			credentials.setValue(accessCredential.getKeypass());
 		
 		URL url = new URL(requestServiceAccess.getRequestService().getLink(), credentials);
 		
@@ -448,7 +448,7 @@ public class MessageService implements MessageServiceIF {
 		
 		Credentials credentials = new Credentials();
 		if(accessCredential != null)
-			credentials.setValue(accessCredential.getKey());
+			credentials.setValue(accessCredential.getKeypass());
 		
 		URL url = new URL(requestService.getLink(), credentials);
 		
@@ -483,7 +483,7 @@ public class MessageService implements MessageServiceIF {
 		
 		Credentials credentials = new Credentials();
 		if(credential != null)
-			credentials.setValue(credential.getKey());
+			credentials.setValue(credential.getKeypass());
 		
 		URL url = new URL(requestService.getLink(), credentials);
 		

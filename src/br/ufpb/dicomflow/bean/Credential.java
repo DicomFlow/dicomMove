@@ -45,7 +45,7 @@ public class Credential extends AbstractPersistence {
     @Column(name="id",unique=true)
 	private Long id;
 	
-	private String key;
+	private String keypass;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="id_owner")
@@ -67,12 +67,12 @@ public class Credential extends AbstractPersistence {
 		this.id = id;
 	}
 
-	public String getKey() {
-		return key;
+	public String getKeypass() {
+		return keypass;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setKeypass(String keypass) {
+		this.keypass = keypass;
 	}
 
 	 public Access getOwner() {
