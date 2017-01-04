@@ -45,7 +45,8 @@ public class FindAccesses {
 	private int inTypeTotal = 0;
 
 	public void execute(){
-
+		inTypeTotal = 0;
+		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		try{
 
@@ -96,7 +97,13 @@ public class FindAccesses {
 						
 						idAccesses.add(access.getId());
 						totalAccess++;
+					
+						//if access exists and has type equals IN only counts
+					}else if(access.getType().equals(Access.IN)){
 						
+						idAccesses.add(access.getId());
+						totalAccess++;
+				
 					//if access exists and has type equals OUT, load credential and existing permissions. 
 					//Update the existing permissions that are in the new permissions list, remove the ones that are not in the list
 					//Create the remaining permissions that are list of new permissions
@@ -110,7 +117,7 @@ public class FindAccesses {
 						List<ServicePermission> newPermissions = readPermissions(credential, accessLine);
 
 						   
-						List<ServicePermission> servicePermissions = persistentService.selectAll("access", access, ServicePermission.class);
+						List<ServicePermission> servicePermissions = persistentService.selectAll("credential", credential, ServicePermission.class);
 						Iterator<ServicePermission> it = servicePermissions.iterator();
 						while (it.hasNext()) {
 
