@@ -69,6 +69,7 @@
         <property name="annotatedClasses">
             <list>
                 <value>br.ufpb.dicomflow.bean.Access</value>
+                <value>br.ufpb.dicomflow.bean.Credential</value>
                 <value>br.ufpb.dicomflow.bean.RequestService</value>
                 <value>br.ufpb.dicomflow.bean.RequestServiceAccess</value>
                 <value>br.ufpb.dicomflow.bean.StorageService</value>
