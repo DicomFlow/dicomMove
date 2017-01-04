@@ -75,14 +75,14 @@ public class FindCertificates {
 					if(certificateService.storeCertificate(accessCertificate, access.getHost())){
 						if(bdAccess == null){
 							
-							access.setCertificateStatus(Access.CERIFICATE_CLOSED);
+							access.setCertificateStatus(Access.CREDENTIAL_PENDING);
 							access.save();
 							Credential credential = CredentialUtil.createCredential(access);
 							credential.save();
 							messageService.sendCertificateResult(domainCertificate, domain, MessageServiceIF.CERTIFICATE_RESULT_CREATED, credential);
 							
 						}else{
-							bdAccess.setCertificateStatus(Access.CERIFICATE_CLOSED);
+							bdAccess.setCertificateStatus(Access.CREDENTIAL_PENDING);
 							bdAccess.save();
 							Credential credential = CredentialUtil.getCredential(bdAccess, domain);
 							messageService.sendCertificateResult(domainCertificate, domain, MessageServiceIF.CERTIFICATE_RESULT_UPDATED, credential);

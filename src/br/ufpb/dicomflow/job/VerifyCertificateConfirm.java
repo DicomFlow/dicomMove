@@ -63,7 +63,7 @@ public class VerifyCertificateConfirm {
 				
 				try {
 					Access bdAccess = (Access) persistentService.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
-					bdAccess.setCertificateStatus(Access.CERIFICATE_CLOSED);
+					bdAccess.setCertificateStatus(Access.CERTIFICATE_CLOSED);
 					bdAccess.save();
 					
 					Credential credential = access.getDomainCredential(0);

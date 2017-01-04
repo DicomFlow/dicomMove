@@ -35,6 +35,7 @@ import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.service.UrlGeneratorIF;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
@@ -120,6 +121,7 @@ public class PrepareStorages {
 					ra.setStatus(StorageService.OPEN);
 					ra.setUploadAttempt(0);
 					ra.setValidity(messageService.getMessageValidity());
+//					ra.setCredential(CredentialUtil.createCredential(access).getKey());
 					try {
 						ra.save();
 					} catch (ServiceException e) {

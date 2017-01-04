@@ -23,12 +23,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.bean.RequestService;
 import br.ufpb.dicomflow.bean.RequestServiceAccess;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
@@ -52,9 +54,9 @@ public class SendRequests {
 			if(requestServiceAccess.getRequestService().getAction().equals(RequestService.PUT)){
 				try {
 					//TODO requisitar o certificado do dominio remoto
+					Credential credential = CredentialUtil.getCredential(requestServiceAccess.getAccess(), CredentialUtil.getDomain());
 					
-					
-					String messageID = messageService.sendRequest(requestServiceAccess);
+					String messageID = messageService.sendRequest(requestServiceAccess, credential);
 					requestServiceAccess.setMessageID(messageID);
 					requestServiceAccess.setStatus(RequestService.PENDING);
 					requestServiceAccess.setUploadAttempt(requestServiceAccess.getUploadAttempt()+1);

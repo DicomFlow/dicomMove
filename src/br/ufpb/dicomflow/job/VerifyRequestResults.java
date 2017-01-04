@@ -19,18 +19,19 @@
 package br.ufpb.dicomflow.job;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.bean.RequestService;
 import br.ufpb.dicomflow.bean.RequestServiceAccess;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
@@ -54,10 +55,10 @@ public class VerifyRequestResults {
 				requestServiceAccess.setUploadAttempt(requestServiceAccess.getUploadAttempt()+1);
 				if(requestServiceAccess.getUploadAttempt() <= messageService.getMaxAttempts()){
 					
-					Map<String, String> results = new HashMap<String, String>();
+					List<RequestService> results = new ArrayList<>();
 					
 					try {
-						results = messageService.getRequestResults(null, null, requestServiceAccess.getMessageID());
+						results = messageService.getRequestResults(null, null, null, requestServiceAccess.getMessageID());
 						//TODO implementar o que fazer com os resultados do request.
 					} catch (ServiceException e1) {
 						Util.getLogger(this).error("Could not get results: " + e1.getMessage(),e1);
@@ -68,12 +69,13 @@ public class VerifyRequestResults {
 					
 					
 						
-					Iterator<String> itDomain = results.keySet().iterator();
+					Iterator<RequestService> itDomain = results.iterator();
 					String domainStatus = null;
 					while (itDomain.hasNext()) {
-						String domain = (String) itDomain.next();
+						RequestService request = itDomain.next();
+						String domain = request.getHost();
 						if(requestServiceAccess.getAccess().getHost().equals(domain)){
-							domainStatus = results.get(domain);
+							domainStatus = request.getStatus();
 							break;
 						}
 					}
@@ -83,7 +85,8 @@ public class VerifyRequestResults {
 						treatDomainStatus(domainStatus);
 					} else {
 						try {
-							messageService.sendRequest(requestServiceAccess.getRequestService(), requestServiceAccess.getAccess());
+							Credential credential = CredentialUtil.getCredential(requestServiceAccess.getAccess(), CredentialUtil.getDomain());
+							messageService.sendRequest(requestServiceAccess.getRequestService(), requestServiceAccess.getAccess(), credential);
 							requestServiceAccess.setStatus(RequestService.PENDING);
 						} catch (ServiceException e) {
 							String status = requestServiceAccess.getUploadAttempt() == messageService.getMaxAttempts() ? RequestService.ERROR : RequestService.PENDING;

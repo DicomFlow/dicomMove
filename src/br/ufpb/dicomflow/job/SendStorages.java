@@ -23,12 +23,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.bean.StorageService;
 import br.ufpb.dicomflow.bean.StorageServiceAccess;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
@@ -52,9 +54,9 @@ public class SendStorages {
 			if(storageServiceAccess.getStorageService().getAction().equals(StorageService.SAVE)){
 				try {
 					//TODO requisitar o certificado do dominio remoto
+					Credential credential = CredentialUtil.getCredential(storageServiceAccess.getAccess(), CredentialUtil.getDomain());
 					
-					
-					String messageID = messageService.sendStorage(storageServiceAccess);
+					String messageID = messageService.sendStorage(storageServiceAccess, credential);
 					storageServiceAccess.setMessageID(messageID);
 					storageServiceAccess.setStatus(StorageService.PENDING);
 					storageServiceAccess.setUploadAttempt(storageServiceAccess.getUploadAttempt()+1);

@@ -52,9 +52,10 @@ public class Access extends AbstractPersistence {
 	public static final String OUT = "OUT";
 	
 	
-	public static final String CERIFICATE_OPEN = "OPEN";
-	public static final String CERIFICATE_PENDING = "PENDING";
-	public static final String CERIFICATE_CLOSED = "CLOSED";
+	public static final String CERTIFICATE_OPEN = "OPEN";
+	public static final String CERTIFICATE_PENDING = "PENDING";
+	public static final String CREDENTIAL_PENDING = "CREDENTIAL_PENDING";
+	public static final String CERTIFICATE_CLOSED = "CLOSED";
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)

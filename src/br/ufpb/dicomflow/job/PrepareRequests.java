@@ -128,7 +128,7 @@ public class PrepareRequests {
 					ra.setStatus(RequestService.OPEN);
 					ra.setUploadAttempt(0);
 					ra.setValidity("");
-	//				ra.setCredential(credential);
+	//				ra.setCredential(CredentialUtil.createCredential(access).getKey());
 					try {
 						ra.save();
 					} catch (ServiceException e) {
