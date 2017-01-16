@@ -63,16 +63,17 @@ public class VerifyCertificateConfirm {
 				
 				try {
 					Access bdAccess = (Access) persistentService.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
-					bdAccess.setCertificateStatus(Access.CERTIFICATE_CLOSED);
-					bdAccess.save();
-					
-					Credential credential = access.getDomainCredential(0);
-					if(credential != null){
-						credential.setOwner(domain);
-						credential.setDomain(bdAccess);
-						credential.save();
+					if(bdAccess.getCertificateStatus().equals(Access.CREDENTIAL_PENDING)){
+						bdAccess.setCertificateStatus(Access.CERTIFICATE_CLOSED);
+						bdAccess.save();
+						
+						Credential credential = access.getDomainCredential(0);
+						if(credential != null){
+							credential.setOwner(domain);
+							credential.setDomain(bdAccess);
+							credential.save();
+						}
 					}
-					
 					
 				} catch (ServiceException e) {
 					e.printStackTrace();
