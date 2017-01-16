@@ -84,7 +84,13 @@ public class FindAccesses {
 					if(access == null){
 
 						access = CredentialUtil.createAccess(mail, host, port, type);
+						
+						//isn't necessary request certificate for Access with type equals IN
+						if(access.getType().equals(Access.IN)){
+							access.setCertificateStatus(Access.CERTIFICATE_CLOSED);
+						}
 						access.save();
+						
 						//create credential and permissions for Access with type equals OUT
 						if(access.getType().equals(Access.OUT)){
 							Credential credential = CredentialUtil.createCredential(access);
@@ -98,7 +104,7 @@ public class FindAccesses {
 						idAccesses.add(access.getId());
 						totalAccess++;
 					
-						//if access exists and has type equals IN only counts
+					//if access exists and has type equals IN only counts
 					}else if(access.getType().equals(Access.IN)){
 						
 						idAccesses.add(access.getId());
