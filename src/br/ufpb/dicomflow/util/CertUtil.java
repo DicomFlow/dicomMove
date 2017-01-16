@@ -267,7 +267,7 @@ public class CertUtil {
 		//create certificate file on store directory
 		File keystore = new File(keystoreFile);
 		String path = keystore.getAbsolutePath();
-		File certificate = new File(path.substring(0,path.lastIndexOf('/')+1)+alias+".crt");
+		File certificate = new File(path.substring(0,path.lastIndexOf(File.separator)+1)+alias+".crt");
 		try {
 			//load store
 			InputStream in = new FileInputStream(keystore);
