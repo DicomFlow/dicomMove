@@ -214,7 +214,7 @@ public class CertUtil {
 		
 		//create certificate file on store directory
 		String path = keystore.getAbsolutePath();
-		File certFile = new File(path.substring(0,path.lastIndexOf('/'))+alias+".crt");
+		File certFile = new File(path.substring(0,path.lastIndexOf(File.separator))+alias+".crt");
 		
 		try {
 			//write on certificate file
