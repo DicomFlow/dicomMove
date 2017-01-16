@@ -78,7 +78,7 @@ public class VerifyCertificateResult {
 						}
 						
 						Credential accessCredential = CredentialUtil.getCredential(bdAccess, domain);
-						messageService.sendCertificateConfirm(domain, MessageServiceIF.CERTIFICATE_RESULT_UPDATED, accessCredential);
+						messageService.sendCertificateConfirm(access.getMail(), domain, MessageServiceIF.CERTIFICATE_RESULT_UPDATED, accessCredential);
 						
 					}
 				} catch (ServiceException e) {

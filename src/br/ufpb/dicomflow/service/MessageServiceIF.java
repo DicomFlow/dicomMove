@@ -64,11 +64,11 @@ public interface MessageServiceIF {
 	
 	
 	
-	public String sendCertificateResult(File certificate, Access access, String status, Credential accessCredential) throws ServiceException;
+	public String sendCertificateResult(String mail, File certificate, Access access, String status, Credential accessCredential) throws ServiceException;
 	
-	public String sendCertificateError(Access access, String certificateResultError) throws ServiceException;
+	public String sendCertificateError(String mail, Access access, String certificateResultError) throws ServiceException;
 	
-	public String sendCertificateConfirm(Access domain, String certificateResultUpdated, Credential accessCredential) throws ServiceException;
+	public String sendCertificateConfirm(String mail, Access domain, String certificateResultUpdated, Credential accessCredential) throws ServiceException;
 	
 	public List<Access> getCertificateResults(Date initialDate, Date finalDate, String messageID) throws ServiceException;
 	

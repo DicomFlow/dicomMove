@@ -79,16 +79,16 @@ public class FindCertificates {
 							access.save();
 							Credential credential = CredentialUtil.createCredential(access);
 							credential.save();
-							messageService.sendCertificateResult(domainCertificate, access, MessageServiceIF.CERTIFICATE_RESULT_CREATED, credential);
+							messageService.sendCertificateResult(access.getMail(), domainCertificate, domain, MessageServiceIF.CERTIFICATE_RESULT_CREATED, credential);
 							
 						}else{
 							bdAccess.setCertificateStatus(Access.CREDENTIAL_PENDING);
 							bdAccess.save();
 							Credential credential = CredentialUtil.getCredential(bdAccess, domain);
-							messageService.sendCertificateResult(domainCertificate, bdAccess, MessageServiceIF.CERTIFICATE_RESULT_UPDATED, credential);
+							messageService.sendCertificateResult(access.getMail(),domainCertificate, domain, MessageServiceIF.CERTIFICATE_RESULT_UPDATED, credential);
 						}
 					}else{
-						messageService.sendCertificateError(access, MessageServiceIF.CERTIFICATE_RESULT_ERROR);
+						messageService.sendCertificateError(access.getMail(), domain, MessageServiceIF.CERTIFICATE_RESULT_ERROR);
 					}
 					
 				} catch (ServiceException e) {

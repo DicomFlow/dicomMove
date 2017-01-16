@@ -290,7 +290,7 @@ public class MessageService implements MessageServiceIF {
 	}
 	
 	@Override
-	public String sendCertificateResult(File certificate, Access access, String status, Credential credential) throws ServiceException {
+	public String sendCertificateResult(String mail, File certificate, Access access, String status, Credential credential) throws ServiceException {
 		
 		CertificateResult certificateResult = (CertificateResult) ServiceFactory.createService(ServiceIF.CERTIFICATE_RESULT);
 		certificateResult.setMail(access.getMail());
@@ -301,14 +301,14 @@ public class MessageService implements MessageServiceIF {
 		
 		certificateResult.setStatus(status);
 		
-		return sendMessage(certificateResult, certificate, access.getMail());
+		return sendMessage(certificateResult, certificate, mail);
 
 			
 		
 	}
 	
 	@Override
-	public String sendCertificateError(Access access, String status) throws ServiceException {
+	public String sendCertificateError(String mail, Access access, String status) throws ServiceException {
 		
 		CertificateResult certificateResult = (CertificateResult) ServiceFactory.createService(ServiceIF.CERTIFICATE_RESULT);
 		certificateResult.setMail(access.getMail());
@@ -316,7 +316,7 @@ public class MessageService implements MessageServiceIF {
 		certificateResult.setPort(access.getPort());
 		certificateResult.setStatus(status);
 		
-		return sendMessage(certificateResult, null, access.getMail());
+		return sendMessage(certificateResult, null, mail);
 		
 			
 		
@@ -324,7 +324,7 @@ public class MessageService implements MessageServiceIF {
 	
 	
 	@Override
-	public String sendCertificateConfirm(Access access, String status, Credential credential) throws ServiceException {
+	public String sendCertificateConfirm(String mail, Access access, String status, Credential credential) throws ServiceException {
 		
 		CertificateConfirm certificateConfirm = (CertificateConfirm) ServiceFactory.createService(ServiceIF.CERTIFICATE_CONFIRM);
 		certificateConfirm.setMail(access.getMail());
@@ -335,7 +335,7 @@ public class MessageService implements MessageServiceIF {
 		
 		certificateConfirm.setStatus(status);
 		
-		return sendMessage(certificateConfirm, null, access.getMail());
+		return sendMessage(certificateConfirm, null, mail);
 
 			
 		
