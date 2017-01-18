@@ -88,7 +88,7 @@ public class FindCertificates {
 							messageService.sendCertificateResult(access.getMail(),domainCertificate, domain, MessageServiceIF.CERTIFICATE_RESULT_UPDATED, credential);
 						}
 					}else{
-						messageService.sendCertificateError(access.getMail(), domain, MessageServiceIF.CERTIFICATE_RESULT_ERROR);
+//						messageService.sendCertificateError(access.getMail(), domain, MessageServiceIF.CERTIFICATE_RESULT_ERROR);
 					}
 					
 				} catch (ServiceException e) {
