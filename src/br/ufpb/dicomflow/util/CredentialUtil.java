@@ -61,6 +61,10 @@ public class CredentialUtil {
 		return access;
 	}
 	
+	public static Access getAcess(String host){		
+		return (Access) ServiceLocator.singleton().getPersistentService().select("host", host, Access.class);		
+	}
+	
 	public static Credential getCredential(Access owner, Access domain){
 		return (Credential) ServiceLocator.singleton().getPersistentService().selectByParams(new Object[]{"owner", "domain" }, new Object[]{owner, domain}, Credential.class);
 	}

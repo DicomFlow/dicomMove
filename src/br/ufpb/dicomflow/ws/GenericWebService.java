@@ -26,7 +26,11 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
+import br.ufpb.dicomflow.bean.Access;
+import br.ufpb.dicomflow.bean.Credential;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.RequestOperations;
+import br.ufpb.dicomflow.util.Signature;
 
 public class GenericWebService {
 	
@@ -86,18 +90,22 @@ public class GenericWebService {
 			String requestSignature = authorizationSplit[2];
 			
 			String calculatedHeaderString = RequestOperations.getHeaderString(request, headers);
-						
-			//AccessKey accessKeyObj = getAccessKey(accessKeyID); 			        
-			//String accessKey = accessKeyObj.getKey();
-			//CdnUser user = accessKeyObj.getCdnUser();
-			//String hash = Signature.calculateRFC2104HMAC(calculatedHeaderString, accessKey);
-			//if (hash.equals(requestSignature)) {
-				//return user;
-			//}
+			
+			Access access = CredentialUtil.getAcess(accessKeyID);
+			Credential credential = CredentialUtil.getCredential(access, CredentialUtil.getDomain());			
+			String accessKey = credential.getKeypass();
+			
+			String hash = Signature.calculateRFC2104HMAC(calculatedHeaderString, accessKey);
+			
+			if (hash.equals(requestSignature)) {
+				return true;
+			} else {
+				return false;
+			}
+			
 		} catch (Exception e) {
 			return false;
 		}
-		return false;
 	}
 
 
