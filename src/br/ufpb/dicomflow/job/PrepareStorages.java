@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import br.ufpb.dicomflow.bean.Access;
+import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.bean.ServicePermission;
 import br.ufpb.dicomflow.bean.StorageService;
 import br.ufpb.dicomflow.bean.StorageServiceAccess;
@@ -137,7 +138,8 @@ public class PrepareStorages {
 
 	private boolean verifyAccess(Access access, StudyIF study, String serviceType) {
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
-		ServicePermission servicePermission = (ServicePermission) persistentService.selectByParams(new String[]{"description", "access"}, new Object[]{serviceType, access} , ServicePermission.class);
+		Credential credential  = CredentialUtil.getCredential(access, CredentialUtil.getDomain());
+		ServicePermission servicePermission = (ServicePermission) persistentService.selectByParams(new String[]{"description", "credential"}, new Object[]{serviceType, credential} , ServicePermission.class);
 		//verifica se o acesso tem permiss�o ao servi�o e ao estudo especificados
 		return servicePermission != null && (servicePermission.getModalities().contains(study.getModalitiesInStudy()) || servicePermission.getModalities().contains("*"));
 	}
