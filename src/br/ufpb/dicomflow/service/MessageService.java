@@ -225,16 +225,11 @@ public class MessageService implements MessageServiceIF {
 				
 				if(result.getOriginalMessageID() != null && result.getOriginalMessageID().equals(originalMessageID)){
 					
-					try {
-						StorageService service = new StorageService();
-						service.setHost(MailXTags.getDomain(xMessageID));
-						service.setMessageID(xMessageID);
-						service.setStatus(result.getCompleted().getStatus());
-						services.add(service);
-					} catch (ContentBuilderException e) {
-						Util.getLogger(this).error(e.getMessage());
-						e.printStackTrace();
-					}
+					StorageService service = new StorageService();
+					service.setHost(MailXTags.getDomain(xMessageID));
+					service.setMessageID(xMessageID);
+					service.setStatus(result.getCompleted().getStatus());
+					services.add(service);
 					
 				}
 
@@ -608,16 +603,11 @@ public class MessageService implements MessageServiceIF {
 				
 				if(result.getOriginalMessageID() != null && result.getOriginalMessageID().equals(originalMessageID)){
 					
-					try {
-						RequestService service = new RequestService();
-						service.setHost(MailXTags.getDomain(xMessageID));
-						service.setMessageID(xMessageID);
-						service.setStatus(result.getCompleted().getStatus());
-						services.add(service);
-					} catch (ContentBuilderException e) {
-						Util.getLogger(this).error(e.getMessage());
-						e.printStackTrace();
-					}
+					RequestService service = new RequestService();
+					service.setHost(MailXTags.getDomain(xMessageID));
+					service.setMessageID(xMessageID);
+					service.setStatus(result.getCompleted().getStatus());
+					services.add(service);
 					
 				}
 
