@@ -84,7 +84,7 @@ public class ConcurrentRequest implements Runnable {
 			long inicio = System.currentTimeMillis();
 			
 			//String authorization = "CDN" + ":" + accessKey.getId() + ":" + signature;
-			String authorization = "CDN" + ":" + "teste" + ":" + "Teste";
+			String authorization = "DICOMFLOW" + ":" + "teste" + ":" + "Teste";
 			
 			Invocation.Builder invocationBuilder = resourceWebTarget.request(MediaType.APPLICATION_OCTET_STREAM)
 					.header(HttpHeaders.AUTHORIZATION, authorization);

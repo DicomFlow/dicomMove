@@ -226,7 +226,12 @@ public class MessageService implements MessageServiceIF {
 				if(result.getOriginalMessageID() != null && result.getOriginalMessageID().equals(originalMessageID)){
 					
 					StorageService service = new StorageService();
-					service.setHost(MailXTags.getDomain(xMessageID));
+					try {
+						service.setHost(MailXTags.getDomain(xMessageID));
+					} catch (ContentBuilderException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					service.setMessageID(xMessageID);
 					service.setStatus(result.getCompleted().getStatus());
 					services.add(service);
@@ -604,7 +609,12 @@ public class MessageService implements MessageServiceIF {
 				if(result.getOriginalMessageID() != null && result.getOriginalMessageID().equals(originalMessageID)){
 					
 					RequestService service = new RequestService();
-					service.setHost(MailXTags.getDomain(xMessageID));
+					try {
+						service.setHost(MailXTags.getDomain(xMessageID));
+					} catch (ContentBuilderException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					service.setMessageID(xMessageID);
 					service.setStatus(result.getCompleted().getStatus());
 					services.add(service);
