@@ -19,18 +19,19 @@
 package br.ufpb.dicomflow.job;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.bean.StorageService;
 import br.ufpb.dicomflow.bean.StorageServiceAccess;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
@@ -54,10 +55,10 @@ public class VerifyStorageResults {
 				storageServiceAccess.setUploadAttempt(storageServiceAccess.getUploadAttempt()+1);
 				if(storageServiceAccess.getUploadAttempt() <= messageService.getMaxAttempts()){
 					
-					Map<String, String> results = new HashMap<String, String>();
+					List<StorageService> results = new ArrayList<>();
 					
 					try {
-						results = messageService.getStorageResults(null, null, storageServiceAccess.getMessageID());
+						results = messageService.getStorageResults(null, null, null, storageServiceAccess.getMessageID());
 					} catch (ServiceException e1) {
 						Util.getLogger(this).error("Could not get results: " + e1.getMessage(),e1);
 						e1.printStackTrace();
@@ -67,12 +68,13 @@ public class VerifyStorageResults {
 					
 					
 						
-					Iterator<String> itDomain = results.keySet().iterator();
+					Iterator<StorageService> itDomain = results.iterator();
 					String domainStatus = null;
 					while (itDomain.hasNext()) {
-						String domain = (String) itDomain.next();
+						StorageService storage = itDomain.next();
+						String domain = storage.getHost();
 						if(storageServiceAccess.getAccess().getHost().equals(domain)){
-							domainStatus = results.get(domain);
+							domainStatus = storage.getStatus();
 							break;
 						}
 					}
@@ -82,7 +84,8 @@ public class VerifyStorageResults {
 						treatDomainStatus(domainStatus);
 					} else {
 						try {
-							messageService.sendStorage(storageServiceAccess.getStorageService(), storageServiceAccess.getAccess());
+							Credential credential = CredentialUtil.getCredential(storageServiceAccess.getAccess(), CredentialUtil.getDomain());
+							messageService.sendStorage(storageServiceAccess.getStorageService(), storageServiceAccess.getAccess(), credential);
 							storageServiceAccess.setStatus(StorageService.PENDING);
 						} catch (ServiceException e) {
 							String status = storageServiceAccess.getUploadAttempt() == messageService.getMaxAttempts() ? StorageService.ERROR : StorageService.PENDING;

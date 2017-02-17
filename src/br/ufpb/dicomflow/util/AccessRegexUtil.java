@@ -21,15 +21,18 @@ import java.util.StringTokenizer;
 
 public class AccessRegexUtil {
 
+	public static final String IN = "IN";
+	public static final String OUT = "OUT";
 	public static final String ACCESS_DELIM = "#";
 	public static final String PERMISSION_DELIM = ";";
+	public static final String TYPE_REGEX = "("+IN+"|"+OUT+")";
 	public static final String MAIL_REGEX = "[A-Za-z0-9\\._-]+@[A-Za-z0-9]+(\\.[A-Za-z]+)*";
 	public static final String HOST_REGEX = "[A-Za-z0-9]+(\\.[A-Za-z0-9]+)+";
 	public static final String PORT_REGEX = "[0-9]+";
 	public static final String MODALITY_REGEX = "[A-Z]{2}(,[A-Z]{2})*";
 	public static final String PERMISSION_REGEX =          "(Sharing|Storage|Request|Find|Discovery) (\\*|"+MODALITY_REGEX+")";
 	public static final String MULTI_PERMISSION_REGEX = PERMISSION_REGEX+"(;"+PERMISSION_REGEX+")*";
-	public static final String ACCESS_REGEX = MAIL_REGEX + ACCESS_DELIM + HOST_REGEX + ACCESS_DELIM+ PORT_REGEX + ACCESS_DELIM + MULTI_PERMISSION_REGEX;
+	public static final String ACCESS_REGEX = TYPE_REGEX + ACCESS_DELIM + MAIL_REGEX + ACCESS_DELIM + HOST_REGEX + ACCESS_DELIM+ PORT_REGEX + ACCESS_DELIM + MULTI_PERMISSION_REGEX;
 	
 	
 	public static boolean accessMatches(String access){
@@ -40,27 +43,33 @@ public class AccessRegexUtil {
 		return permissions.matches(MULTI_PERMISSION_REGEX);
 	}
 	
-	public static String getMail(String access){
+	public static String getType(String access){
 		if(accessMatches(access))
 			return getElement(access, ACCESS_DELIM, 0);
 		return null;
 	}
 	
-	public static String getHost(String access){
+	public static String getMail(String access){
 		if(accessMatches(access))
 			return getElement(access, ACCESS_DELIM, 1);
 		return null;
 	}
 	
-	public static String getPort(String access){
+	public static String getHost(String access){
 		if(accessMatches(access))
 			return getElement(access, ACCESS_DELIM, 2);
 		return null;
 	}
 	
-	public static String getPermissions(String access){
+	public static String getPort(String access){
 		if(accessMatches(access))
 			return getElement(access, ACCESS_DELIM, 3);
+		return null;
+	}
+	
+	public static String getPermissions(String access){
+		if(accessMatches(access))
+			return getElement(access, ACCESS_DELIM, 4);
 		return null;
 	}
 	
@@ -102,16 +111,19 @@ public class AccessRegexUtil {
 	
 	
 	public static void main(String[] args) {
-		
+		String type = "IN";
 		String mail = "email@domain.com";
 		String host = "domain.com";
 		String port = "8080";
 		String modality = "CT,MR";
 		String permission = "Sharing *";
 		String permissions = "Sharing *;Storage CT,MR;Find *";
-		String example = "email@domain.com#domain.com#8080#Sharing *;Storage CT,MR;Find *";
+		String example = "OUT#email@domain.com#domain.com#8080#Sharing *;Storage CT,MR;Find *";
 		
-		boolean matches = mail.matches(MAIL_REGEX);
+		boolean matches = type.matches(TYPE_REGEX);
+		System.out.println("type matches: " + matches);
+		
+		matches = mail.matches(MAIL_REGEX);
 		System.out.println("mail matches: " + matches);
 		
 		matches = host.matches(HOST_REGEX);
@@ -132,6 +144,7 @@ public class AccessRegexUtil {
 		matches = example.matches(ACCESS_REGEX);
 		System.out.println("example matches: " + matches);
 		
+		System.out.println("Type: "+ getType(example));
 		System.out.println("E-mail: "+ getMail(example));
 		System.out.println("Host: "+ getHost(example));
 		System.out.println("Port: "+ getPort(example));

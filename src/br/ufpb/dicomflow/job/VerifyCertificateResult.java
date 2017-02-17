@@ -19,17 +19,19 @@
 package br.ufpb.dicomflow.job;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import br.ufpb.dicomflow.bean.Access;
+import br.ufpb.dicomflow.bean.Credential;
+import br.ufpb.dicomflow.service.CertificateServiceIF;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
@@ -42,26 +44,43 @@ public class VerifyCertificateResult {
 		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
+		CertificateServiceIF certificateService =  ServiceLocator.singleton().getCertificateService();
 		
-		Map<Access, String> map = new HashMap<Access, String>();
+		Access domain = CredentialUtil.getDomain();
+		
+		List<Access> accesses = new ArrayList<Access>();
 		try {
-			map = messageService.getCertificateResults(null, null, null);
+			accesses = messageService.getCertificateResults(null, null, null);
 		} catch (ServiceException e1) {
 			e1.printStackTrace();
 		}
-		Set<Access> accesses = map.keySet();
 		Iterator<Access> it = accesses.iterator();
 		while (it.hasNext()) {
 			
 			Access access = (Access) it.next();
-			String result = map.get(access);
+			String result = access.getCertificateStatus();
 			
 			if(result.equals(MessageServiceIF.CERTIFICATE_RESULT_CREATED)|| result.equals(MessageServiceIF.CERTIFICATE_RESULT_UPDATED)){
-				Access bdAccess = (Access) persistentService.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
-				bdAccess.setCredential(access.getCredential());
-				bdAccess.setCertificateStatus(Access.CERIFICATE_CLOSED);
+				
+				byte[] accessCertificate = access.getCertificate();
+				
 				try {
-					bdAccess.save();
+					if(certificateService.storeCertificate(accessCertificate, access.getHost())){
+						Access bdAccess = (Access) persistentService.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
+						bdAccess.setCertificateStatus(Access.CERTIFICATE_CLOSED);
+						bdAccess.save();
+						
+						Credential credential = access.getDomainCredential(0);
+						if(credential != null){
+							credential.setOwner(domain);
+							credential.setDomain(bdAccess);
+							credential.save();
+						}
+						
+						Credential accessCredential = CredentialUtil.getCredential(bdAccess, domain);
+						messageService.sendCertificateConfirm(access.getMail(), domain, MessageServiceIF.CERTIFICATE_RESULT_UPDATED, accessCredential);
+						
+					}
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}

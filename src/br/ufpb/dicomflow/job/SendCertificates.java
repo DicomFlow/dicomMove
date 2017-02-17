@@ -25,11 +25,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import br.ufpb.dicomflow.bean.Access;
+import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.service.CertificateServiceIF;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
@@ -44,7 +46,7 @@ public class SendCertificates {
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		CertificateServiceIF certificateService =  ServiceLocator.singleton().getCertificateService();
 		
-		List<Access> accesses = persistentService.selectAll("certificateStatus", Access.CERIFICATE_OPEN, Access.class);
+		List<Access> accesses = persistentService.selectAll("certificateStatus", Access.CERTIFICATE_OPEN, Access.class);
 		
 		
 		Util.getLogger(this).debug("TOTAL ACCESS: " + accesses.size());
@@ -55,7 +57,7 @@ public class SendCertificates {
 			try {
 				File certificate = certificateService.getCertificate();
 				messageService.sendCertificate(certificate, access);
-				access.setCertificateStatus(Access.CERIFICATE_PENDING);
+				access.setCertificateStatus(Access.CERTIFICATE_PENDING);
 				access.save();
 			} catch (ServiceException e) {
 				e.printStackTrace();

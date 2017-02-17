@@ -21,9 +21,11 @@ package br.ufpb.dicomflow.job;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import br.ufpb.dicomflow.bean.StorageService;
@@ -42,17 +44,18 @@ public class FindStorages {
 		
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
-		Map<String,String> urls = new HashMap<String, String>(); 
+		List<StorageService> storages = new ArrayList<>(); 
 		try {
-			urls = messageService.getStorages(null, null, null);
+			storages = messageService.getStorages(null, null, null);
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
 		
-		Iterator<String> it = urls.keySet().iterator();
+		Iterator<StorageService> it = storages.iterator();
 		while (it.hasNext()) {
-			String messageID = it.next();
-			String url = urls.get(messageID);
+			StorageService storage = it.next();
+			String originalMessageID = storage.getMessageID();
+			String url = storage.getLink();
 			Util.getLogger(this).debug("URL FOUND : " + url);
 			
 			PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
@@ -63,7 +66,7 @@ public class FindStorages {
 				storageService.setLink(url);
 				try {
 					URL aURL = new URL(url);
-					storageService.setMessageID(messageID);
+					storageService.setMessageID(originalMessageID);
 					storageService.setHost(aURL.getHost());
 					storageService.setPort(aURL.getPort());
 				} catch (MalformedURLException e) {
@@ -77,28 +80,13 @@ public class FindStorages {
 				
 				try {
 					storageService.save();
-					messageService.sendStorageResult(messageID, storageService);
+					messageService.sendStorageResult(originalMessageID, storageService);
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
 				
 			}
 
-			
-			
-			
-			
-//			FileService fileService = ServiceLocator.singleton().getFileService();
-//			try {
-//				fileService.extractZipFile(new URL(url));
-//				fileService.storeFile(new File(fileService.getExtractDir()));
-//			} catch (MalformedURLException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			} catch (ServiceException e) {
-//				e.printStackTrace();
-//			}
 		}
 		
 		Util.getLogger(this).debug("DONE");

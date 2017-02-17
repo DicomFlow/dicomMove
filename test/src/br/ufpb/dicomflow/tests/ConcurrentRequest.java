@@ -27,6 +27,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -34,7 +35,6 @@ import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.client.ClientConfig;
 
 import br.ufpb.dicomflow.integrationAPI.conf.DicomMessageProperties;
-import br.ufpb.dicomflow.integrationAPI.exceptions.PropertyNotFoundException;
 
 /**
  * 
@@ -54,7 +54,7 @@ public class ConcurrentRequest implements Runnable {
 		try {
 			
 			DicomMessageProperties iap = DicomMessageProperties.getInstance();
-			iap.load("WebContent/WEB_INF/classes/config.properties");
+			iap.load("C:/home/dicomflow/repos/dicomMove2/WebContent/WEB-INF/classes/config.properties");
 			
 		
 			
@@ -70,20 +70,24 @@ public class ConcurrentRequest implements Runnable {
 			ClientConfig clientConfig = new ClientConfig();
 //			clientConfig.register(MyClientResponseFilter.class);
 //			clientConfig.register(new AnotherClientFilter());				
-			//Client client = ClientBuilder.newClient(clientConfig);
+			Client client = ClientBuilder.newClient(clientConfig);
 //			client.register(ThirdClientFilter.class);
 			//http://localhost:8090/DicomMoveServer/rest/DownloadStudy
-			//WebTarget webTarget = client.target("http://" + host + ":" + port + "/" + context + "/");
+			WebTarget webTarget = client.target("http://" + host + ":" + port + "/" + context + "/");
 //			webTarget.register(FilterForExampleCom.class);
-			//WebTarget resourceWebTarget = webTarget.path(serviceName + "/" + studyId);
+			WebTarget resourceWebTarget = webTarget.path(serviceName + "/" + studyId);
 //			WebTarget helloworldWebTarget = resourceWebTarget.path("helloworld");
 //			WebTarget helloworldWebTargetWithQueryParam = helloworldWebTarget.queryParam("greeting", "Hi World!");
 			
 //			Invocation.Builder invocationBuilder = helloworldWebTargetWithQueryParam.request(MediaType.APPLICATION_OCTET_STREAM);				
 			
-			long inicio = System.currentTimeMillis();				
+			long inicio = System.currentTimeMillis();
 			
-			Invocation.Builder invocationBuilder = resourceWebTarget.request(MediaType.APPLICATION_OCTET_STREAM);//			
+			//String authorization = "CDN" + ":" + accessKey.getId() + ":" + signature;
+			String authorization = "DICOMFLOW" + ":" + "teste" + ":" + "Teste";
+			
+			Invocation.Builder invocationBuilder = resourceWebTarget.request(MediaType.APPLICATION_OCTET_STREAM)
+					.header(HttpHeaders.AUTHORIZATION, authorization);
 			
 			Response response = invocationBuilder.get();
 			InputStream is = (InputStream)response.getEntity();		

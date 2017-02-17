@@ -18,19 +18,21 @@
 
 package br.ufpb.dicomflow.job;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import br.ufpb.dicomflow.bean.Access;
+import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.service.CertificateServiceIF;
 import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
@@ -45,34 +47,48 @@ public class FindCertificates {
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		CertificateServiceIF certificateService =  ServiceLocator.singleton().getCertificateService();
 		
-		Map<Access, byte[]> map = new HashMap<Access, byte[]>();
+		//load the domain certificate. It can't load throws exception and return.
+		File domainCertificate;
 		try {
-			map = messageService.getCertificates( null, null, null);
+			domainCertificate = certificateService.getCertificate();
+		} catch (ServiceException e2) {
+			e2.printStackTrace();
+			return;
+		}
+		Access domain = CredentialUtil.getDomain();
+		
+		List<Access> accesses = new ArrayList<Access>();
+		try {
+			accesses = messageService.getCertificates( null, null, null);
 		} catch (ServiceException e1) {
 			e1.printStackTrace();
 		}
-		Set<Access> accesses = map.keySet();
+		
 		Iterator<Access> it = accesses.iterator();
 		while (it.hasNext()) {
 			Access access = (Access) it.next();
 			Access bdAccess = (Access) persistentService.selectByParams(new Object[]{"host","port","mail"}, new Object[]{access.getHost(), access.getPort(), access.getMail()}, Access.class);
 			
-				byte[] certificate = map.get(access);
+				byte[] accessCertificate = access.getCertificate();
 				try {
-					if(certificateService.storeCertificate(certificate, access.getHost())){
+					
+					if(certificateService.storeCertificate(accessCertificate, access.getHost())){
 						if(bdAccess == null){
-							access.setCertificateStatus(Access.CERIFICATE_OPEN);
-							access.setCredential(Util.getCredential());
+							
+							access.setCertificateStatus(Access.CREDENTIAL_PENDING);
 							access.save();
-							messageService.sendCertificateResult(access, MessageServiceIF.CERTIFICATE_RESULT_CREATED);
+							Credential credential = CredentialUtil.createCredential(access);
+							credential.save();
+							messageService.sendCertificateResult(access.getMail(), domainCertificate, domain, MessageServiceIF.CERTIFICATE_RESULT_CREATED, credential);
+							
 						}else{
-							if(bdAccess.getCredential() == null || bdAccess.getCredential().isEmpty()){
-								bdAccess.setCredential(Util.getCredential());
-							}
-							messageService.sendCertificateResult(bdAccess, MessageServiceIF.CERTIFICATE_RESULT_UPDATED);
+							bdAccess.setCertificateStatus(Access.CREDENTIAL_PENDING);
+							bdAccess.save();
+							Credential credential = CredentialUtil.getCredential(bdAccess, domain);
+							messageService.sendCertificateResult(access.getMail(),domainCertificate, domain, MessageServiceIF.CERTIFICATE_RESULT_UPDATED, credential);
 						}
 					}else{
-						messageService.sendCertificateResult(access, MessageServiceIF.CERTIFICATE_RESULT_ERROR);
+//						messageService.sendCertificateError(access.getMail(), domain, MessageServiceIF.CERTIFICATE_RESULT_ERROR);
 					}
 					
 				} catch (ServiceException e) {

@@ -25,57 +25,105 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.springframework.aop.ThrowsAdvice;
+
 import br.ufpb.dicomflow.bean.Access;
+import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.bean.ServicePermission;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.util.AccessRegexUtil;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 public class FindAccesses {
+	
+	private static final int MAX_IN_ACCESS = 1;
 
 	private String accessConfigFile;
+	private int inTypeTotal = 0;
 
 	public void execute(){
-
+		inTypeTotal = 0;
+		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		try{
 
 			File file = new File(accessConfigFile);
 			FileReader fileReader = new FileReader(file);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			
 			//read each access into config file
 			String accessLine;
+			int lineNumber = 0;
+			int totalAccess = 0;
+			List<Long> idAccesses = new ArrayList<>();
 			while ((accessLine = bufferedReader.readLine()) != null) {
+				
+				lineNumber++;
+				//the first line must be a valid Access with type equals IN
+				if((lineNumber == 1 && !AccessRegexUtil.accessMatches(accessLine)) ||
+				   (lineNumber == 1 &&	AccessRegexUtil.accessMatches(accessLine) &&  !AccessRegexUtil.getType(accessLine).equals(AccessRegexUtil.IN))){
+					throw new Exception("Access Config File invalid format: First line must contain a valid Access with type equals IN"); 
+				}
 
-				if(AccessRegexUtil.accessMatches(accessLine)){
+				//include all Access with type equals OUT and only one Access with type equals IN
+				if(AccessRegexUtil.accessMatches(accessLine) && isValidType(AccessRegexUtil.getType(accessLine))){
+					String type = AccessRegexUtil.getType(accessLine);
 					String mail = AccessRegexUtil.getMail(accessLine);
 					String host = AccessRegexUtil.getHost(accessLine);
 					String port = AccessRegexUtil.getPort(accessLine);
+					
+					
 
 					//check access into DB
-					Access access = (Access) persistentService.selectByParams(new Object[]{"mail", "host", "port"}, new Object[]{mail, host, new Integer(port)}, Access.class);
+					Access access = (Access) persistentService.selectByParams(new Object[]{"mail", "host", "port", "type"}, new Object[]{mail, host, new Integer(port), type}, Access.class);
 
 					//if access does not exists, create new access and permissions
 					if(access == null){
 
-						access = createAccess(mail, host, port);
-						access.save();
-
-						List<ServicePermission> newPermissions = readPermissions(access, accessLine);
+						access = CredentialUtil.createAccess(mail, host, port, type);
 						
-						savePermissions(newPermissions);
+						//isn't necessary request certificate for Access with type equals IN
+						if(access.getType().equals(Access.IN)){
+							access.setCertificateStatus(Access.CERTIFICATE_CLOSED);
+						}
+						access.save();
+						
+						//create credential and permissions for Access with type equals OUT
+						if(access.getType().equals(Access.OUT)){
+							Credential credential = CredentialUtil.createCredential(access);
+							credential.save();
 
-					//if access exists, load existing permissions. 
+							List<ServicePermission> newPermissions = readPermissions(credential, accessLine);
+						
+							savePermissions(newPermissions);
+						}
+						
+						idAccesses.add(access.getId());
+						totalAccess++;
+					
+					//if access exists and has type equals IN only counts
+					}else if(access.getType().equals(Access.IN)){
+						
+						idAccesses.add(access.getId());
+						totalAccess++;
+				
+					//if access exists and has type equals OUT, load credential and existing permissions. 
 					//Update the existing permissions that are in the new permissions list, remove the ones that are not in the list
 					//Create the remaining permissions that are list of new permissions
-					}else{
+					}else if(access.getType().equals(Access.OUT)){
+						Credential credential = CredentialUtil.getCredential(access, CredentialUtil.getDomain());
 
-						List<ServicePermission> newPermissions = readPermissions(access, accessLine);
+						if(credential == null){
+							credential = CredentialUtil.createCredential(access);
+							credential.save();
+						}
+						List<ServicePermission> newPermissions = readPermissions(credential, accessLine);
 
 						   
-						List<ServicePermission> servicePermissions = persistentService.selectAll("access", access, ServicePermission.class);
+						List<ServicePermission> servicePermissions = persistentService.selectAll("credential", credential, ServicePermission.class);
 						Iterator<ServicePermission> it = servicePermissions.iterator();
 						while (it.hasNext()) {
 
@@ -108,18 +156,45 @@ public class FindAccesses {
 						}
 						
 						savePermissions(newPermissions);
-
+						
+						idAccesses.add(access.getId());
+						totalAccess++;
 					}
 				}
 			}
 			bufferedReader.close();
+			//remove access that is not in config access file 
+			List<Access> invalidAccesses  = persistentService.selectAllNotIn("id", idAccesses, Access.class);
+			removeAccesses(invalidAccesses);
+			
+			Util.getLogger(this).debug("Total acess read: " + lineNumber + ". Total access saved: " + totalAccess);
 
 		}catch(Exception e){
 			Util.getLogger(this).debug("accessConfigFile is invalid: " + accessConfigFile);
 			Util.getLogger(this).error(e.getMessage());
 			e.printStackTrace();
+			
 		}
 
+	}
+
+	private void removeAccesses(List<Access> invalidAccesses) throws ServiceException {
+		Iterator<Access> it = invalidAccesses.iterator();
+		while (it.hasNext()) {
+			Access access = (Access) it.next();
+			access.remove();
+		}
+		
+	}
+
+	private boolean isValidType(String type) {
+		if(type.equals(AccessRegexUtil.IN)){
+			inTypeTotal++;
+			return inTypeTotal <= MAX_IN_ACCESS;
+		}else{
+			return true;
+		}
+		
 	}
 
 	private void savePermissions(List<ServicePermission> newPermissions) throws ServiceException {
@@ -130,7 +205,7 @@ public class FindAccesses {
 		}
 	}
 
-	private List<ServicePermission> readPermissions(Access access, String accessLine) {
+	private List<ServicePermission> readPermissions(Credential credential, String accessLine) {
 
 		ArrayList<ServicePermission> servicePermissions = new ArrayList<ServicePermission>();
 
@@ -140,7 +215,7 @@ public class FindAccesses {
 		for (int i = 0; i < count; i++) {
 
 			String permission = AccessRegexUtil.getPermission(permissions, i);
-			ServicePermission servicePermission = createServicePermission(access, permission);
+			ServicePermission servicePermission = createServicePermission(credential, permission);
 
 			if(servicePermission != null)
 				servicePermissions.add(servicePermission);
@@ -149,25 +224,17 @@ public class FindAccesses {
 		return servicePermissions;
 	}
 
-	private Access createAccess(String mail, String host, String port) {
+	
+	
 
-		Access access = new Access();
-		access.setMail(mail);
-		access.setHost(host);
-		access.setPort(new Integer(port));
-		access.setCertificateStatus(Access.CERIFICATE_OPEN);
-
-		return access;
-	}
-
-	private ServicePermission createServicePermission(Access access, String permission) {
+	private ServicePermission createServicePermission(Credential credential, String permission) {
 
 		StringTokenizer tokenizer = new StringTokenizer(permission, " ");
 		ServicePermission servicePermission = null;
 
 		if(tokenizer.countTokens() == 2){
 			servicePermission = new ServicePermission();
-			servicePermission.setAccess(access);
+			servicePermission.setCredential(credential);
 			servicePermission.setDescription(tokenizer.nextToken());
 			servicePermission.setModalities(tokenizer.nextToken());
 		}

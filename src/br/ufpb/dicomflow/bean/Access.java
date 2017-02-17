@@ -18,6 +18,8 @@
 
 package br.ufpb.dicomflow.bean;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -29,6 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
@@ -45,9 +48,14 @@ public class Access extends AbstractPersistence {
 	 */
 	private static final long serialVersionUID = 8784986036008582117L;
 	
-	public static final String CERIFICATE_OPEN = "OPEN";
-	public static final String CERIFICATE_PENDING = "PENDING";
-	public static final String CERIFICATE_CLOSED = "CLOSED";
+	public static final String IN = "IN";
+	public static final String OUT = "OUT";
+	
+	
+	public static final String CERTIFICATE_OPEN = "OPEN";
+	public static final String CERTIFICATE_PENDING = "PENDING";
+	public static final String CREDENTIAL_PENDING = "CREDENTIAL_PENDING";
+	public static final String CERTIFICATE_CLOSED = "CLOSED";
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -57,8 +65,20 @@ public class Access extends AbstractPersistence {
 	private String mail;
 	private String host;
 	private Integer port;
-	private String credential;
 	private String certificateStatus;
+	private String type;
+	
+	@Transient
+	private byte[] certificate;
+	
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="id_owner")
+	private Set<Credential> ownerCredentials;
+	
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="id_domain")
+	private Set<Credential> domainCredentials;
+	
 	
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="id_access")
@@ -68,9 +88,7 @@ public class Access extends AbstractPersistence {
 	@JoinColumn(name="id_access")
 	private Set<RequestServiceAccess> accessRequestServices;
 	
-	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="id_access")
-	private Set<ServicePermission> servicePermissions;
+	
 	
 	@Override
 	public Long getId() {
@@ -88,14 +106,6 @@ public class Access extends AbstractPersistence {
 
 	public void setMail(String mail) {
 		this.mail = mail;
-	}
-
-	public String getCredential() {
-		return credential;
-	}
-
-	public void setCredential(String credential) {
-		this.credential = credential;
 	}
 	
 	public Set<StorageServiceAccess> getAccessStorageServices() {
@@ -138,13 +148,12 @@ public class Access extends AbstractPersistence {
 		this.certificateStatus = certificateStatus;
 	}
 	
-
-	public Set<ServicePermission> getServicePermissions() {
-		return servicePermissions;
+	public String getType() {
+		return type;
 	}
 
-	public void setServicePermissions(Set<ServicePermission> servicePermissions) {
-		this.servicePermissions = servicePermissions;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	@Override
@@ -156,6 +165,74 @@ public class Access extends AbstractPersistence {
 	public void remove() throws ServiceException {
 		ServiceLocator.singleton().getPersistentService().remove(this);
 		
+	}
+
+	public Set<Credential> getOwnerCredentials() {
+		return ownerCredentials;
+	}
+
+	public void setOwnerCredentials(Set<Credential> ownerCredentials) {
+		this.ownerCredentials = ownerCredentials;
+	}
+
+	public Set<Credential> getDomainCredentials() {
+		return domainCredentials;
+	}
+
+	public void setDomainCredentials(Set<Credential> domainCredentials) {
+		this.domainCredentials = domainCredentials;
+	}
+
+	public byte[] getCertificate() {
+		return certificate;
+	}
+
+	public void setCertificate(byte[] certificate) {
+		this.certificate = certificate;
+	}
+	
+	public Credential getDomainCredential(int index){
+		Credential credential = null;
+		
+		if (index < domainCredentials.size()) {
+			
+			Iterator<Credential> it = domainCredentials.iterator();
+			for (int i = 0; i <= index; i++) {
+				credential = it.next();
+			}
+			
+		}
+		
+		return credential;
+	}
+	
+	public Credential getOwnerCredential(int index){
+		Credential credential = null;
+		
+		if (index < ownerCredentials.size()) {
+			
+			Iterator<Credential> it = ownerCredentials.iterator();
+			for (int i = 0; i <= index; i++) {
+				credential = it.next();
+			}
+			
+		}
+		
+		return credential;
+	}
+	
+	public boolean addDomainCredential(Credential credential){
+		if(domainCredentials == null){
+			domainCredentials = new HashSet<>();
+		}
+		return credential != null ? domainCredentials.add(credential) : false;
+	}
+	
+	public boolean addOwnerCredential(Credential credential){
+		if(ownerCredentials == null){
+			ownerCredentials = new HashSet<>();
+		}
+		return credential != null ? ownerCredentials.add(credential) : false;
 	}
 
 }

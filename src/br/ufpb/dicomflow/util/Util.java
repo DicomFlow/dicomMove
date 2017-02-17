@@ -59,7 +59,7 @@ import br.ufpb.dicomflow.service.ServiceLocator;
 
 /**
  * Class Util
- * classe que reune coisas importantes que são usadas por várias classes no
+ * classe que reune coisas importantes que sï¿½o usadas por vï¿½rias classes no
  * projeto
  */
 public class Util {
@@ -73,8 +73,8 @@ public class Util {
 	
 	
 	/**
-	 * retoan uma instância da classe Util
-	 * @return a instância da classe Util
+	 * retoan uma instï¿½ncia da classe Util
+	 * @return a instï¿½ncia da classe Util
 	 */
 	public static Util singleton(){
 		if (singleton == null) {
@@ -85,7 +85,7 @@ public class Util {
 	
 
 	/**
-	 * tira tudo que não eh alfanumérico de uma String
+	 * tira tudo que nï¿½o eh alfanumï¿½rico de uma String
 	 * @param str a string que vai ser analisada
 	 * @return String filtrada
 	 */
@@ -127,7 +127,7 @@ public class Util {
     /**
      * Tranforma um objeto Date em uma String.
 	 * @param date a data a ser tranformada
-	 * @return String representando a data passada por parâmetro
+	 * @return String representando a data passada por parï¿½metro
 	 */
 	public String getDataString(Date data) {		
 		String dateStr = "";		
@@ -147,7 +147,7 @@ public class Util {
 	/**
      * Tranforma um objeto Date em uma String.
 	 * @param date a data a ser tranformada
-	 * @return String representando a data passada por parâmetro
+	 * @return String representando a data passada por parï¿½metro
 	 */
 	public String getDataStringDoc(Date data) {		
 		String dateStr = "";		
@@ -172,7 +172,7 @@ public class Util {
 			newDate = dateStr.substring(0, 2) + " de Fevereiro de " +  dateStr.substring(dateStr.length()-4,dateStr.length());
 		}
 		if(dateStr.toLowerCase().contains("march")){
-			newDate = dateStr.substring(0, 2) + " de Março de " +  dateStr.substring(dateStr.length()-4,dateStr.length());
+			newDate = dateStr.substring(0, 2) + " de Marï¿½o de " +  dateStr.substring(dateStr.length()-4,dateStr.length());
 		}
 		if(dateStr.toLowerCase().contains("April")){
 			newDate = dateStr.substring(0, 2) + " de Abril de " +  dateStr.substring(dateStr.length()-4,dateStr.length());
@@ -208,9 +208,9 @@ public class Util {
 
 
 	/**
-	 * valida um cpf recebido como parâmetro
+	 * valida um cpf recebido como parï¿½metro
 	 * @param str o cpf que vai ser validado
-	 * @return true se eh um cpf válido e false caso contrário
+	 * @return true se eh um cpf vï¿½lido e false caso contrï¿½rio
 	 */
 	public boolean validaCPF(String str){
 		String cpf = filterString(str);
@@ -256,7 +256,7 @@ public class Util {
 	   }
 	
 	/**
-	 * Método que Retira todas as quebras de linhas de um texto
+	 * Mï¿½todo que Retira todas as quebras de linhas de um texto
 	 * @param texto o texto a ser formatado
 	 * @return String o texto formatado
 	 */
@@ -280,7 +280,7 @@ public class Util {
 
 
 	/**
-	 * método que transforma um Objeto Date  em um String no formato dd/MM/yyyy HH:mm:ss
+	 * mï¿½todo que transforma um Objeto Date  em um String no formato dd/MM/yyyy HH:mm:ss
 	 * @param dataPublicacao a data a ser formatada.
 	 * @return String a data formatada.
 	 */
@@ -521,7 +521,7 @@ public class Util {
 	
 	
 	/**
-	 * retorna uma lista dos objetos selecionados em um formulário
+	 * retorna uma lista dos objetos selecionados em um formulï¿½rio
 	 * @param arg1 identificadores dos objetos selecionados
 	 * @return List objetos selecionados
 	 */
@@ -559,11 +559,5 @@ public class Util {
 				
 		
 		}
-	}
-	
-	
-	public static String getCredential(){
-		return "" + (int)Math.random() * 1000000;
-		
 	}
 }

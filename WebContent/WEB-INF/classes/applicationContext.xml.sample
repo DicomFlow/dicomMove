@@ -69,6 +69,7 @@
         <property name="annotatedClasses">
             <list>
                 <value>br.ufpb.dicomflow.bean.Access</value>
+                <value>br.ufpb.dicomflow.bean.Credential</value>
                 <value>br.ufpb.dicomflow.bean.RequestService</value>
                 <value>br.ufpb.dicomflow.bean.RequestServiceAccess</value>
                 <value>br.ufpb.dicomflow.bean.StorageService</value>
@@ -168,6 +169,9 @@
 		<property name="maxAttempts">
 			<value>3</value>
 		</property>
+		<property name="messageValidity">
+			<value>600000</value>
+		</property>
     </bean>
     
     <bean id="fileService" class="br.ufpb.dicomflow.service.FileService"> 
@@ -248,6 +252,17 @@
 	</bean>
 	<bean id="verifyCertificateResultCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 	    <property name="jobDetail" ref="verifyCertificateResultJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="verifyCertificateConfirmJob" class="br.ufpb.dicomflow.job.VerifyCertificateConfirm"/>
+    <bean id="verifyCertificateConfirmJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="verifyCertificateConfirmJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="verifyCertificateConfirmCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="verifyCertificateConfirmJobDetail"/>
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
@@ -359,7 +374,8 @@
 	            <!-- JOBS PARA ENVIO E RECEBIMENTO DE CERTIFICADOS 
             	<ref bean="sendCertificatesCronTrigger"/>
                 <ref bean="findCertificatesCronTrigger"/>
-                <ref bean="verifyCertificateResultCronTrigger"/> -->
+                <ref bean="verifyCertificateResultCronTrigger"/> 
+                <ref bean="verifyCertificateConfirmCronTrigger"/> -->
                 
                
                 <!-- JOBS PARA ENVIO DE STORAGE SAVE 

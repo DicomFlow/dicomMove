@@ -24,20 +24,19 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 import br.ufpb.dicomflow.bean.Access;
+import br.ufpb.dicomflow.bean.Credential;
+import br.ufpb.dicomflow.bean.ServicePermission;
 import br.ufpb.dicomflow.bean.StorageService;
 import br.ufpb.dicomflow.bean.StorageServiceAccess;
-import br.ufpb.dicomflow.bean.ServicePermission;
 import br.ufpb.dicomflow.bean.StudyIF;
+import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.service.UrlGeneratorIF;
+import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
@@ -91,6 +90,8 @@ public class PrepareStorages {
 	}
 
 	private void insertRegistries(List<StudyIF> studies, List<Access> accesses) {
+		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
+		
 		UrlGeneratorIF urlGenerator = ServiceLocator.singleton().getUrlGenerator();
 		
 		Iterator<StudyIF> it = studies.iterator();
@@ -120,8 +121,8 @@ public class PrepareStorages {
 					StorageServiceAccess ra = new StorageServiceAccess(storageService, access);
 					ra.setStatus(StorageService.OPEN);
 					ra.setUploadAttempt(0);
-					ra.setValidity("");
-	//				ra.setCredential(credential);
+					ra.setValidity(messageService.getMessageValidity());
+//					ra.setCredential(CredentialUtil.createCredential(access).getKey());
 					try {
 						ra.save();
 					} catch (ServiceException e) {
@@ -137,8 +138,9 @@ public class PrepareStorages {
 
 	private boolean verifyAccess(Access access, StudyIF study, String serviceType) {
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
-		ServicePermission servicePermission = (ServicePermission) persistentService.selectByParams(new String[]{"description", "access"}, new Object[]{serviceType, access} , ServicePermission.class);
-		//verifica se o acesso tem permissão ao serviço e ao estudo especificados
+		Credential credential  = CredentialUtil.getCredential(access, CredentialUtil.getDomain());
+		ServicePermission servicePermission = (ServicePermission) persistentService.selectByParams(new String[]{"description", "credential"}, new Object[]{serviceType, credential} , ServicePermission.class);
+		//verifica se o acesso tem permissï¿½o ao serviï¿½o e ao estudo especificados
 		return servicePermission != null && (servicePermission.getModalities().contains(study.getModalitiesInStudy()) || servicePermission.getModalities().contains("*"));
 	}
 

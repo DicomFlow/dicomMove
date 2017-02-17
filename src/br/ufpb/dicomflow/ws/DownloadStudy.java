@@ -50,9 +50,17 @@ public class DownloadStudy extends GenericWebService {
 	public Response getStudy(@PathParam("studyIUID") String studyIUID) {
 		
 		//TODO - Modificar
-//		if (authenticate()) {
-//			System.out.println("OK");
-//		}
+		if (authenticate()) {
+			System.out.println("OK");
+		}
+				
+		//TODO implementando a autenticacao no download
+		//AccessKeyID = host
+		//AccessKey = credential		
+		//No solicitante - pegar o host do applicationcontext - beans URLGenerator e mailHeadBuilder
+		//No que responde o download - pegar da tabela access 
+		
+		
 		Date initialTime = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss.SSS");
 		Util.getLogger(this).debug("INICIANDO DOWNLOAD - " + format.format(initialTime) );

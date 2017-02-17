@@ -56,7 +56,7 @@ public class StorageServiceAccess extends AbstractPersistence {
 	
 	private String messageID;
 	
-	private String credential;
+	private Credential credential;
 	
 	private String validity;
 	
@@ -116,11 +116,11 @@ public class StorageServiceAccess extends AbstractPersistence {
 		this.messageID = messageID;
 	}
 
-	public String getCredential() {
+	public Credential getCredential() {
 		return credential;
 	}
 
-	public void setCredential(String credential) {
+	public void setCredential(Credential credential) {
 		this.credential = credential;
 	}
 

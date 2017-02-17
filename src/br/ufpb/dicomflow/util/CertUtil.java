@@ -214,7 +214,7 @@ public class CertUtil {
 		
 		//create certificate file on store directory
 		String path = keystore.getAbsolutePath();
-		File certFile = new File(path.substring(0,path.lastIndexOf('/'))+alias+".crt");
+		File certFile = new File(path.substring(0,path.lastIndexOf(File.separator)+1)+alias+".crt");
 		
 		try {
 			//write on certificate file
@@ -267,7 +267,7 @@ public class CertUtil {
 		//create certificate file on store directory
 		File keystore = new File(keystoreFile);
 		String path = keystore.getAbsolutePath();
-		File certificate = new File(path.substring(0,path.lastIndexOf('/'))+alias+".crt");
+		File certificate = new File(path.substring(0,path.lastIndexOf(File.separator)+1)+alias+".crt");
 		try {
 			//load store
 			InputStream in = new FileInputStream(keystore);
@@ -288,7 +288,7 @@ public class CertUtil {
 	
 		    Writer wr = new OutputStreamWriter(os, Charset.forName("UTF-8"));
 		    wr.write(new sun.misc.BASE64Encoder().encode(buf));
-		    wr.flush();
+//		    wr.close();
 	    
 	    
 	    
