@@ -18,11 +18,6 @@
 
 package br.ufpb.dicomflow.bean;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-@Entity
-@Table(name="series")
 public interface SeriesIF {
 
 

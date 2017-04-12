@@ -18,11 +18,6 @@
 
 package br.ufpb.dicomflow.bean;
 
-import java.util.Date;
-import java.util.Set;
-
-
-
 public interface InstanceIF {
 
 
