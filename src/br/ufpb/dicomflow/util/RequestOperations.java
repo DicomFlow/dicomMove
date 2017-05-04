@@ -38,7 +38,7 @@ public class RequestOperations {
 		return signature;
 	}
 	
-	public String getHeaderString(String contentMD5, String header) {
+	public static String getHeaderString(String contentMD5, String header) {
 		String canonicalizeHeaders = "";
 		String canonicalizedResource = "";
 		String signature = "GET" + "\n"

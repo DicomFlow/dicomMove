@@ -87,8 +87,8 @@ public class ConcurrentRequest implements Runnable {
 			
 			String contentMD5 = "contentMD5";			
 			String date = "date";
-			String accessKey = 
-			String signature =  Signature.calculateRFC2104HMAC(RequestOperations.getHeaderString(contentMD5, date), accessKey.getKey());
+			String accessKey = ""; 
+			String signature =  Signature.calculateRFC2104HMAC(RequestOperations.getHeaderString(contentMD5, date), accessKey);
 			
 			//String authorization = "CDN" + ":" + accessKey.getId() + ":" + signature;			
 			String authorization = "DICOMFLOW" + ":" + "150.165.250.181" + ":" + signature;
