@@ -35,6 +35,8 @@ import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.client.ClientConfig;
 
 import br.ufpb.dicomflow.integrationAPI.conf.DicomMessageProperties;
+import br.ufpb.dicomflow.util.RequestOperations;
+import br.ufpb.dicomflow.util.Signature;
 
 /**
  * 
@@ -83,8 +85,13 @@ public class ConcurrentRequest implements Runnable {
 			
 			long inicio = System.currentTimeMillis();
 			
-			//String authorization = "CDN" + ":" + accessKey.getId() + ":" + signature;
-			String authorization = "CDN" + ":" + "teste" + ":" + "Teste";
+			String contentMD5 = "contentMD5";			
+			String date = "date";
+			String accessKey = 
+			String signature =  Signature.calculateRFC2104HMAC(RequestOperations.getHeaderString(contentMD5, date), accessKey.getKey());
+			
+			//String authorization = "CDN" + ":" + accessKey.getId() + ":" + signature;			
+			String authorization = "DICOMFLOW" + ":" + "150.165.250.181" + ":" + signature;
 			
 			Invocation.Builder invocationBuilder = resourceWebTarget.request(MediaType.APPLICATION_OCTET_STREAM)
 					.header(HttpHeaders.AUTHORIZATION, authorization);

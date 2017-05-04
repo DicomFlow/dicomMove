@@ -32,10 +32,19 @@ public class RequestOperations {
 		String canonicalizeHeaders = "";
 		String canonicalizedResource = "";
 		String signature = request.getMethod() + "\n" 
-				+ headers.getRequestHeader(contentMD5Header).get(0) + "\n" 
-				+ headers.getRequestHeader(dateHeader).get(0) + "\n"
+				+ headers.getRequestHeader(HttpHeaders.AUTHORIZATION).get(0) + "\n" 
 				+ canonicalizeHeaders + 
 				canonicalizedResource;					
+		return signature;
+	}
+	
+	public String getHeaderString(String contentMD5, String header) {
+		String canonicalizeHeaders = "";
+		String canonicalizedResource = "";
+		String signature = "GET" + "\n"
+				+ header
+				+ canonicalizeHeaders + 
+				canonicalizedResource;
 		return signature;
 	}
 	
