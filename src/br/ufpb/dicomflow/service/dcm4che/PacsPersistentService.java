@@ -17,7 +17,14 @@
  */
 package br.ufpb.dicomflow.service.dcm4che;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import br.ufpb.dicomflow.bean.InstanceIF;
 import br.ufpb.dicomflow.bean.PatientIF;
@@ -65,5 +72,13 @@ public class PacsPersistentService extends PersistentService  implements PacsPer
 	public List<InstanceIF> selectAllFiles(List<SeriesIF> series) {
 		return super.selectAll("series", series, Instance.class);
 	}
+
+	@Override
+	public List<StudyIF> selectAllStudies(Date initialDate, Date finalDate, List<String> modalities) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 	
 }

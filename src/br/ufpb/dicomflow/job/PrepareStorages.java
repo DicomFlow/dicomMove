@@ -41,6 +41,14 @@ import br.ufpb.dicomflow.util.Util;
 
 
 public class PrepareStorages {
+	
+	
+	private static final String  DAILY_TYPE = "1";
+	
+	private String initialDate;
+	private String finalDate;
+	private String modalities;
+	private String type;
 
 	public void execute(){
 		
@@ -143,5 +151,42 @@ public class PrepareStorages {
 		//verifica se o acesso tem permiss�o ao servi�o e ao estudo especificados
 		return servicePermission != null && (servicePermission.getModalities().contains(study.getModalitiesInStudy()) || servicePermission.getModalities().contains("*"));
 	}
+
+	public String getInitialDate() {
+		return initialDate;
+	}
+
+	public void setInitialDate(String initialDate) {
+		this.initialDate = initialDate;
+	}
+
+	public String getFinalDate() {
+		return finalDate;
+	}
+
+	public void setFinalDate(String finalDate) {
+		this.finalDate = finalDate;
+	}
+
+	public String getModalities() {
+		return modalities;
+	}
+
+	public void setModalities(String modalities) {
+		this.modalities = modalities;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	
+	
+	
+	
 
 }

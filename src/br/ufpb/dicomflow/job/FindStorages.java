@@ -40,7 +40,8 @@ public class FindStorages {
 	public void execute() {
 		
 		long start = System.currentTimeMillis();
-		Util.getLogger(this).debug("SEARCHING URLs...");	
+		Util.getLogger(this).debug("SEARCHING URLs...");
+		System.out.println("SEARCHING URLs...");
 		
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
@@ -57,6 +58,7 @@ public class FindStorages {
 			String originalMessageID = storage.getMessageID();
 			String url = storage.getLink();
 			Util.getLogger(this).debug("URL FOUND : " + url);
+			System.out.println("URL FOUND : " + url);
 			
 			PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 			StorageService storageService = (StorageService) persistentService.selectByParams(new Object[]{"link", "type", "action"},new Object[]{url,StorageService.RECEIVED, StorageService.SAVE}, StorageService.class);

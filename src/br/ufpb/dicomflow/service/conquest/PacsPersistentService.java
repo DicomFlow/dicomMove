@@ -17,6 +17,7 @@
  */
 package br.ufpb.dicomflow.service.conquest;
 
+import java.util.Date;
 import java.util.List;
 
 import br.ufpb.dicomflow.bean.InstanceIF;
@@ -64,6 +65,12 @@ public class PacsPersistentService extends PersistentService  implements PacsPer
 	@Override
 	public List<InstanceIF> selectAllFiles(List<SeriesIF> series) {
 		return super.selectAll("series", series, Instance.class);
+	}
+
+	@Override
+	public List<StudyIF> selectAllStudies(Date initialDate, Date finalDate, List<String> modalities) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

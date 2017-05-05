@@ -20,7 +20,9 @@ package br.ufpb.dicomflow.job;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -45,6 +47,11 @@ public class FindAccesses {
 	private int inTypeTotal = 0;
 
 	public void execute(){
+		
+		long start = System.currentTimeMillis();
+		Util.getLogger(this).debug("FIND ACCESS...");
+		System.out.println("FIND ACCESS...");
+		
 		inTypeTotal = 0;
 		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
@@ -175,6 +182,12 @@ public class FindAccesses {
 			e.printStackTrace();
 			
 		}
+		
+		Util.getLogger(this).debug("DONE!!");
+		long finish = System.currentTimeMillis();
+		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		System.out.println("JOB:FIND_ACCESS - StartInMillis - " + start + " - FinishInMillis - " + finish + " - StartFormated - " + sdfDate.format(new Date(start)) + " - FinishFormated " +  sdfDate.format(new Date(finish)));	
+		
 
 	}
 

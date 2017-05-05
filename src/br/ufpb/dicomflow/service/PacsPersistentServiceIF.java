@@ -18,6 +18,7 @@
 
 package br.ufpb.dicomflow.service;
 
+import java.util.Date;
 import java.util.List;
 
 import br.ufpb.dicomflow.bean.InstanceIF;
@@ -33,6 +34,8 @@ public interface PacsPersistentServiceIF {
 	public static final String DESC = "desc";
 	
 	public PatientIF selectPatient(String patientID);
+	
+	public List<StudyIF> selectAllStudies(Date initialDate, Date finalDate, List<String> modalities);
 	
 	public List<StudyIF> selectAllStudiesNotIn(List<String> registredStudiesIuids);
 
