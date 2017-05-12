@@ -21,6 +21,9 @@ package br.ufpb.dicomflow.service;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
+
 import br.ufpb.dicomflow.bean.InstanceIF;
 import br.ufpb.dicomflow.bean.PatientIF;
 import br.ufpb.dicomflow.bean.SeriesIF;
@@ -33,9 +36,13 @@ public interface PacsPersistentServiceIF {
 	public static final String ASC = "asc";
 	public static final String DESC = "desc";
 	
+	public Session createSession();
+	
 	public PatientIF selectPatient(String patientID);
 	
 	public List<StudyIF> selectAllStudies(Date initialDate, Date finalDate, List<String> modalities);
+	
+	public ScrollableResults selectAllStudiesScrollable(Session session, Date initialDate, Date finalDate, List<String> modalities);
 	
 	public List<StudyIF> selectAllStudiesNotIn(List<String> registredStudiesIuids);
 
@@ -44,6 +51,8 @@ public interface PacsPersistentServiceIF {
 	public List<SeriesIF> selectAllSeries(StudyIF study);
 
 	public List<InstanceIF> selectAllFiles(List<SeriesIF> series);
+
+	
 	
 	
 	

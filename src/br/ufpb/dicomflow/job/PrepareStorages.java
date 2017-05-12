@@ -18,13 +18,21 @@
 
 package br.ufpb.dicomflow.job;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
+
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import br.ufpb.dicomflow.bean.Access;
+import br.ufpb.dicomflow.bean.ControllerProperty;
 import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.bean.ServicePermission;
 import br.ufpb.dicomflow.bean.StorageService;
@@ -43,12 +51,14 @@ import br.ufpb.dicomflow.util.Util;
 public class PrepareStorages {
 	
 	
-	private static final String  DAILY_TYPE = "1";
+	private static final String  DAILY_STRATEGY = "1";
+	private static final String  INTERVAL_STRATEGY = "2";
+	private static final String  CURRENT_STUDY_STRATEGY = "3";
 	
 	private String initialDate;
 	private String finalDate;
 	private String modalities;
-	private String type;
+	private String strategy;
 
 	public void execute(){
 		
@@ -56,16 +66,16 @@ public class PrepareStorages {
 		
 		Util.getLogger(this).debug("SEARCHING NEW STUDIES...");
 		
-		PacsPersistentServiceIF pacsPersistentservice = ServiceLocator.singleton().getPacsPersistentService();
+		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		
-		List<StorageService> storageServices = persistentService.selectAllByParams(new String[]{"type", "action"}, new Object[]{StorageService.SENT, StorageService.SAVE}, StorageService.class);
+//		List<StorageService> storageServices = persistentService.selectAllByParams(new String[]{"type", "action"}, new Object[]{StorageService.SENT, StorageService.SAVE}, StorageService.class);
 		
-		List<String> registredStudiesIuids = getStudiesIuids(storageServices);
-		List<StudyIF> studies = new ArrayList<StudyIF>();
+//		List<String> registredStudiesIuids = getStudiesIuids(storageServices);
+//		List<StudyIF> studies = new ArrayList<StudyIF>();
 		
-		studies = pacsPersistentservice.selectAllStudiesNotIn(registredStudiesIuids);
-		Util.getLogger(this).debug("TOTAL STUDIES: " + studies.size());
+//		studies = pacsPersistentservice.selectAllStudiesNotIn(registredStudiesIuids);
+//		Util.getLogger(this).debug("TOTAL STUDIES: " + studies.size());
 		
 		
 		List<Access> accesses = new ArrayList<Access>();
@@ -77,7 +87,8 @@ public class PrepareStorages {
 			e.printStackTrace();
 		}
 		
-		insertRegistries(studies, accesses);
+		//insertRegistries(studies, accesses);
+		insertRegistries(accesses);
 		
 		Util.getLogger(this).debug("DONE!!");
 		long finish = System.currentTimeMillis();
@@ -86,26 +97,120 @@ public class PrepareStorages {
 		
 	}
 
-	private List<String> getStudiesIuids(List<StorageService> registries) {
-		List<String> iuids = new ArrayList<String>();
-		Iterator<StorageService> it = registries.iterator();
-		while (it.hasNext()) {
-			StorageService registry = (StorageService) it.next();
-			iuids.add(registry.getStudyIuid());
-			
-		}
-		return iuids;
-	}
+	
 
-	private void insertRegistries(List<StudyIF> studies, List<Access> accesses) {
+//	private List<String> getStudiesIuids(List<StorageService> registries) {
+//		List<String> iuids = new ArrayList<String>();
+//		Iterator<StorageService> it = registries.iterator();
+//		while (it.hasNext()) {
+//			StorageService registry = (StorageService) it.next();
+//			iuids.add(registry.getStudyIuid());
+//			
+//		}
+//		return iuids;
+//	}
+
+	private void insertRegistries(/*List<StudyIF> studies,*/ List<Access> accesses) {
+		
+		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
 		UrlGeneratorIF urlGenerator = ServiceLocator.singleton().getUrlGenerator();
 		
-		Iterator<StudyIF> it = studies.iterator();
-		while (it.hasNext()) {
+		PacsPersistentServiceIF pacsPersistentservice = ServiceLocator.singleton().getPacsPersistentService();
+		Session session = pacsPersistentservice.createSession();
+		Transaction tx = session.beginTransaction();
+		
+		ScrollableResults studies = null;
+		
+		ControllerProperty currentDateProperty = (ControllerProperty) persistentService.select("property", ControllerProperty.CURRENT_DATE_PROPERTY, ControllerProperty.class);
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
+		//verifies the retrieve straegy
+		if(strategy.equals(DAILY_STRATEGY)){
 			
-			StudyIF study = (StudyIF) it.next();
+			Date currentDate = Calendar.getInstance().getTime();
+			
+			studies = getStudies(session, currentDate, currentDate, modalities);
+			
+		}
+		if(strategy.equals(INTERVAL_STRATEGY)){
+			
+			try {
+				if(initialDate == null || finalDate == null || initialDate.equals("") || finalDate.equals("")){
+					throw new Exception("Formato inválido para initialDate ou finalDate. Formato: dd/MM/yyyy");
+				}
+				
+				Date startDate = formatter.parse(initialDate);
+				Date finishDate = formatter.parse(finalDate);
+				if(currentDateProperty != null){
+					Date currentDate = formatter.parse(currentDateProperty.getValue());
+					
+					if(currentDate.equals(startDate) || currentDate.after(startDate) ){
+						startDate = currentDate;
+					}
+					if(currentDate.after(finishDate)){
+						throw new Exception("CurrentDateProperty fora do intervalo.");
+					}
+				}
+				studies = getStudies(session, startDate, finishDate, modalities);
+				
+			} catch (Exception e) {
+				tx.commit();
+				session.close();
+				Util.getLogger(this).error("Could not possible retrieve Studies using Interval Strategy", e);
+				e.printStackTrace();
+				return;
+			}
+			
+		}
+		if(strategy.equals(CURRENT_STUDY_STRATEGY)){
+			try {
+				
+				
+				if(initialDate == null || initialDate.equals("")){
+					throw new Exception("Formato inválido para initialDate. Formato: dd/MM/yyyy");
+				}
+				
+				Date startDate = formatter.parse(initialDate);
+				
+				if(currentDateProperty != null){
+					Date currentDate = formatter.parse(currentDateProperty.getValue());
+					
+					if(currentDate.equals(startDate) || currentDate.after(startDate) ){
+						startDate = currentDate;
+					}
+					
+				}
+				
+				studies = getStudies(session, startDate, null, modalities);
+				
+			} catch (Exception e) {
+				tx.commit();
+				session.close();
+				Util.getLogger(this).error("Could not possible retrieve Studies using Current Study Strategy", e);
+				e.printStackTrace();
+				return;
+			}
+		}
+
+		
+		if(studies == null){
+			tx.commit();
+			session.close();
+			return;
+		}
+		int count = 0;
+//		Iterator<StudyIF> it = studies.iterator();
+		while (studies.next()) {//it.hasNext()) {
+			
+			StudyIF study = (StudyIF) studies.get(0);//(StudyIF) it.next();
+			
+			//If the study has already been mapped, it does not create the storage service
+			StorageService storageServiceDB = (StorageService) persistentService.select("studyIuid", study.getStudyIuid(), StorageService.class);
+			if(storageServiceDB != null){
+				continue;
+			}
 			
 			StorageService storageService = new StorageService(urlGenerator.getURL(study));
 			storageService.setType(StorageService.SENT);
@@ -114,6 +219,7 @@ public class PrepareStorages {
 			storageService.setStatus(StorageService.OPEN);
 			try {
 				storageService.save();
+				
 			} catch (ServiceException e) {
 				Util.getLogger(this).error("Could not possible save registry", e);
 				e.printStackTrace();
@@ -139,9 +245,63 @@ public class PrepareStorages {
 					}
 				}
 				
-			}														
+			}
+			
+			//update currentDate Property
+			try {
+				if(currentDateProperty == null){
+					currentDateProperty = new ControllerProperty();
+					currentDateProperty.setProperty(ControllerProperty.CURRENT_DATE_PROPERTY);
+				}
+				if(study.getStudyDateTime() != null){
+					currentDateProperty.setValue(formatter.format(study.getStudyDateTime()));
+					currentDateProperty.save();
+				}
+			} catch (ServiceException e) {
+				Util.getLogger(this).error("Could not possible save currentDateProperty", e);
+				e.printStackTrace();
+			}
+			
+			 //flush a batch of updates and release memory:
+			if ( ++count % 20 == 0 ) {
+		        session.flush();
+		        session.clear();
+		    }
+			
 		}
 		
+		tx.commit();
+		session.close();
+		
+	}
+	
+	private ScrollableResults getStudies(Session session, Date initialDate, Date finalDate, String modalities) {
+		
+		
+		PacsPersistentServiceIF pacsPersistentservice = ServiceLocator.singleton().getPacsPersistentService();
+		
+		
+		try {
+			
+			
+			List<String> modalityList = new ArrayList<String>();
+			
+			if(modalities != null && !modalities.equals("*")){
+			
+				StringTokenizer tokenizer = new StringTokenizer(modalities, ",");
+				while (tokenizer.hasMoreTokens()) {
+					modalityList.add(tokenizer.nextToken());
+				}
+			}
+			
+			
+			return  pacsPersistentservice.selectAllStudiesScrollable(session, initialDate, finalDate, modalityList);
+		
+		} catch (Exception e) {
+			Util.getLogger(this).error(e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private boolean verifyAccess(Access access, StudyIF study, String serviceType) {
@@ -176,13 +336,15 @@ public class PrepareStorages {
 		this.modalities = modalities;
 	}
 
-	public String getType() {
-		return type;
+	public String getStrategy() {
+		return strategy;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setStrategy(String strategy) {
+		this.strategy = strategy;
 	}
+
+	
 	
 	
 	

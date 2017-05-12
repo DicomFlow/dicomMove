@@ -17,21 +17,25 @@
  */
 package br.ufpb.dicomflow.service.dcm4che;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.hibernate.CacheMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 
 import br.ufpb.dicomflow.bean.InstanceIF;
 import br.ufpb.dicomflow.bean.PatientIF;
 import br.ufpb.dicomflow.bean.SeriesIF;
 import br.ufpb.dicomflow.bean.StudyIF;
-import br.ufpb.dicomflow.bean.dcm4che.Patient;
 import br.ufpb.dicomflow.bean.dcm4che.Instance;
+import br.ufpb.dicomflow.bean.dcm4che.Patient;
 import br.ufpb.dicomflow.bean.dcm4che.Series;
 import br.ufpb.dicomflow.bean.dcm4che.Study;
 import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
@@ -45,6 +49,11 @@ public class PacsPersistentService extends PersistentService  implements PacsPer
 	 */
 	public PacsPersistentService() {
 		super();
+	}
+	
+	@Override
+	public Session createSession() {
+		return this.getSession();
 	}
 	
 	@Override
@@ -75,10 +84,71 @@ public class PacsPersistentService extends PersistentService  implements PacsPer
 
 	@Override
 	public List<StudyIF> selectAllStudies(Date initialDate, Date finalDate, List<String> modalities) {
-		// TODO Auto-generated method stub
-		return null;
+		String query = allStudiesQuery(initialDate, finalDate, modalities);              
+		               
+		List result = new ArrayList();
+		
+		Session session = this.getSession();
+		try {
+			Query consulta = session.createQuery(query);
+	        List list  = consulta.list();
+	        return list;
+		} catch (HibernateException e) {
+			this.logger.error("Error retrieving objects", e);
+	        e.printStackTrace();
+		} finally {
+			session.clear();
+			session.close();	
+		}		                
+		return new ArrayList();
+	}
+
+	
+
+	@Override
+	public ScrollableResults selectAllStudiesScrollable(Session session, Date initialDate, Date finalDate, List<String> modalities) {
+		
+		String query = allStudiesQuery(initialDate, finalDate, modalities);              
+		               
+		ScrollableResults studies = null;
+		try {
+			studies = session.createQuery(query).setCacheMode(CacheMode.IGNORE).scroll(ScrollMode.FORWARD_ONLY);
+	        return studies;
+		} catch (Exception e) {
+			this.logger.error("Error retrieving objects", e);
+	        e.printStackTrace();
+		}	                
+		return studies;
 	}
 	
+	private String allStudiesQuery(Date initialDate, Date finalDate, List<String> modalities) {
+		String query = "from " + Study.class.getName() + " study where 1=1 ";
+		
+		
+		if(initialDate != null){
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			query+=" and study.studyDateTime >= '" + dateFormat.format(initialDate)+"'";
+		}
+		if(finalDate != null){
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			query+=" and study.studyDateTime <= '" + dateFormat.format(finalDate)+"'";
+		}
+		if(modalities != null && modalities.size() != 0){
+			query += "  and study.modalitiesInStudy IN (";
+			Iterator it = modalities.iterator();
+			if(it.hasNext()){
+				String modality = (String) it.next();
+				query+=modality;
+			}
+			while (it.hasNext()) {
+				String modality = (String) it.next();
+				query+=","+modality;
+				
+			}
+			query+=") order by study.studyDateTime";
+		}
+		return query;
+	}
 	
 	
 }

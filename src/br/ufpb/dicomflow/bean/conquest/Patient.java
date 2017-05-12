@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -32,7 +33,7 @@ import br.ufpb.dicomflow.bean.AbstractPersistence;
 import br.ufpb.dicomflow.bean.PatientIF;
 
 @Entity
-@Table(name="dicompatients")
+@Table(name="DICOMPatients")
 public class Patient extends AbstractPersistence implements PatientIF{
 
 	/**
@@ -42,22 +43,22 @@ public class Patient extends AbstractPersistence implements PatientIF{
 
 
 	@Id
-	@Column(name="patientID",unique=true)
+	@Column(name="PatientID",unique=true)
     private String patientId;
 	
     
-	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="patientID")
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinColumn(name="PatientID")
 	private Set<Study> studies;
 	
 	
-	@Column(name="patientNam")
+	@Column(name="PatientNam")
     private String patientName;
 	
-	@Column(name="patientBir")
+	@Column(name="PatientBir")
     private String patientBirthDate;
 	
-	@Column(name="patientSex")
+	@Column(name="PatientSex")
     private String patientSex;
 	
 	public String getPatientId() {
