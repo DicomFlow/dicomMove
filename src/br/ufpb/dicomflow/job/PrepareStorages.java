@@ -86,9 +86,11 @@ public class PrepareStorages {
 			Util.getLogger(this).error("Could not possible select accesses",e);
 			e.printStackTrace();
 		}
+		if(accesses.size() != 0){
+			//insertRegistries(studies, accesses);
+			insertRegistries(accesses);
+		}
 		
-		//insertRegistries(studies, accesses);
-		insertRegistries(accesses);
 		
 		Util.getLogger(this).debug("DONE!!");
 		long finish = System.currentTimeMillis();
@@ -212,6 +214,8 @@ public class PrepareStorages {
 				continue;
 			}
 			
+			
+			
 			StorageService storageService = new StorageService(urlGenerator.getURL(study));
 			storageService.setType(StorageService.SENT);
 			storageService.setAction(StorageService.SAVE);
@@ -219,6 +223,10 @@ public class PrepareStorages {
 			storageService.setStatus(StorageService.OPEN);
 			try {
 				storageService.save();
+				
+				Util.getLogger(this).debug(">>>>>>  SALVANDO STORAGE SAVE <<<<<<<<<");
+				System.out.println(">>>>>>  SALVANDO STORAGE SAVE <<<<<<<<<");	
+				
 				
 			} catch (ServiceException e) {
 				Util.getLogger(this).error("Could not possible save registry", e);
@@ -239,6 +247,9 @@ public class PrepareStorages {
 //					ra.setCredential(CredentialUtil.createCredential(access).getKey());
 					try {
 						ra.save();
+						
+						Util.getLogger(this).debug(">>>>>>  SALVANDO STORAGE ACCESS <<<<<<<<<");
+						System.out.println(">>>>>>  SALVANDO STORAGE ACCESS <<<<<<<<<");
 					} catch (ServiceException e) {
 						Util.getLogger(this).error("Could not possible save registry-access biding", e);
 						e.printStackTrace();
@@ -308,6 +319,11 @@ public class PrepareStorages {
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		Credential credential  = CredentialUtil.getCredential(access, CredentialUtil.getDomain());
 		ServicePermission servicePermission = (ServicePermission) persistentService.selectByParams(new String[]{"description", "credential"}, new Object[]{serviceType, credential} , ServicePermission.class);
+		System.out.println(">>>>>>  CREDENTIAL "+ credential +" <<<<<<<<<");
+		System.out.println(">>>>>>  PERMISSION " + servicePermission +" <<<<<<<<<");
+		if(servicePermission != null ){
+			System.out.println(">>>>>>  MODALITY " + servicePermission.getModalities().contains("*") +" <<<<<<<<<");
+		}
 		//verifica se o acesso tem permiss�o ao servi�o e ao estudo especificados
 		return servicePermission != null && (servicePermission.getModalities().contains(study.getModalitiesInStudy()) || servicePermission.getModalities().contains("*"));
 	}
