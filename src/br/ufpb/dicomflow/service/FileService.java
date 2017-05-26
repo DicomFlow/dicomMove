@@ -31,6 +31,22 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.X509TrustManager;
+
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import org.dcm4che3.tool.storescu.StoreSCU;
 
 import br.ufpb.dicomflow.bean.InstanceIF;
@@ -107,7 +123,34 @@ public class FileService implements FileServiceIF {
 			dir.mkdir();
 		}
 		
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		System.out.println("URL PROTOCOL: " + url.getProtocol().toLowerCase());
+		
+		if(url.getProtocol().toLowerCase().equals("https")){
+			try {
+				SSLContext ctx = SSLContext.getInstance("TLS");
+				ctx.init(new KeyManager[0], new TrustManager[] {new DefaultTrustManager()}, new SecureRandom());
+		        SSLContext.setDefault(ctx);
+			} catch (NoSuchAlgorithmException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (KeyManagementException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+
+  
+        HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        if(url.getProtocol().toLowerCase().equals("https")){
+	        con.setHostnameVerifier(new HostnameVerifier() {
+	            @Override
+	            public boolean verify(String arg0, SSLSession arg1) {
+	                return true;
+	            }
+	        });
+        }
+		
+//		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		InputStream in = (InputStream)con.getInputStream();					
 		String filePath = zipDir  + java.io.File.separator + fileName;
 		Util.getLogger(this).debug("filePath: " + filePath);
@@ -284,6 +327,20 @@ public class FileService implements FileServiceIF {
 	public void setExtractDir(String extractDir) {
 		this.extractDir = extractDir;
 	}
+	
+	private static class DefaultTrustManager implements X509TrustManager {
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
+    }
 	
 	
 	
