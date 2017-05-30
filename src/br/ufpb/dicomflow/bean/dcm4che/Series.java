@@ -54,7 +54,7 @@ public class Series extends AbstractPersistence implements SeriesIF{
 	@JoinColumn(name="study_fk")
 	private Study study;
 	
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="series_fk")
 	private Set<Instance> instances;
 	

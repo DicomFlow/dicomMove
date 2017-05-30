@@ -31,7 +31,7 @@ import br.ufpb.dicomflow.bean.InstanceIF;
 
 
 @Entity
-@Table(name="dicomimages")
+@Table(name="DICOMImages")
 public class Instance extends AbstractPersistence implements InstanceIF {
 
 	/**
@@ -41,21 +41,21 @@ public class Instance extends AbstractPersistence implements InstanceIF {
 
 
 	@Id
-	@Column(name="sOPInstanc",unique=true)
+	@Column(name="SOPInstanc",unique=true)
 	private String sopIuid;
 	
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="seriesInst")
+	@JoinColumn(name="SeriesInst")
 	private Series series;
 	
-	@Column(name="sOPClassUI")
+	@Column(name="SOPClassUI")
 	private String sopCuid;
 	
-	@Column(name="imageNumbe")
+	@Column(name="ImageNumbe")
 	private String instanceNumber;
 	
-	@Column(name="objectFile")
+	@Column(name="ObjectFile")
 	private String filePath;
 	
 	public Series getSeries() {
