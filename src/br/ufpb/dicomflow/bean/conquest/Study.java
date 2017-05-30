@@ -18,6 +18,8 @@
 
 package br.ufpb.dicomflow.bean.conquest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -36,7 +38,7 @@ import br.ufpb.dicomflow.bean.PatientIF;
 import br.ufpb.dicomflow.bean.StudyIF;
 
 @Entity
-@Table(name="dicomstudies")
+@Table(name="DICOMStudies")
 public class Study extends AbstractPersistence implements StudyIF{
 	 
 	/**
@@ -45,34 +47,34 @@ public class Study extends AbstractPersistence implements StudyIF{
 	private static final long serialVersionUID = 8825435386193410947L;
 
 	@Id
-	@Column(name="studyInsta",unique=true)
+	@Column(name="StudyInsta",unique=true)
 	private String studyIuid;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="patientID")
+	@JoinColumn(name="PatientID")
 	private Patient patient;
 	
-	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="studyInsta")
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinColumn(name="StudyInsta")
 	private Set<Series> series;
 	
 	
-	@Column(name="studyID")
+	@Column(name="StudyID")
     private String studyId;
 	
-	@Column(name="studyDate")
-    private Date studyDateTime;
+	@Column(name="StudyDate")
+    private String studyDate;
 	
-	@Column(name="accessionN")
+	@Column(name="AccessionN")
     private String accessionNumber;
 	
-	@Column(name="studyModal")
+	@Column(name="StudyModal")
     private String modalitiesInStudy;
 	
-	@Column(name="studyDescr")
+	@Column(name="StudyDescr")
 	private String studyDescription;
 	
-	@Column(name="referPhysi")
+	@Column(name="ReferPhysi")
 	private String referedPhysician;
 
 	public Patient getPatient() {
@@ -99,12 +101,12 @@ public class Study extends AbstractPersistence implements StudyIF{
 		this.studyId = studyId;
 	}
 
-	public Date getStudyDateTime() {
-		return studyDateTime;
+	public String getStudyDate() {
+		return studyDate;
 	}
 
-	public void setStudyDateTime(Date studyDateTime) {
-		this.studyDateTime = studyDateTime;
+	public void setStudyDate(String studyDate) {
+		this.studyDate = studyDate;
 	}
 
 	public String getAccessionNumber() {
@@ -149,6 +151,24 @@ public class Study extends AbstractPersistence implements StudyIF{
 
 	public PatientIF getPatientIF() {
 		return patient;
+	}
+
+	@Override
+	public Date getStudyDateTime() {
+		Date studyDateTime = null; 
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		try {
+			studyDateTime = formatter.parse(studyDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return studyDateTime;
+	}
+
+	@Override
+	public void setStudyDateTime(Date studyDateTime) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		this.studyDate = formatter.format(studyDateTime);
 	}
 	
 	

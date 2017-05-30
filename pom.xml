@@ -14,7 +14,7 @@
         </repository>
     </repositories>
     <properties>
-        <jersey2.version>2.19</jersey2.version>
+        <jersey2.version>2.25.1</jersey2.version>
         <jaxrs.version>2.0.1</jaxrs.version>
     </properties>
     <dependencies>
@@ -24,7 +24,7 @@
             <artifactId>javax.ws.rs-api</artifactId>
             <version>${jaxrs.version}</version>
         </dependency>
-        <!-- Jersey 2.19 -->
+        <!-- Jersey 2.25.1 -->
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
@@ -40,6 +40,11 @@
             <artifactId>jersey-client</artifactId>
             <version>${jersey2.version}</version>
         </dependency>
+        <dependency>
+    		<groupId>org.glassfish.jersey.core</groupId>
+    		<artifactId>jersey-common</artifactId>
+    		<version>${jersey2.version}</version>
+		</dependency>
     </dependencies>
   
   <build>

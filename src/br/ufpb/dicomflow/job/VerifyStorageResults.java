@@ -41,12 +41,15 @@ public class VerifyStorageResults {
 		
 		long start = System.currentTimeMillis();
 		Util.getLogger(this).debug("SENDING PENDING NEW STUDIES...");
+		System.out.println("SENDING PENDING NEW STUDIES...");
+		
 		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
 		List<StorageServiceAccess> ras = persistentService.selectAll("status", StorageService.PENDING, StorageServiceAccess.class);
 		Util.getLogger(this).debug("TOTAL REGISTRY-ACCESS: " + ras.size());
+		System.out.println("TOTAL REGISTRY-ACCESS: " + ras.size());
 		
 		Iterator<StorageServiceAccess> it = ras.iterator();
 		while (it.hasNext()) {

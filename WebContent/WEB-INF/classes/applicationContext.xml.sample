@@ -57,6 +57,8 @@
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
 				<prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
+				<prop key="hibernate.jdbc.batch_size">20</prop>
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
 			</props>
 		</property>	
         
@@ -69,6 +71,7 @@
         <property name="annotatedClasses">
             <list>
                 <value>br.ufpb.dicomflow.bean.Access</value>
+                <value>br.ufpb.dicomflow.bean.ControllerProperty</value>
                 <value>br.ufpb.dicomflow.bean.Credential</value>
                 <value>br.ufpb.dicomflow.bean.RequestService</value>
                 <value>br.ufpb.dicomflow.bean.RequestServiceAccess</value>
@@ -85,6 +88,8 @@
 				<prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
 				<prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.jdbc.batch_size">20</prop>
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
 			</props>
 		</property>	
         
@@ -266,7 +271,20 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="prepareStoragesJob" class="br.ufpb.dicomflow.job.PrepareStorages"/>
+	<bean id="prepareStoragesJob" class="br.ufpb.dicomflow.job.PrepareStorages">
+    	<property name="initialDate">
+            <value>DATA_INICIAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="finalDate">
+            <value>DATA_FINAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="modalities">
+            <value>MODALITIES_SEPARATED_BY_COMMAS</value>
+        </property>
+        <property name="strategy">
+            <value>SCAN_TYPE</value>
+        </property>
+    </bean>
     <bean id="prepareStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="prepareStoragesJob"/>
 	    <property name="targetMethod" value="execute"/>

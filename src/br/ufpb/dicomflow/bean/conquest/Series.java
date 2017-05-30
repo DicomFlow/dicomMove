@@ -34,7 +34,7 @@ import br.ufpb.dicomflow.bean.AbstractPersistence;
 import br.ufpb.dicomflow.bean.SeriesIF;
 
 @Entity
-@Table(name="dicomseries")
+@Table(name="DICOMSeries")
 public class Series extends AbstractPersistence implements SeriesIF{
 
 	
@@ -45,34 +45,34 @@ public class Series extends AbstractPersistence implements SeriesIF{
 	private static final long serialVersionUID = 2645400092973938894L;
 
 	@Id
-	@Column(name="seriesInst",unique=true)
+	@Column(name="SeriesInst",unique=true)
 	private String seriesIuid;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="studyInsta")
+	@JoinColumn(name="StudyInsta")
 	private Study study;
 	
-	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="seriesInst")
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinColumn(name="SeriesInst")
 	private Set<Instance> instances;
 	
 	
-	@Column(name="seriesNumb")
+	@Column(name="SeriesNumb")
 	private String seriesNumber;
 	
-	@Column(name="modality")
+	@Column(name="Modality")
 	private String modality;
 	
-	@Column(name="bodyPartEx")
+	@Column(name="BodyPartEx")
 	private String bodyPartExamined;
 	
-	@Column(name="seriesDesc")
+	@Column(name="SeriesDesc")
 	private String seriesDescription;
 	
-	@Column(name="stationNam")
+	@Column(name="StationNam")
 	private String stationName;
 	
-	@Column(name="institutio")
+	@Column(name="Institutio")
 	private String institution;
 
 	public Study getStudy() {

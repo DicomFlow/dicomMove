@@ -55,7 +55,7 @@ public class Study extends AbstractPersistence implements StudyIF{
 	@JoinColumn(name="patient_fk")
 	private Patient patient;
 	
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="study_fk")
 	private Set<Series> series;
 
