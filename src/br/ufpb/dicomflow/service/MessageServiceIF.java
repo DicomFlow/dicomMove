@@ -102,8 +102,9 @@ public interface MessageServiceIF {
 
 	public void setMessageValidity(String messageValidity);
 
-	
+	public boolean isUnreadOnly();
 
+	public void setUnreadOnly(boolean unreadOnly);
 	
 	
 }

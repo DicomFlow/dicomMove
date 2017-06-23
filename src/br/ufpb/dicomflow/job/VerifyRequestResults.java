@@ -20,10 +20,12 @@ package br.ufpb.dicomflow.job;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import br.ufpb.dicomflow.bean.ControllerProperty;
 import br.ufpb.dicomflow.bean.Credential;
 import br.ufpb.dicomflow.bean.RequestService;
 import br.ufpb.dicomflow.bean.RequestServiceAccess;
@@ -36,6 +38,15 @@ import br.ufpb.dicomflow.util.Util;
 
 
 public class VerifyRequestResults {
+	
+	private static final String  DAILY_STRATEGY = "1";
+	private static final String  INTERVAL_STRATEGY = "2";
+	private static final String  CURRENT_STUDY_STRATEGY = "3";
+	
+	private String initialDate;
+	private String finalDate;
+	private String modalities;
+	private String strategy;
 
 	public void execute() {
 		
@@ -48,6 +59,9 @@ public class VerifyRequestResults {
 		List<RequestServiceAccess> ras = persistentService.selectAll("status", RequestService.PENDING, RequestServiceAccess.class);
 		Util.getLogger(this).debug("TOTAL REGISTRY-ACCESS: " + ras.size());
 		
+		ControllerProperty currentDateProperty = (ControllerProperty) persistentService.select("property", ControllerProperty.REQUEST_VERIFY_CURRENT_DATE_PROPERTY, ControllerProperty.class);
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
 		Iterator<RequestServiceAccess> it = ras.iterator();
 		while (it.hasNext()) {
 			RequestServiceAccess requestServiceAccess = (RequestServiceAccess) it.next();
@@ -58,7 +72,76 @@ public class VerifyRequestResults {
 					List<RequestService> results = new ArrayList<>();
 					
 					try {
-						results = messageService.getRequestResults(null, null, null, requestServiceAccess.getMessageID());
+						
+						//verifies the retrieve straegy
+						if(strategy.equals(DAILY_STRATEGY)){
+							
+							Date currentDate = Calendar.getInstance().getTime();
+							
+							results = messageService.getRequestResults(currentDate, null, null, requestServiceAccess.getMessageID());
+							
+						}
+						if(strategy.equals(INTERVAL_STRATEGY)){
+							
+							try{
+								
+								if(initialDate == null || finalDate == null || initialDate.equals("") || finalDate.equals("")){
+									throw new Exception("Formato inválido para initialDate ou finalDate. Formato: dd/MM/yyyy");
+								}
+								
+								Date startDate = formatter.parse(initialDate);
+								Date finishDate = formatter.parse(finalDate);
+								if(currentDateProperty != null){
+									Date currentDate = formatter.parse(currentDateProperty.getValue());
+									
+									if(currentDate.equals(startDate) || currentDate.after(startDate) ){
+										startDate = currentDate;
+									}
+									if(currentDate.after(finishDate)){
+										throw new Exception("CurrentDateProperty fora do intervalo.");
+									}
+								}
+								results = messageService.getRequestResults(startDate, finishDate, null, requestServiceAccess.getMessageID());
+								
+							} catch (Exception e) {
+								Util.getLogger(this).error("Could not possible retrieve Studies using Interval Strategy", e);
+								e.printStackTrace();
+								return;
+							}	
+							
+							
+						}
+						if(strategy.equals(CURRENT_STUDY_STRATEGY)){
+							
+								
+							try{
+								
+								if(initialDate == null || initialDate.equals("")){
+									throw new Exception("Formato inválido para initialDate. Formato: dd/MM/yyyy");
+								}
+								
+								Date startDate = formatter.parse(initialDate);
+								
+								if(currentDateProperty != null){
+									Date currentDate = formatter.parse(currentDateProperty.getValue());
+									
+									if(currentDate.equals(startDate) || currentDate.after(startDate) ){
+										startDate = currentDate;
+									}
+									
+								}
+								
+								results = messageService.getRequestResults(startDate, null, null, requestServiceAccess.getMessageID());
+								
+							} catch (Exception e) {
+								Util.getLogger(this).error("Could not possible retrieve Studies using Interval Strategy", e);
+								e.printStackTrace();
+								return;
+							}
+							
+						}
+						
+						
 						//TODO implementar o que fazer com os resultados do request.
 					} catch (ServiceException e1) {
 						Util.getLogger(this).error("Could not get results: " + e1.getMessage(),e1);
@@ -115,6 +198,21 @@ public class VerifyRequestResults {
 			}
 		}
 		
+		//update currentDate Property
+		try {
+			if(currentDateProperty == null){
+				currentDateProperty = new ControllerProperty();
+				currentDateProperty.setProperty(ControllerProperty.REQUEST_VERIFY_CURRENT_DATE_PROPERTY);
+			}
+			Date currentDate = Calendar.getInstance().getTime();
+			currentDateProperty.setValue(formatter.format(currentDate));
+			currentDateProperty.save();
+			
+		} catch (ServiceException e) {
+			Util.getLogger(this).error("Could not possible save currentDateProperty", e);
+			e.printStackTrace();
+		}
+		
 		Util.getLogger(this).debug("DONE!!");
 		long finish = System.currentTimeMillis();
 		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");						
@@ -125,6 +223,38 @@ public class VerifyRequestResults {
 	private void treatDomainStatus(String domainStatus) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public String getInitialDate() {
+		return initialDate;
+	}
+
+	public void setInitialDate(String initialDate) {
+		this.initialDate = initialDate;
+	}
+
+	public String getFinalDate() {
+		return finalDate;
+	}
+
+	public void setFinalDate(String finalDate) {
+		this.finalDate = finalDate;
+	}
+
+	public String getModalities() {
+		return modalities;
+	}
+
+	public void setModalities(String modalities) {
+		this.modalities = modalities;
+	}
+
+	public String getStrategy() {
+		return strategy;
+	}
+	
+	public void setStrategy(String strategy) {
+		this.strategy = strategy;
 	}
 
 

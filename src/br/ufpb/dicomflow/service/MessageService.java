@@ -70,6 +70,7 @@ public class MessageService implements MessageServiceIF {
 	private UrlGeneratorIF urlGenerator;
 	private int maxAttempts;
 	private String messageValidity;
+	private boolean unreadOnly;
 	
 	
 	@Override
@@ -643,6 +644,7 @@ public class MessageService implements MessageServiceIF {
 		filter.setFinalDate(finalDate);
 		filter.setIdMessage(messageID);
 		filter.setServiceType(type);
+		filter.setUnreadOnly(unreadOnly);
 		
 		DicomMessageProperties iap = DicomMessageProperties.getInstance();
 		iap.load(propertiesConfigPath);
@@ -674,6 +676,7 @@ public class MessageService implements MessageServiceIF {
 		filter.setFinalDate(finalDate);
 		filter.setIdMessage(messageID);
 		filter.setServiceType(type);
+		filter.setUnreadOnly(unreadOnly);
 		
 		
 		try {
@@ -794,10 +797,14 @@ public class MessageService implements MessageServiceIF {
 	public void setMessageValidity(String messageValidity) {
 		this.messageValidity = messageValidity;
 	}
-	
-	
-	
-	
+
+	public boolean isUnreadOnly() {
+		return unreadOnly;
+	}
+
+	public void setUnreadOnly(boolean unreadOnly) {
+		this.unreadOnly = unreadOnly;
+	}
 
 
 }

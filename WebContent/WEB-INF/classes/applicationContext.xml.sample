@@ -177,6 +177,9 @@
 		<property name="messageValidity">
 			<value>600000</value>
 		</property>
+		<property name="unreadOnly">
+			<value>true</value>
+		</property>
     </bean>
     
     <bean id="fileService" class="br.ufpb.dicomflow.service.FileService"> 
@@ -238,7 +241,20 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="findCertificatesJob" class="br.ufpb.dicomflow.job.FindCertificates"/>
+	<bean id="findCertificatesJob" class="br.ufpb.dicomflow.job.FindCertificates">
+    	<property name="initialDate">
+            <value>DATA_INICIAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="finalDate">
+            <value>DATA_FINAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="modalities">
+            <value>MODALITIES_SEPARATED_BY_COMMAS</value>
+        </property>
+        <property name="strategy">
+            <value>SCAN_TYPE</value>
+        </property>
+    </bean>
     <bean id="findCertificatesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="findCertificatesJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -249,7 +265,20 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="verifyCertificateResultJob" class="br.ufpb.dicomflow.job.VerifyCertificateResult"/>
+	<bean id="verifyCertificateResultJob" class="br.ufpb.dicomflow.job.VerifyCertificateResult">
+    	<property name="initialDate">
+            <value>DATA_INICIAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="finalDate">
+            <value>DATA_FINAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="modalities">
+            <value>MODALITIES_SEPARATED_BY_COMMAS</value>
+        </property>
+        <property name="strategy">
+            <value>SCAN_TYPE</value>
+        </property>
+    </bean>
     <bean id="verifyCertificateResultJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="verifyCertificateResultJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -260,7 +289,20 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="verifyCertificateConfirmJob" class="br.ufpb.dicomflow.job.VerifyCertificateConfirm"/>
+	<bean id="verifyCertificateConfirmJob" class="br.ufpb.dicomflow.job.VerifyCertificateConfirm">
+    	<property name="initialDate">
+            <value>DATA_INICIAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="finalDate">
+            <value>DATA_FINAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="modalities">
+            <value>MODALITIES_SEPARATED_BY_COMMAS</value>
+        </property>
+        <property name="strategy">
+            <value>SCAN_TYPE</value>
+        </property>
+    </bean>
     <bean id="verifyCertificateConfirmJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="verifyCertificateConfirmJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -306,7 +348,20 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="findStoragesJob" class="br.ufpb.dicomflow.job.FindStorages"/>
+	<bean id="findStoragesJob" class="br.ufpb.dicomflow.job.FindStorages">
+    	<property name="initialDate">
+            <value>DATA_INICIAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="finalDate">
+            <value>DATA_FINAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="modalities">
+            <value>MODALITIES_SEPARATED_BY_COMMAS</value>
+        </property>
+        <property name="strategy">
+            <value>SCAN_TYPE</value>
+        </property>
+    </bean>
     <bean id="findStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="findStoragesJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -317,7 +372,20 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="verifyStorageResultsJob" class="br.ufpb.dicomflow.job.VerifyStorageResults"/>
+	<bean id="verifyStorageResultsJob" class="br.ufpb.dicomflow.job.VerifyStorageResults">
+    	<property name="initialDate">
+            <value>DATA_INICIAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="finalDate">
+            <value>DATA_FINAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="modalities">
+            <value>MODALITIES_SEPARATED_BY_COMMAS</value>
+        </property>
+        <property name="strategy">
+            <value>SCAN_TYPE</value>
+        </property>
+    </bean>
     <bean id="verifyStorageResultsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="verifyStorageResultsJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -350,7 +418,20 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="prepareRequestsJob" class="br.ufpb.dicomflow.job.PrepareRequests"/>
+	<bean id="prepareRequestsJob" class="br.ufpb.dicomflow.job.PrepareRequests">
+    	<property name="initialDate">
+            <value>DATA_INICIAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="finalDate">
+            <value>DATA_FINAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="modalities">
+            <value>MODALITIES_SEPARATED_BY_COMMAS</value>
+        </property>
+        <property name="strategy">
+            <value>SCAN_TYPE</value>
+        </property>
+    </bean>
     <bean id="prepareRequestsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="prepareRequestsJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -372,7 +453,20 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="verifyRequestResultsJob" class="br.ufpb.dicomflow.job.VerifyRequestResults"/>
+	<bean id="verifyRequestResultsJob" class="br.ufpb.dicomflow.job.VerifyRequestResults">
+    	<property name="initialDate">
+            <value>DATA_INICIAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="finalDate">
+            <value>DATA_FINAL_FORMAT_DD/MM/AAAA</value>
+        </property>
+        <property name="modalities">
+            <value>MODALITIES_SEPARATED_BY_COMMAS</value>
+        </property>
+        <property name="strategy">
+            <value>SCAN_TYPE</value>
+        </property>
+    </bean>
     <bean id="verifyRequestResultsJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="verifyRequestResultsJob"/>
 	    <property name="targetMethod" value="execute"/>
