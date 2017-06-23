@@ -54,6 +54,46 @@ public class ControllerProperty extends AbstractPersistence {
 	public static final String CURRENT_DATE_PROPERTY = "currentDate";
 	
 	/**
+	 * Current date used to access storage services messages
+	 */
+	public static final String MAIL_CURRENT_DATE_PROPERTY = "mailCurrentDate";
+	
+	/**
+	 * Current date used to access storage services result messages
+	 */
+	public static final String VERIFY_CURRENT_DATE_PROPERTY = "verifyCurrentDate";
+	
+	/**
+	 * Current date used to list studies during preparation of storage services
+	 */
+	public static final String REQUEST_CURRENT_DATE_PROPERTY = "requestCurrentDate";
+	
+	/**
+	 * Current date used to access request services messages
+	 */
+	public static final String REQUEST_MAIL_CURRENT_DATE_PROPERTY = "requestMailCurrentDate";
+	
+	/**
+	 * Current date used to access request services result messages
+	 */
+	public static final String REQUEST_VERIFY_CURRENT_DATE_PROPERTY = "requestVerifyCurrentDate";
+	
+	/**
+	 * Current date used to access certificate services messages
+	 */
+	public static final String CERTIFICATE_MAIL_CURRENT_DATE_PROPERTY = "certificateMailCurrentDate";
+	
+	/**
+	 * Current date used to access certificate services result messages
+	 */
+	public static final String CERTIFICATE_VERIFY_CURRENT_DATE_PROPERTY = "certificateVerifyCurrentDate";
+	
+	/**
+	 * Current date used to access request services confirm messages
+	 */
+	public static final String CERTIFICATE_CONFIRM_CURRENT_DATE_PROPERTY = "certificateConfirmCurrentDate";
+	
+	/**
 	 * Current id used to list studies during preparation of storage services
 	 */
 	public static final String CURRENT_ID_PROPERTY = "currentID";

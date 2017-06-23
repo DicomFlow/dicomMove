@@ -26,19 +26,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.X509TrustManager;
-
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -125,67 +122,72 @@ public class FileService implements FileServiceIF {
 		
 		System.out.println("URL PROTOCOL: " + url.getProtocol().toLowerCase());
 		
+		InputStream in = null;
+		
 		if(url.getProtocol().toLowerCase().equals("https")){
 			try {
 				SSLContext ctx = SSLContext.getInstance("TLS");
 				ctx.init(new KeyManager[0], new TrustManager[] {new DefaultTrustManager()}, new SecureRandom());
 		        SSLContext.setDefault(ctx);
+		        
+		        
+		        HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+		        
+		        con.setHostnameVerifier(new HostnameVerifier() {
+		            @Override
+		            public boolean verify(String arg0, SSLSession arg1) {
+		                return true;
+		            }
+		        });
+		        
+		        in = con.getInputStream();
 			} catch (NoSuchAlgorithmException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (KeyManagementException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		}
-
-  
-        HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-        if(url.getProtocol().toLowerCase().equals("https")){
-	        con.setHostnameVerifier(new HostnameVerifier() {
-	            @Override
-	            public boolean verify(String arg0, SSLSession arg1) {
-	                return true;
-	            }
-	        });
-        }
-		
-//		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		InputStream in = (InputStream)con.getInputStream();					
-		String filePath = zipDir  + java.io.File.separator + fileName;
-		Util.getLogger(this).debug("filePath: " + filePath);
-		java.io.File file = new java.io.File(filePath);
-		FileOutputStream fout = new FileOutputStream(file, false);
-		Util.getLogger(this).debug("INICIANDO ESCRITA DO .ZIP");
-		int i = 0;
-		byte buffer[] = new byte[8192];
-		
-		
-		while( (i = in.read(buffer)) != -1 ) {
-			fout.write(buffer, 0, i);
-		}
-		Util.getLogger(this).debug(".ZIP CRIADO");
-		in.close();
-		fout.close();
-		
-		//extraindo o arquivo .zip
-		InputStream is = new BufferedInputStream(new FileInputStream(filePath));
-	    ZipInputStream zin = new ZipInputStream(is);
-	    ZipEntry e;
-	 
-		while ((e = zin.getNextEntry()) != null) {			
-			unzip(zin, zipDir + java.io.File.separator  + e.getName());//extractDir + e.getName());
-		}
-
-	    zin.close();
-	    
-	    //apagando o arquivo .zip após a extração
-	    if(!deleteFile(file, true)){
-	    	String errMsg = "Could not delete file " + file.getAbsolutePath();
 			
-			Util.getLogger(this).error(errMsg);
-			throw new ServiceException(new Exception(errMsg));
-	    }
+		}else{
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			in = con.getInputStream();
+		}
+
+		if(in != null){				
+			String filePath = zipDir  + java.io.File.separator + fileName;
+			Util.getLogger(this).debug("filePath: " + filePath);
+			java.io.File file = new java.io.File(filePath);
+			FileOutputStream fout = new FileOutputStream(file, false);
+			Util.getLogger(this).debug("INICIANDO ESCRITA DO .ZIP");
+			int i = 0;
+			byte buffer[] = new byte[8192];
+			
+			
+			while( (i = in.read(buffer)) != -1 ) {
+				fout.write(buffer, 0, i);
+			}
+			Util.getLogger(this).debug(".ZIP CRIADO");
+			in.close();
+			fout.close();
+			
+			//extraindo o arquivo .zip
+			InputStream is = new BufferedInputStream(new FileInputStream(filePath));
+		    ZipInputStream zin = new ZipInputStream(is);
+		    ZipEntry e;
+		 
+			while ((e = zin.getNextEntry()) != null) {			
+				unzip(zin, zipDir + java.io.File.separator  + e.getName());//extractDir + e.getName());
+			}
+	
+		    zin.close();
+		    
+		    //apagando o arquivo .zip após a extração
+		    if(!deleteFile(file, true)){
+		    	String errMsg = "Could not delete file " + file.getAbsolutePath();
+				
+				Util.getLogger(this).error(errMsg);
+				throw new ServiceException(new Exception(errMsg));
+		    }
+		}
 //		
 //		ZipInputStream zipIn = new ZipInputStream(con.getInputStream());
 //		ZipEntry entry;

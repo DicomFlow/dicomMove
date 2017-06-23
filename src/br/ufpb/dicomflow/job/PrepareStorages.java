@@ -69,14 +69,6 @@ public class PrepareStorages {
 		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		
-//		List<StorageService> storageServices = persistentService.selectAllByParams(new String[]{"type", "action"}, new Object[]{StorageService.SENT, StorageService.SAVE}, StorageService.class);
-		
-//		List<String> registredStudiesIuids = getStudiesIuids(storageServices);
-//		List<StudyIF> studies = new ArrayList<StudyIF>();
-		
-//		studies = pacsPersistentservice.selectAllStudiesNotIn(registredStudiesIuids);
-//		Util.getLogger(this).debug("TOTAL STUDIES: " + studies.size());
-		
 		
 		List<Access> accesses = new ArrayList<Access>();
 		try {
@@ -87,7 +79,6 @@ public class PrepareStorages {
 			e.printStackTrace();
 		}
 		if(accesses.size() != 0){
-			//insertRegistries(studies, accesses);
 			insertRegistries(accesses);
 		}
 		
@@ -99,20 +90,7 @@ public class PrepareStorages {
 		
 	}
 
-	
-
-//	private List<String> getStudiesIuids(List<StorageService> registries) {
-//		List<String> iuids = new ArrayList<String>();
-//		Iterator<StorageService> it = registries.iterator();
-//		while (it.hasNext()) {
-//			StorageService registry = (StorageService) it.next();
-//			iuids.add(registry.getStudyIuid());
-//			
-//		}
-//		return iuids;
-//	}
-
-	private void insertRegistries(/*List<StudyIF> studies,*/ List<Access> accesses) {
+	private void insertRegistries(List<Access> accesses) {
 		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
@@ -202,11 +180,11 @@ public class PrepareStorages {
 			session.close();
 			return;
 		}
+		
 		int count = 0;
-//		Iterator<StudyIF> it = studies.iterator();
-		while (studies.next()) {//it.hasNext()) {
+		while (studies.next()) {
 			
-			StudyIF study = (StudyIF) studies.get(0);//(StudyIF) it.next();
+			StudyIF study = (StudyIF) studies.get(0);
 			
 			//If the study has already been mapped, it does not create the storage service
 			StorageService storageServiceDB = (StorageService) persistentService.select("studyIuid", study.getStudyIuid(), StorageService.class);
@@ -316,15 +294,12 @@ public class PrepareStorages {
 	}
 
 	private boolean verifyAccess(Access access, StudyIF study, String serviceType) {
+		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		Credential credential  = CredentialUtil.getCredential(access, CredentialUtil.getDomain());
 		ServicePermission servicePermission = (ServicePermission) persistentService.selectByParams(new String[]{"description", "credential"}, new Object[]{serviceType, credential} , ServicePermission.class);
-		System.out.println(">>>>>>  CREDENTIAL "+ credential +" <<<<<<<<<");
-		System.out.println(">>>>>>  PERMISSION " + servicePermission +" <<<<<<<<<");
-		if(servicePermission != null ){
-			System.out.println(">>>>>>  MODALITY " + servicePermission.getModalities().contains("*") +" <<<<<<<<<");
-		}
-		//verifica se o acesso tem permissï¿½o ao serviï¿½o e ao estudo especificados
+
+		//verifica se o acesso tem permissão ao serviço e ao estudo especificados
 		return servicePermission != null && (servicePermission.getModalities().contains(study.getModalitiesInStudy()) || servicePermission.getModalities().contains("*"));
 	}
 
