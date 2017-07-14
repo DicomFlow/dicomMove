@@ -29,6 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
@@ -87,6 +88,15 @@ public class RequestService extends AbstractPersistence {
 	@Column(name="patient_birth")
 	private String patientBirth;
 	
+	@Transient
+	private byte[] bytes;
+	
+	@Column
+	private String accessMail;
+	
+	@Column
+	private String filename;
+	
 	private String messageID;
 	
 	private String host;
@@ -100,6 +110,8 @@ public class RequestService extends AbstractPersistence {
 	private String action;
 	
 	private int downloadAttempt;
+	
+	
 	
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="id_request_service")
@@ -249,6 +261,30 @@ public class RequestService extends AbstractPersistence {
 
 	public void setDownloadAttempt(int downloadAttempt) {
 		this.downloadAttempt = downloadAttempt;
+	}
+
+	public byte[] getBytes() {
+		return bytes;
+	}
+
+	public void setBytes(byte[] bytes) {
+		this.bytes = bytes;
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	public String getAccessMail() {
+		return accessMail;
+	}
+
+	public void setAccessMail(String accessMail) {
+		this.accessMail = accessMail;
 	}
 
 	@Override

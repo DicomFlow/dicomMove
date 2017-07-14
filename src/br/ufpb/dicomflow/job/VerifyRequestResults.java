@@ -67,7 +67,7 @@ public class VerifyRequestResults {
 			RequestServiceAccess requestServiceAccess = (RequestServiceAccess) it.next();
 			if(requestServiceAccess.getRequestService().getAction().equals(RequestService.PUT)){
 				requestServiceAccess.setUploadAttempt(requestServiceAccess.getUploadAttempt()+1);
-				if(requestServiceAccess.getUploadAttempt() <= messageService.getMaxAttempts()){
+//				if(requestServiceAccess.getUploadAttempt() <= messageService.getMaxAttempts()){
 					
 					List<RequestService> results = new ArrayList<>();
 					
@@ -141,8 +141,26 @@ public class VerifyRequestResults {
 							
 						}
 						
+						Iterator<RequestService> it2  = results.iterator();
+						while (it2.hasNext()) {
+							RequestService resultService = (RequestService) it2.next();
+							
+							resultService.setPatientName(requestServiceAccess.getRequestService().getPatientName());
+							resultService.setPatientGender(requestServiceAccess.getRequestService().getPatientGender());
+							resultService.setPatientBirth(requestServiceAccess.getRequestService().getPatientBirth());
+							resultService.setStudyIuid(requestServiceAccess.getRequestService().getStudyIuid());
+							resultService.setStudyDescription(requestServiceAccess.getRequestService().getStudyDescription());
+							resultService.setStudyModality(requestServiceAccess.getRequestService().getStudyModality());
+							
+							
+							
+							ServiceLocator.singleton().getFileService().storeReport(resultService.getStudyIuid(), resultService.getFilename(), resultService.getBytes());
+							
+							resultService.setStatus(RequestService.CLOSED);
+							resultService.save();
+						}
 						
-						//TODO implementar o que fazer com os resultados do request.
+						
 					} catch (ServiceException e1) {
 						Util.getLogger(this).error("Could not get results: " + e1.getMessage(),e1);
 						e1.printStackTrace();
@@ -156,8 +174,8 @@ public class VerifyRequestResults {
 					String domainStatus = null;
 					while (itDomain.hasNext()) {
 						RequestService request = itDomain.next();
-						String domain = request.getHost();
-						if(requestServiceAccess.getAccess().getHost().equals(domain)){
+						String accessMail = request.getAccessMail();
+						if(requestServiceAccess.getAccess().getMail().equals(accessMail)){
 							domainStatus = request.getStatus();
 							break;
 						}
@@ -166,18 +184,19 @@ public class VerifyRequestResults {
 					if(domainStatus != null){
 						requestServiceAccess.setStatus(RequestService.CLOSED);
 						treatDomainStatus(domainStatus);
-					} else {
-						try {
-							Credential credential = CredentialUtil.getCredential(requestServiceAccess.getAccess(), CredentialUtil.getDomain());
-							messageService.sendRequest(requestServiceAccess.getRequestService(), requestServiceAccess.getAccess(), credential);
-							requestServiceAccess.setStatus(RequestService.PENDING);
-						} catch (ServiceException e) {
-							String status = requestServiceAccess.getUploadAttempt() == messageService.getMaxAttempts() ? RequestService.ERROR : RequestService.PENDING;
-							requestServiceAccess.setStatus(status);
-							Util.getLogger(this).error("Could not send Studies: " + e.getMessage(),e);
-							e.printStackTrace();
-						}
-					}
+					} 
+//					else {
+//						try {
+//							Credential credential = CredentialUtil.getCredential(requestServiceAccess.getAccess(), CredentialUtil.getDomain());
+//							messageService.sendRequest(requestServiceAccess.getRequestService(), requestServiceAccess.getAccess(), credential);
+//							requestServiceAccess.setStatus(RequestService.PENDING);
+//						} catch (ServiceException e) {
+//							String status = requestServiceAccess.getUploadAttempt() == messageService.getMaxAttempts() ? RequestService.ERROR : RequestService.PENDING;
+//							requestServiceAccess.setStatus(status);
+//							Util.getLogger(this).error("Could not send Studies: " + e.getMessage(),e);
+//							e.printStackTrace();
+//						}
+//					}
 					
 					try {
 						requestServiceAccess.save();
@@ -186,15 +205,15 @@ public class VerifyRequestResults {
 						e.printStackTrace();
 					}							
 					
-				} else {
-					requestServiceAccess.setStatus(RequestService.CLOSED);
-					try {
-						requestServiceAccess.save();
-					} catch (ServiceException e) {
-						Util.getLogger(this).error("Could not save RegistryAccess: " + e.getMessage(),e);
-						e.printStackTrace();
-					}
-				}
+//				} else {
+//					requestServiceAccess.setStatus(RequestService.CLOSED);
+//					try {
+//						requestServiceAccess.save();
+//					} catch (ServiceException e) {
+//						Util.getLogger(this).error("Could not save RegistryAccess: " + e.getMessage(),e);
+//						e.printStackTrace();
+//					}
+//				}
 			}
 		}
 		

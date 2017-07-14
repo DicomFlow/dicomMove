@@ -18,6 +18,7 @@
 package br.ufpb.dicomflow.service;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -54,6 +55,8 @@ public class FileService implements FileServiceIF {
 	public static final String ZIP_EXTENSION = ".zip";
 	
 	private String archivePath; 
+	
+	private String reportDir;
 	
 	private String eat;
 	private String host;
@@ -259,6 +262,63 @@ public class FileService implements FileServiceIF {
 			throw new ServiceException(new Exception(errMsg));
 		}
 	}
+	
+	
+	@Override
+	public void storeReport(String folder, String filename, byte[] bytes) throws ServiceException{
+		if(reportDir == null || reportDir.equals("")){
+			String errMsg = "Could not store file: invalid report path.";
+			
+			Util.getLogger(this).error(errMsg);
+			throw new ServiceException(new Exception(errMsg));
+		}
+		
+		if(folder == null || folder.equals("")){
+			String errMsg = "Could not store file: invalid folder.";
+			
+			Util.getLogger(this).error(errMsg);
+			throw new ServiceException(new Exception(errMsg));
+		}
+		
+		if(filename == null || filename.equals("")){
+			String errMsg = "Could not store file: invalid filename.";
+			
+			Util.getLogger(this).error(errMsg);
+			throw new ServiceException(new Exception(errMsg));
+		}
+		
+		if(bytes == null || bytes.length < 0){
+			String errMsg = "Could not store file: invalid file length.";
+			
+			Util.getLogger(this).error(errMsg);
+			throw new ServiceException(new Exception(errMsg));
+		}
+		
+		
+		
+		try {
+			java.io.File dir = new java.io.File(reportDir+File.separator+folder);
+			if (!dir.exists()) {		
+				dir.mkdir();
+			}
+			
+			File report = new File(reportDir+File.separator+folder+File.separator+filename);
+			FileOutputStream out = new FileOutputStream(report);
+			out.write(bytes);
+			out.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ServiceException(e);
+		}
+		
+		
+		
+		
+		
+		
+	}
+	
 	/**
 	 * Apaga um diretório e todos seus arquivos
 	 * @param root o diretório raiz
@@ -329,7 +389,15 @@ public class FileService implements FileServiceIF {
 	public void setExtractDir(String extractDir) {
 		this.extractDir = extractDir;
 	}
-	
+
+	public String getReportDir() {
+		return reportDir;
+	}
+
+	public void setReportDir(String reportDir) {
+		this.reportDir = reportDir;
+	}
+
 	private static class DefaultTrustManager implements X509TrustManager {
 
         @Override
@@ -343,6 +411,8 @@ public class FileService implements FileServiceIF {
             return null;
         }
     }
+
+	
 	
 	
 	

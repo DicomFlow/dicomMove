@@ -27,7 +27,7 @@ public class AccessRegexUtil {
 	public static final String PERMISSION_DELIM = ";";
 	public static final String TYPE_REGEX = "("+IN+"|"+OUT+")";
 	public static final String MAIL_REGEX = "[A-Za-z0-9\\._-]+@[A-Za-z0-9]+(\\.[A-Za-z]+)*";
-	public static final String HOST_REGEX = "[A-Za-z0-9]+(\\.[A-Za-z0-9]+)+";
+	public static final String HOST_REGEX = "[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*";
 	public static final String PORT_REGEX = "[0-9]+";
 	public static final String MODALITY_REGEX = "[A-Z]{2}(,[A-Z]{2})*";
 	public static final String PERMISSION_REGEX =          "(Sharing|Storage|Request|Find|Discovery) (\\*|"+MODALITY_REGEX+")";
@@ -120,6 +120,8 @@ public class AccessRegexUtil {
 		String permissions = "Sharing *;Storage CT,MR;Find *";
 		String example = "OUT#email@domain.com#domain.com#8080#Sharing *;Storage CT,MR;Find *";
 		
+		String example2 = "IN#protocolointegracao@gmail.com#localhost#8444#Storage *";
+		
 		boolean matches = type.matches(TYPE_REGEX);
 		System.out.println("type matches: " + matches);
 		
@@ -141,8 +143,8 @@ public class AccessRegexUtil {
 		matches = permissions.matches(MULTI_PERMISSION_REGEX);
 		System.out.println("permissions matches: " + matches);
 		
-		matches = example.matches(ACCESS_REGEX);
-		System.out.println("example matches: " + matches);
+		matches = example2.matches(ACCESS_REGEX);
+		System.out.println("example2 matches: " + matches);
 		
 		System.out.println("Type: "+ getType(example));
 		System.out.println("E-mail: "+ getMail(example));

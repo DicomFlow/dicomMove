@@ -198,6 +198,9 @@
         <property name="extractDir">
             <value>RECEIVED_FILES_EXTRACT_DIR</value>
         </property>
+        <property name="reportDir">
+            <value>RECEIVED_REPORTS_EXTRACT_DIR</value>
+        </property>
     </bean>
     
     <bean id="certificateService" class="br.ufpb.dicomflow.service.CertificateService"> 

@@ -44,6 +44,8 @@ public interface FileServiceIF {
 	
 	public String getExtractDir();
 
+	public void storeReport(String folder, String filename, byte[] bytes) throws ServiceException;
+
 
 	
 }

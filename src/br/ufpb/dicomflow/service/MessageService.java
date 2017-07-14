@@ -600,6 +600,7 @@ public class MessageService implements MessageServiceIF {
 		while (it.hasNext()) {
 			MessageIF message = (MessageIF) it.next();
 			String xMessageID = (String) message.getMailTag(MailXTags.MESSAGE_ID_X_TAG);
+			String from = (String) message.getMailTag(MailXTags.FROM);
 			
 			RequestResult requestResult = (RequestResult) message.getService();
 			List<Result> results  = requestResult.getResult();
@@ -610,14 +611,20 @@ public class MessageService implements MessageServiceIF {
 				if(result.getOriginalMessageID() != null && result.getOriginalMessageID().equals(originalMessageID)){
 					
 					RequestService service = new RequestService();
+					service.setType(RequestService.RECEIVED);
+					service.setAction(RequestService.RESULT);
 					try {
 						service.setHost(MailXTags.getDomain(xMessageID));
+						service.setAccessMail(from);
 					} catch (ContentBuilderException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					
 					service.setMessageID(xMessageID);
 					service.setStatus(result.getCompleted().getStatus());
+					service.setBytes(result.getData().getBytes());
+					service.setFilename(result.getData().getFilename());
 					services.add(service);
 					
 				}
