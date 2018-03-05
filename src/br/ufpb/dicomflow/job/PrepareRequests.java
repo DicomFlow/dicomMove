@@ -37,10 +37,7 @@ import br.ufpb.dicomflow.bean.PatientIF;
 import br.ufpb.dicomflow.bean.RequestService;
 import br.ufpb.dicomflow.bean.RequestServiceAccess;
 import br.ufpb.dicomflow.bean.ServicePermission;
-import br.ufpb.dicomflow.bean.StorageService;
-import br.ufpb.dicomflow.bean.StorageServiceAccess;
 import br.ufpb.dicomflow.bean.StudyIF;
-import br.ufpb.dicomflow.service.MessageServiceIF;
 import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
@@ -92,7 +89,6 @@ public class PrepareRequests {
 	private void insertRegistries(List<Access> accesses) {
 		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
-		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
 		UrlGeneratorIF urlGenerator = ServiceLocator.singleton().getUrlGenerator();
 		
@@ -292,62 +288,7 @@ public class PrepareRequests {
 		}
 		return null;
 	}
-
-	private void insertRegistries(List<StudyIF> studies, List<Access> accesses) {
-		UrlGeneratorIF urlGenerator = ServiceLocator.singleton().getUrlGenerator();
-		PacsPersistentServiceIF pacsPersistentservice = ServiceLocator.singleton().getPacsPersistentService();
-		
-		Iterator<StudyIF> it = studies.iterator();
-		while (it.hasNext()) {
-			
-			StudyIF study = (StudyIF) it.next();
-			
-			PatientIF patient = study.getPatientIF();
-			
-			RequestService requestService = new RequestService(urlGenerator.getURL(study));
-			requestService.setType(RequestService.SENT);
-			requestService.setAction(RequestService.PUT);
-			requestService.setStatus(RequestService.OPEN);
-			requestService.setStudyIuid(study.getStudyIuid());
-			requestService.setStudyModality(study.getModalitiesInStudy());
-			requestService.setStudyDescription(study.getStudyDescription());
-			requestService.setPatientID(patient.getPatientId());
-			requestService.setPatientName(patient.getPatientName());
-			requestService.setPatientGender(patient.getPatientSex());
-			requestService.setPatientBirth(patient.getPatientBirthDate());
-			
-			try {
-				requestService.save();
-			} catch (ServiceException e) {
-				Util.getLogger(this).error("Could not possible save registry", e);
-				e.printStackTrace();
-			}
-			
-			Iterator<Access> it2 = accesses.iterator();
-			
-			while (it2.hasNext()) {
-				Access access = (Access) it2.next();
-				
-				
-				if(verifyAccess(access, study, ServicePermission.REQUEST_SERVICE)){
-					RequestServiceAccess ra = new RequestServiceAccess(requestService, access);
-					ra.setStatus(RequestService.OPEN);
-					ra.setUploadAttempt(0);
-					ra.setValidity("");
-	//				ra.setCredential(CredentialUtil.createCredential(access).getKey());
-					try {
-						ra.save();
-					} catch (ServiceException e) {
-						Util.getLogger(this).error("Could not possible save registry-access biding", e);
-						e.printStackTrace();
-					}
-				}
-				
-			}														
-		}
-		
-	}
-
+	
 	private boolean verifyAccess(Access access, StudyIF study, String serviceType) {
 		
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();

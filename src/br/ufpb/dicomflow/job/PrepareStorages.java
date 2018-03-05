@@ -18,7 +18,6 @@
 
 package br.ufpb.dicomflow.job;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -214,7 +213,7 @@ public class PrepareStorages {
 			Iterator<Access> it2 = accesses.iterator();
 			
 			while (it2.hasNext()) {
-				Access access = (Access) it2.next();
+				Access access = it2.next();
 				
 				
 				if(verifyAccess(access, study, ServicePermission.STORAGE_SERVICE)){
