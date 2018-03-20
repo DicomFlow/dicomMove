@@ -18,6 +18,13 @@
 
 package br.ufpb.dicomflow.bean.conquest;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Formatter;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -31,6 +38,8 @@ import javax.persistence.Table;
 
 import br.ufpb.dicomflow.bean.AbstractPersistence;
 import br.ufpb.dicomflow.bean.PatientIF;
+import br.ufpb.dicomflow.bean.SeriesIF;
+import br.ufpb.dicomflow.bean.StudyIF;
 
 @Entity
 @Table(name="DICOMPatients")
@@ -101,6 +110,55 @@ public class Patient extends AbstractPersistence implements PatientIF{
 
 	public void setPatientSex(String patientSex) {
 		this.patientSex = patientSex;
+	}
+
+	@Override
+	public Long getPatientBirthDateTimestamp() {
+		
+		if(patientBirthDate != null && !patientBirthDate.equals("")){
+			DateFormat format = new SimpleDateFormat("yyyyMMdd");
+			try {
+				return format.parse(patientBirthDate).getTime();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public Set<StudyIF> getStudiesIF() {
+		Set<StudyIF> studiesIF = new HashSet<>();
+		if(getStudies() != null)
+			studiesIF.addAll(getStudies());
+		return studiesIF;
+	}
+	
+	@Override
+	public void setStudiesIF(Set<StudyIF> studies) {
+		this.studies = new HashSet<>();
+		for (Iterator iterator = studies.iterator(); iterator.hasNext();) {
+			StudyIF studyIF = (StudyIF) iterator.next();
+			this.studies.add((Study)studyIF);
+			
+		}
+		
+	}
+
+	@Override
+	public String getPatientBirthDateString(DateFormat formatter) {
+		if(patientBirthDate != null && !patientBirthDate.equals("")){
+			DateFormat format = new SimpleDateFormat("yyyyMMdd");
+			try {
+				Date date = format.parse(patientBirthDate);
+				return formatter.format(date);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
 	}
 
 }

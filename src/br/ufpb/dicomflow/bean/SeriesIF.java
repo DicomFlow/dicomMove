@@ -48,6 +48,10 @@ public interface SeriesIF {
 	public String getInstitution();
 	
 	public void setInstitution(String institution);
+	
+	public Integer getNumInstances();
+	
+	public void setNumInstances(Integer numInstances);
 
 	
 	

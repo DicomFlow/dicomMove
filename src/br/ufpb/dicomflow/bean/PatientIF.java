@@ -18,6 +18,9 @@
 
 package br.ufpb.dicomflow.bean;
 
+import java.text.DateFormat;
+import java.util.Set;
+
 public interface PatientIF  {
 
 	public String getPatientId();
@@ -35,5 +38,13 @@ public interface PatientIF  {
 	public String getPatientSex();
 
 	public void setPatientSex(String patientSex);
+	
+	public Long getPatientBirthDateTimestamp();
+	
+	public String getPatientBirthDateString(DateFormat formatter);
+	
+	public Set<StudyIF> getStudiesIF(); 
+	
+	public void setStudiesIF(Set<StudyIF> studies);
 	
 }

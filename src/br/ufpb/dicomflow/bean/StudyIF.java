@@ -18,7 +18,9 @@
 
 package br.ufpb.dicomflow.bean;
 
+import java.text.DateFormat;
 import java.util.Date;
+import java.util.Set;
 
 
 public interface StudyIF {
@@ -53,6 +55,13 @@ public interface StudyIF {
 	public void setReferedPhysician(String referedPhysician);
 	
 	public PatientIF getPatientIF();
+	
+	public Set<SeriesIF> getSeriesIF(); 
+	
+	public void setSeriesIF(Set<SeriesIF> series);
+	
+	public String getStudyDateTimeString(DateFormat formatter);
+	
 	
 	
 

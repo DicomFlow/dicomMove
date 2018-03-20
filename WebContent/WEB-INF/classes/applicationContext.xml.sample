@@ -73,11 +73,13 @@
                 <value>br.ufpb.dicomflow.bean.Access</value>
                 <value>br.ufpb.dicomflow.bean.ControllerProperty</value>
                 <value>br.ufpb.dicomflow.bean.Credential</value>
+                <value>br.ufpb.dicomflow.bean.GraphqlService</value>
+                <value>br.ufpb.dicomflow.bean.GraphqlServiceAccess</value>
                 <value>br.ufpb.dicomflow.bean.RequestService</value>
                 <value>br.ufpb.dicomflow.bean.RequestServiceAccess</value>
                 <value>br.ufpb.dicomflow.bean.StorageService</value>
                 <value>br.ufpb.dicomflow.bean.StorageServiceAccess</value>
-                <value>br.ufpb.dicomflow.bean.ServicePermission</value>                              
+                <value>br.ufpb.dicomflow.bean.ServicePermission</value>
             </list>
         </property>
                 
@@ -480,6 +482,41 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
+	<bean id="prepareGraphqlJob" class="br.ufpb.dicomflow.job.PrepareGraphql">
+        <property name="initialDate">
+            <value>01/01/1980</value>
+        </property>
+        <property name="finalDate">
+            <value>01/01/2010</value>
+        </property>
+        <property name="modalities">
+            <value>*</value>
+        </property>
+        <property name="strategy">
+            <value>2</value>
+        </property>
+    </bean>
+    <bean id="prepareGraphqlJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="prepareGraphqlJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="prepareGraphqlCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="prepareGraphqlJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="sendGraphqlJob" class="br.ufpb.dicomflow.job.SendGraphql"/>
+    <bean id="sendGraphqlJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="sendGraphqlJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="sendGraphqlCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="sendGraphqlJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	    <property name="triggers">
 	        <list>
@@ -507,6 +544,10 @@
                 <ref bean="prepareRequestsCronTrigger"/>
                 <ref bean="sendRequestsCronTrigger"/>
                 <ref bean="verifyRequestResultsCronTrigger"/> -->
+                
+                <!-- JOBS PARA ENVIO DE GRAPHQL 
+                <ref bean="prepareGraphqlCronTrigger"/>
+                <ref bean="sendGraphqlCronTrigger"/> -->
 	        </list>
 	    </property>
 	</bean>

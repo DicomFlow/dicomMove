@@ -54,7 +54,7 @@ public class Series extends AbstractPersistence implements SeriesIF{
 	@JoinColumn(name="study_fk")
 	private Study study;
 	
-	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="series_fk")
 	private Set<Instance> instances;
 	
@@ -271,8 +271,14 @@ public class Series extends AbstractPersistence implements SeriesIF{
 	public void setInstitution(String institution) {
 		this.institution = institution;
 	}
-	
-	
+
+	public Integer getNumInstances() {
+		return numberOfSeriesRelatedInstances;
+	}
+
+	public void setNumInstances(Integer numInstances) {
+		this.numberOfSeriesRelatedInstances = numInstances;
+	}
 	
 	
 

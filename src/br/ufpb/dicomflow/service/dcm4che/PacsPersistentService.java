@@ -58,7 +58,7 @@ public class PacsPersistentService extends PersistentService  implements PacsPer
 	
 	@Override
 	public PatientIF selectPatient(String patientID) {
-		return (PatientIF) super.select("patientID", patientID, Patient.class);
+		return (PatientIF) super.select("patientId", patientID, Patient.class);
 	}
 
 	@Override

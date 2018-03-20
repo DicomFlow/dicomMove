@@ -56,7 +56,7 @@ public class CredentialUtil {
 		access.setHost(host);
 		access.setPort(new Integer(port));
 		access.setType(type);
-		access.setCertificateStatus(Access.CERTIFICATE_OPEN);
+		access.setCertificateStatus(Access.CERTIFICATE_CLOSED);
 
 		return access;
 	}

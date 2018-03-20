@@ -17,6 +17,9 @@
         <jersey2.version>2.25.1</jersey2.version>
         <jaxrs.version>2.0.1</jaxrs.version>
     </properties>
+    
+    
+    
     <dependencies>
         <!-- JAX-RS -->
         <dependency>
@@ -45,6 +48,12 @@
     		<artifactId>jersey-common</artifactId>
     		<version>${jersey2.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>${jersey2.version}</version>
+		</dependency>
+		
     </dependencies>
   
   <build>

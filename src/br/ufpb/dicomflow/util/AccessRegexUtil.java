@@ -27,7 +27,8 @@ public class AccessRegexUtil {
 	public static final String PERMISSION_DELIM = ";";
 	public static final String TYPE_REGEX = "("+IN+"|"+OUT+")";
 	public static final String MAIL_REGEX = "[A-Za-z0-9\\._-]+@[A-Za-z0-9]+(\\.[A-Za-z]+)*";
-	public static final String HOST_REGEX = "[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*";
+//	public static final String HOST_REGEX = "[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*";
+	public static final String HOST_REGEX = "(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]\\.[^\\s]{2,})";
 	public static final String PORT_REGEX = "[0-9]+";
 	public static final String MODALITY_REGEX = "[A-Z]{2}(,[A-Z]{2})*";
 	public static final String PERMISSION_REGEX =          "(Sharing|Storage|Request|Find|Discovery) (\\*|"+MODALITY_REGEX+")";

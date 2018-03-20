@@ -69,6 +69,11 @@ public class ControllerProperty extends AbstractPersistence {
 	public static final String REQUEST_CURRENT_DATE_PROPERTY = "requestCurrentDate";
 	
 	/**
+	 * Current date used to list studies during preparation of storage services
+	 */
+	public static final String GRAPHQL_CURRENT_DATE_PROPERTY = "graphqlCurrentDate";
+	
+	/**
 	 * Current date used to access request services messages
 	 */
 	public static final String REQUEST_MAIL_CURRENT_DATE_PROPERTY = "requestMailCurrentDate";
@@ -97,6 +102,8 @@ public class ControllerProperty extends AbstractPersistence {
 	 * Current id used to list studies during preparation of storage services
 	 */
 	public static final String CURRENT_ID_PROPERTY = "currentID";
+
+	
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)

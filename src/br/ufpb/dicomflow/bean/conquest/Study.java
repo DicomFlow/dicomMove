@@ -18,9 +18,12 @@
 
 package br.ufpb.dicomflow.bean.conquest;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -35,6 +38,7 @@ import javax.persistence.Table;
 
 import br.ufpb.dicomflow.bean.AbstractPersistence;
 import br.ufpb.dicomflow.bean.PatientIF;
+import br.ufpb.dicomflow.bean.SeriesIF;
 import br.ufpb.dicomflow.bean.StudyIF;
 
 @Entity
@@ -170,6 +174,41 @@ public class Study extends AbstractPersistence implements StudyIF{
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		this.studyDate = formatter.format(studyDateTime);
 	}
+
+	@Override
+	public Set<SeriesIF> getSeriesIF() {
+		Set<SeriesIF> seriesIF = new HashSet<>();
+		if(getSeries() != null)
+			seriesIF.addAll(getSeries());
+		return seriesIF;
+	}
+	
+	@Override
+	public void setSeriesIF(Set<SeriesIF> series) {
+		this.series = new HashSet<>();
+		for (Iterator iterator = series.iterator(); iterator.hasNext();) {
+			SeriesIF studyIF = (SeriesIF) iterator.next();
+			this.series.add((Series)studyIF);
+			
+		}
+		
+	}
+
+	@Override
+	public String getStudyDateTimeString(DateFormat formatter) {
+		if(studyDate != null && !studyDate.equals("")){
+			DateFormat format = new SimpleDateFormat("yyyyMMdd");
+			try {
+				Date date = format.parse(studyDate);
+				return formatter.format(date);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
+	
 	
 	
 
