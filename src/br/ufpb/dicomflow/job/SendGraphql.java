@@ -35,6 +35,7 @@ import br.ufpb.dicomflow.bean.PatientIF;
 import br.ufpb.dicomflow.bean.RequestService;
 import br.ufpb.dicomflow.bean.SeriesIF;
 import br.ufpb.dicomflow.bean.StudyIF;
+import br.ufpb.dicomflow.integrationAPI.message.xml.ServiceIF;
 import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
@@ -44,7 +45,9 @@ import br.ufpb.dicomflow.util.Util;
 import br.ufpb.dicomflow.ws.graphql.GraphqlClient;
 import br.ufpb.dicomflow.ws.graphql.GraphqlException;
 import br.ufpb.dicomflow.ws.graphql.Mutation;
+import br.ufpb.dicomflow.ws.json.ServiceJSON;
 import br.ufpb.dicomflow.ws.json.UrlJSON;
+import br.ufpb.dicomflow.ws.json.UserJSON;
 
 
 public class SendGraphql {
@@ -87,16 +90,25 @@ public class SendGraphql {
 				patients.add(patientDB);
 				UrlJSON url = new UrlJSON(serviceAccess.getGraphqlService().getLink(), credential.getKeypass(), patients);
 				
-				System.out.println("JSON: " + url.getJSON());
+				ServiceJSON serviceJSON = ServiceJSON.createService(ServiceIF.REQUEST_PUT);
+				
+				Set<UrlJSON> urls = new HashSet<>();
+				urls.add(url);
+				serviceJSON.setUrls(urls);
+				
+				UserJSON userJSON = new UserJSON(serviceAccess.getAccess().getMail(), serviceAccess.getAccess().getMail());
+				serviceJSON.setUser(userJSON);
+				
+				System.out.println("JSON: " + serviceJSON.getJSON());
 					
 				Mutation mutation = new Mutation();
-				mutation.buildQuery(url, "createUrl", "{id}");
+				mutation.buildQuery(serviceJSON, "createService", "{id}");
 				
 				System.out.println("MUTATION: " + mutation.getQuery());
 				
 				GraphqlClient client =  new GraphqlClient(serviceAccess.getAccess().getHost());
 				
-				Response  response = client.createURL(mutation);
+				Response  response = client.query(mutation);
 				
 				if(response.getStatus() == OK ){
 					serviceAccess.setStatus(GraphqlService.CLOSED);

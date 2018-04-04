@@ -13,11 +13,14 @@ import br.ufpb.dicomflow.bean.SeriesIF;
 import br.ufpb.dicomflow.bean.dcm4che.Patient;
 import br.ufpb.dicomflow.bean.dcm4che.Series;
 import br.ufpb.dicomflow.bean.dcm4che.Study;
+import br.ufpb.dicomflow.integrationAPI.message.xml.ServiceIF;
 import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.ws.graphql.GraphqlClient;
 import br.ufpb.dicomflow.ws.graphql.GraphqlException;
 import br.ufpb.dicomflow.ws.graphql.Mutation;
+import br.ufpb.dicomflow.ws.json.ServiceJSON;
 import br.ufpb.dicomflow.ws.json.UrlJSON;
+import br.ufpb.dicomflow.ws.json.UserJSON;
 
 public class GraphqlClientTest {
 	
@@ -55,19 +58,30 @@ public class GraphqlClientTest {
 		
 		UrlJSON url = new UrlJSON("localhost:8080/DicomMove/downloadStudy", CredentialUtil.generateCredentialKey(), patients);
 		
-		System.out.println("JSON: " + url.getJSON());
+		
+		UserJSON userJSON = new UserJSON("Severino Aires", "severino.dicomflow@gmail.com");
 		
 		
 		try {
 			
+			ServiceJSON serviceJSON = ServiceJSON.createService(ServiceIF.REQUEST_PUT);
+			
+			Set<UrlJSON> urls = new HashSet<>();
+			urls.add(url);
+			serviceJSON.setUrls(urls);
+			
+			serviceJSON.setUser(userJSON);
+			
+			System.out.println("JSON: " + serviceJSON.getJSON());
+			
 			Mutation mutation = new Mutation();
-			mutation.buildQuery(url, "createUrl", "{id}");
+			mutation.buildQuery(serviceJSON, "createService", "{id}");
 			
 			System.out.println("MUTATION: " + mutation.getQuery());
 			
 			GraphqlClient client =  new GraphqlClient();
 			
-			Response  response = client.createURL(mutation);
+			Response  response = client.query(mutation);
 			
 			System.out.println(response.getStatus() +" - " + response.getStatusInfo());
 			

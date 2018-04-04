@@ -43,7 +43,7 @@ public class GraphqlClient {
 	
 	
 	/**Cria uma URL*/
-	public Response createURL(GraphqlEntity entity){
+	public Response query(GraphqlEntity entity){
  
 		
 		this.webTarget = this.client.target(uri);
