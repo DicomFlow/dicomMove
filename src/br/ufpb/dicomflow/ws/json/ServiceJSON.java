@@ -109,9 +109,16 @@ public class ServiceJSON implements JSONDecorator {
 		}
 		
 		if(user != null && !user.getJSON().isEmpty()){
-			json.append("user: {");
-			json.append(user.getJSON());
-			json.append("}, ");
+			if(user.getId() != null && !user.getId().isEmpty()){
+				json.append("userId: ");
+				json.append(user.getJSON());
+				json.append(", ");
+			}else{
+				json.append("user: {");
+				json.append(user.getJSON());
+				json.append("}, ");
+			}
+			
 		}
 		
 		json.append("urls: [ ");

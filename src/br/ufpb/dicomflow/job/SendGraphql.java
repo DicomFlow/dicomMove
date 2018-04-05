@@ -96,7 +96,9 @@ public class SendGraphql {
 				urls.add(url);
 				serviceJSON.setUrls(urls);
 				
-				UserJSON userJSON = new UserJSON(serviceAccess.getAccess().getMail(), serviceAccess.getAccess().getMail());
+				UserJSON userJSON = new UserJSON(serviceAccess.getAccess().getCode());
+				
+//				UserJSON userJSON = new UserJSON(serviceAccess.getAccess().getMail(), serviceAccess.getAccess().getMail());
 				serviceJSON.setUser(userJSON);
 				
 				System.out.println("JSON: " + serviceJSON.getJSON());

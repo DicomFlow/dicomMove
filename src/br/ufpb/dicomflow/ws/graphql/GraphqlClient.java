@@ -24,7 +24,7 @@ public class GraphqlClient {
 	private WebTarget webTarget;
  
 	/**URL DO SERVIÇO REST QUE VAMOS ACESSAR */
-	private final static String URL_SERVICE = "https://api.graph.cool/simple/v1/cjeobl1v735ia0183ehtaay0f";
+	private final static String URL_SERVICE = "https://api.graph.cool/simple/v1/cjfjw4zof0k7f01506ruvnuz2";
 	
 	private String uri;
  

@@ -1,5 +1,5 @@
 /*
- * 	This file is part of DicomFlow.
+ * 	This file is part of DicomFlow.O
  * 
  * 	DicomFlow is free software: you can redistribute it and/or modify
  * 	it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import org.springframework.aop.ThrowsAdvice;
 
 import br.ufpb.dicomflow.bean.Access;
 import br.ufpb.dicomflow.bean.Credential;
@@ -79,18 +77,19 @@ public class FindAccesses {
 				if(AccessRegexUtil.accessMatches(accessLine) && isValidType(AccessRegexUtil.getType(accessLine))){
 					String type = AccessRegexUtil.getType(accessLine);
 					String mail = AccessRegexUtil.getMail(accessLine);
+					String code = AccessRegexUtil.getCode(accessLine);
 					String host = AccessRegexUtil.getHost(accessLine);
 					String port = AccessRegexUtil.getPort(accessLine);
 					
 					
 
 					//check access into DB
-					Access access = (Access) persistentService.selectByParams(new Object[]{"mail", "host", "port", "type"}, new Object[]{mail, host, new Integer(port), type}, Access.class);
+					Access access = (Access) persistentService.selectByParams(new Object[]{"mail", "code", "host", "port", "type"}, new Object[]{mail, code, host, new Integer(port), type}, Access.class);
 
 					//if access does not exists, create new access and permissions
 					if(access == null){
 
-						access = CredentialUtil.createAccess(mail, host, port, type);
+						access = CredentialUtil.createAccess(mail, code, host, port, type);
 						
 						//isn't necessary request certificate for Access with type equals IN
 						if(access.getType().equals(Access.IN)){

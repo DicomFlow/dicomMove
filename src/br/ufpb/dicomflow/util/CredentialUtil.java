@@ -49,10 +49,11 @@ public class CredentialUtil {
 		
 	}
 	
-	public static Access createAccess(String mail, String host, String port, String type) {
+	public static Access createAccess(String mail, String code, String host, String port, String type) {
 
 		Access access = new Access();
 		access.setMail(mail);
+		access.setCode(code);
 		access.setHost(host);
 		access.setPort(new Integer(port));
 		access.setType(type);

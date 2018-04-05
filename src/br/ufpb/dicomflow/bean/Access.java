@@ -62,6 +62,7 @@ public class Access extends AbstractPersistence {
     @Column(name="id",unique=true)
 	private Long id;
 	
+	private String code;
 	private String mail;
 	private String host;
 	private Integer port;
@@ -98,6 +99,16 @@ public class Access extends AbstractPersistence {
 	@Override
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getMail() {

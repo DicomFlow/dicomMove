@@ -59,9 +59,9 @@ public class GraphqlClientTest {
 		UrlJSON url = new UrlJSON("localhost:8080/DicomMove/downloadStudy", CredentialUtil.generateCredentialKey(), patients);
 		
 		
-		UserJSON userJSON = new UserJSON("Severino Aires", "severino.dicomflow@gmail.com");
+//		UserJSON userJSON = new UserJSON("Severino Aires", "severino.dicomflow@gmail.com");
 		
-		
+		UserJSON userJSON = new UserJSON("cjfmu3o9v9yzl01089vrm034w");
 		try {
 			
 			ServiceJSON serviceJSON = ServiceJSON.createService(ServiceIF.REQUEST_PUT);

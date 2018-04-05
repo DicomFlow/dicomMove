@@ -1,16 +1,16 @@
 package br.ufpb.dicomflow.ws.json;
 
-import java.util.Iterator;
-import java.util.Set;
-
-import br.ufpb.dicomflow.bean.PatientIF;
-
 public class UserJSON implements JSONDecorator {
 	
+	private String id;
 	private String name;
 	private String email;
 	
 	
+	public UserJSON(String id) {
+		super();
+		this.id = id;
+	}
 
 	public UserJSON(String name, String email) {
 		super();
@@ -23,7 +23,15 @@ public class UserJSON implements JSONDecorator {
 		
 		StringBuilder json = new StringBuilder("");
 		
-		if(name != null && !name.isEmpty() && email != null  && !email.isEmpty()){
+		if(id != null && !id.isEmpty()){
+			json.append(" \"");
+			json.append(id);
+			json.append("\" ");
+			
+			return json.toString();
+		}
+		
+		else if(name != null && !name.isEmpty() && email != null  && !email.isEmpty()){
 			
 			
 			json.append("name: \"");
@@ -40,6 +48,16 @@ public class UserJSON implements JSONDecorator {
 		
 		return "";
 		
+	}
+
+	
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {
