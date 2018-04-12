@@ -37,6 +37,9 @@ public class ServiceJSON implements JSONDecorator {
 	
 	private UserJSON user;
 	
+	private UserJSON source;
+	  
+	
 
 	protected ServiceJSON() {
 		super();
@@ -116,6 +119,19 @@ public class ServiceJSON implements JSONDecorator {
 			}else{
 				json.append("user: {");
 				json.append(user.getJSON());
+				json.append("}, ");
+			}
+			
+		}
+		
+		if(source != null && !source.getJSON().isEmpty()){
+			if(source.getId() != null && !source.getId().isEmpty()){
+				json.append("sourceId: ");
+				json.append(source.getJSON());
+				json.append(", ");
+			}else{
+				json.append("source: {");
+				json.append(source.getJSON());
 				json.append("}, ");
 			}
 			
@@ -273,6 +289,14 @@ public class ServiceJSON implements JSONDecorator {
 
 	public void setUser(UserJSON user) {
 		this.user = user;
+	}
+
+	public UserJSON getSource() {
+		return source;
+	}
+
+	public void setSource(UserJSON source) {
+		this.source = source;
 	}
 
 	

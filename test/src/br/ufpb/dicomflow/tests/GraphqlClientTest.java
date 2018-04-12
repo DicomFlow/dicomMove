@@ -62,6 +62,10 @@ public class GraphqlClientTest {
 //		UserJSON userJSON = new UserJSON("Severino Aires", "severino.dicomflow@gmail.com");
 		
 		UserJSON userJSON = new UserJSON("cjfmu3o9v9yzl01089vrm034w");
+		
+		UserJSON sourceJSON = new UserJSON("cjfmusgymgasm0191dar0abgr");
+		
+		
 		try {
 			
 			ServiceJSON serviceJSON = ServiceJSON.createService(ServiceIF.REQUEST_PUT);
@@ -71,6 +75,8 @@ public class GraphqlClientTest {
 			serviceJSON.setUrls(urls);
 			
 			serviceJSON.setUser(userJSON);
+			
+			serviceJSON.setSource(sourceJSON);
 			
 			System.out.println("JSON: " + serviceJSON.getJSON());
 			
