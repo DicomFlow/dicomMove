@@ -92,9 +92,8 @@ public class SendGraphql {
 				
 				ServiceJSON serviceJSON = ServiceJSON.createService(ServiceIF.REQUEST_PUT);
 				
-				Set<UrlJSON> urls = new HashSet<>();
-				urls.add(url);
-				serviceJSON.setUrls(urls);
+				
+				serviceJSON.setUrl(url);
 				
 				UserJSON userJSON = new UserJSON(serviceAccess.getAccess().getCode());
 				

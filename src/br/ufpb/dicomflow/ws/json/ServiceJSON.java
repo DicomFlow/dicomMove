@@ -33,7 +33,7 @@ public class ServiceJSON implements JSONDecorator {
 	private String priority;
 	private String requestType;
 	
-	private Set<UrlJSON> urls;
+	private UrlJSON url;
 	
 	private UserJSON user;
 	
@@ -137,28 +137,16 @@ public class ServiceJSON implements JSONDecorator {
 			
 		}
 		
-		json.append("urls: [ ");
 		
-		if(urls != null){
-			
-			Iterator<UrlJSON> it = urls.iterator();
-			if(it.hasNext()){
-				UrlJSON urlJson = it.next();
-				json.append("{");
-				json.append(urlJson.getJSON());
-				json.append("}");
-				
-			}
-			while (it.hasNext()) {
-				UrlJSON urlJson = it.next();
-				json.append(", {");
-				json.append(urlJson.getJSON());
-				json.append("}");
-			}
+		
+		if(url != null){
+			json.append("url: {");
+			json.append(url.getJSON());
+			json.append("}");
 			
 		}
 		
-		json.append("] ");
+		json.append(" ");
 	
 		return json.toString();
 		
@@ -275,12 +263,12 @@ public class ServiceJSON implements JSONDecorator {
 		this.requestType = requestType;
 	}
 
-	public Set<UrlJSON> getUrls() {
-		return urls;
+	public UrlJSON getUrl() {
+		return url;
 	}
 
-	public void setUrls(Set<UrlJSON> urls) {
-		this.urls = urls;
+	public void setUrl(UrlJSON url) {
+		this.url = url;
 	}
 
 	public UserJSON getUser() {
