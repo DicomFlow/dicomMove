@@ -37,11 +37,15 @@ public class PatientJSON implements JSONDecorator{
 			json.append(patient.getPatientSex());
 			json.append("\", ");
 			
-			json.append("birthdate: \"");
-			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-			json.append(patient.getPatientBirthDateString(formatter));
-			json.append("\", ");
+			if(patient.getPatientBirthDate() != null && !patient.getPatientBirthDate().isEmpty()){
+				
+				json.append("birthdate: \"");
+				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+				formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+				json.append(patient.getPatientBirthDateString(formatter));
+				json.append("\", ");
+			}
+			
 			
 			json.append("studies: [ ");
 			

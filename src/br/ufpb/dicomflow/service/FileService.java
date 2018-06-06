@@ -18,6 +18,7 @@
 package br.ufpb.dicomflow.service;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -45,6 +46,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.io.IOUtils;
 import org.dcm4che3.tool.storescu.StoreSCU;
 
 import br.ufpb.dicomflow.bean.InstanceIF;
@@ -75,26 +77,68 @@ public class FileService implements FileServiceIF {
 			throw new ServiceException(new Exception(errMsg));
 		}
 		
-		ZipOutputStream zipOut = new ZipOutputStream( os );
+		
+		ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(os));
+		InputStream in = null;
+		try {
+		    for(InstanceIF instance : instances) {
 
-		for (InstanceIF instance : instances) {
-			java.io.File ioFile = new java.io.File(archivePath+instance.getFilePath());
-			zipOut.putNextEntry( new ZipEntry( ioFile.getName().toString() )  );
+		    	File file = new File(archivePath+instance.getFilePath());
+				in = new FileInputStream( file );
 
-			FileInputStream fis = new FileInputStream( ioFile );
-
-			int content;
-			byte buffer[] = new byte[8192];
-			while ((content = fis.read(buffer)) != -1) {
-				zipOut.write(buffer, 0, content);
-			}
-
-			zipOut.closeEntry();
-
+				if(in!=null) {
+        
+    				// Add Zip Entry
+					zip.putNextEntry(new ZipEntry(file.getName().toString()));
+				    
+				    // Write file into zip
+    				IOUtils.copy(in, zip);
+    				zip.closeEntry();
+    				
+    				in.close();
+				} 
+    		}
+    
+    		zip.close();
+    		
+		} catch (Exception e) {
+			
+    		e.printStackTrace();
+    		
+		} finally {
+			
+			// Flush output
+    		if( os!=null ) {
+				os.flush();
+				os.close();
+    		}
+    		// Close input
+    		if( in !=null )
+				in.close();
 		}
-
-
-		zipOut.close();
+		
+		
+		
+//		ZipOutputStream zipOut = new ZipOutputStream( os );
+//
+//		for (InstanceIF instance : instances) {
+//			java.io.File ioFile = new java.io.File(archivePath+instance.getFilePath());
+//			zipOut.putNextEntry( new ZipEntry( ioFile.getName().toString() )  );
+//
+//			FileInputStream fis = new FileInputStream( ioFile );
+//
+//			int content;
+//			byte buffer[] = new byte[8192];
+//			while ((content = fis.read(buffer)) != -1) {
+//				zipOut.write(buffer, 0, content);
+//			}
+//
+//			zipOut.closeEntry();
+//
+//		}
+//
+//
+//		zipOut.close();
 	}
 	
 	@Override
@@ -161,13 +205,16 @@ public class FileService implements FileServiceIF {
 			java.io.File file = new java.io.File(filePath);
 			FileOutputStream fout = new FileOutputStream(file, false);
 			Util.getLogger(this).debug("INICIANDO ESCRITA DO .ZIP");
-			int i = 0;
-			byte buffer[] = new byte[8192];
 			
+			IOUtils.copy(in, fout);
 			
-			while( (i = in.read(buffer)) != -1 ) {
-				fout.write(buffer, 0, i);
-			}
+//			int i = 0;
+//			byte buffer[] = new byte[8192];
+//			
+//			
+//			while( (i = in.read(buffer)) != -1 ) {
+//				fout.write(buffer, 0, i);
+//			}
 			Util.getLogger(this).debug(".ZIP CRIADO");
 			in.close();
 			fout.close();

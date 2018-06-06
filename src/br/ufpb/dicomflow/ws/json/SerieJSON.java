@@ -19,18 +19,25 @@ public class SerieJSON implements JSONDecorator {
 			
 			json.append("identifier: \"");
 			json.append(serie.getSeriesIuid());
-			json.append("\", ");
 			
-			json.append("bodypart: \"");
-			json.append(serie.getBodyPartExamined());
-			json.append("\", ");
+			if(serie.getBodyPartExamined() != null && !serie.getBodyPartExamined().isEmpty()){
+				json.append("\", ");
+				json.append("bodypart: \"");
+				json.append(serie.getBodyPartExamined());
+			}
 			
-			json.append("description: \"");
-			json.append(serie.getSeriesDescription());
-			json.append("\", ");
+			if(serie.getSeriesDescription() != null && !serie.getSeriesDescription().isEmpty()){
+				json.append("\", ");
+				json.append("description: \"");
+				json.append(serie.getSeriesDescription());
+			}
 			
-			json.append("instances: ");
-			json.append(serie.getNumInstances());
+			if(serie.getNumInstances() != null && serie.getNumInstances() != 0){
+				json.append("\", ");
+				json.append("instances: ");
+				json.append(serie.getNumInstances());
+			}
+			
 			json.append(" ");
 		
 			return json.toString();

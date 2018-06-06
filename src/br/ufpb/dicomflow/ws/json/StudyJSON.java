@@ -25,6 +25,8 @@ public class StudyJSON implements JSONDecorator {
 		
 		if(study != null){
 			
+			
+			
 			json.append("type: \"");
 			json.append(study.getModalitiesInStudy());
 			json.append("\", ");
@@ -33,9 +35,14 @@ public class StudyJSON implements JSONDecorator {
 			json.append(study.getStudyIuid());
 			json.append("\", ");
 			
-			json.append("description: \"");
-			json.append(study.getStudyDescription());
-			json.append("\", ");
+			
+			if(study.getStudyDescription() != null && !study.getStudyDescription().isEmpty()){
+				
+				json.append("description: \"");
+				json.append(study.getStudyDescription());
+				json.append("\", ");
+			
+			}
 			
 			json.append("datetime: \"");
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
