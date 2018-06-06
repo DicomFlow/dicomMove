@@ -20,7 +20,7 @@ import net.named_data.jndn.security.identity.MemoryIdentityStorage;
 import net.named_data.jndn.security.identity.MemoryPrivateKeyStorage;
 import net.named_data.jndn.util.Blob;
 
-public class PrefixRegisterService implements Runnable {
+public class PrefixRegisterService implements PrefixRegisterServiceIF {
 
 	private static final Logger logger = Logger.getLogger(PrefixRegisterService.class.getName());
 

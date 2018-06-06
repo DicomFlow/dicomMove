@@ -28,6 +28,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import br.ufpb.dicomflow.ndn.PrefixRegisterService;
+import br.ufpb.dicomflow.ndn.PrefixRegisterServiceIF;
 import br.ufpb.dicomflow.util.Util;
 
 /**
@@ -81,7 +82,7 @@ public class ServiceLocator  {
 	
 	private FileServiceIF fileService;
 	
-	private PrefixRegisterService prefixRegisterService;
+	private PrefixRegisterServiceIF prefixRegisterService;
 	
 	private static ServiceLocator singleton = null;
 	
@@ -109,8 +110,7 @@ public class ServiceLocator  {
 		this.urlGenerator = (UrlGeneratorIF)this.lookupService(URL_GENERATOR_BEAN_NAME);
 		this.uriGenerator = (UriGeneratorIF)this.lookupService(URI_GENERATOR_BEAN_NAME);
 		
-		this.prefixRegisterService = (PrefixRegisterService)this.lookupService(PREFIX_REGISTER_BEAN_NAME);
-		
+		this.prefixRegisterService = (PrefixRegisterServiceIF)this.lookupService(PREFIX_REGISTER_BEAN_NAME);
 		Thread newThrd = new Thread(prefixRegisterService);
 		newThrd.start();
 		
