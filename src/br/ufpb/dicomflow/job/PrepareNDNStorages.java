@@ -42,12 +42,13 @@ import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
+import br.ufpb.dicomflow.service.UriGeneratorIF;
 import br.ufpb.dicomflow.service.UrlGeneratorIF;
 import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 
 
-public class PrepareStorages {
+public class PrepareNDNStorages {
 	
 	
 	private static final String  DAILY_STRATEGY = "1";
@@ -94,7 +95,7 @@ public class PrepareStorages {
 		PersistentServiceIF persistentService = ServiceLocator.singleton().getPersistentService();
 		MessageServiceIF messageService = ServiceLocator.singleton().getMessageService();
 		
-		UrlGeneratorIF urlGenerator = ServiceLocator.singleton().getUrlGenerator();
+		UriGeneratorIF uriGenerator = ServiceLocator.singleton().getUriGenerator();
 		
 		PacsPersistentServiceIF pacsPersistentservice = ServiceLocator.singleton().getPacsPersistentService();
 		Session session = pacsPersistentservice.createSession();
@@ -193,7 +194,7 @@ public class PrepareStorages {
 			
 			
 			
-			StorageService storageService = new StorageService(urlGenerator.getURL(study.getStudyIuid()));
+			StorageService storageService = new StorageService(uriGenerator.getURI(study.getStudyIuid()));
 			storageService.setType(StorageService.SENT);
 			storageService.setAction(StorageService.SAVE);
 			storageService.setStudyIuid(study.getStudyIuid());

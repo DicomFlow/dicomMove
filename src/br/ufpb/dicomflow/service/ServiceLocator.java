@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import br.ufpb.dicomflow.ndn.PrefixRegisterService;
 import br.ufpb.dicomflow.util.Util;
 
 /**
@@ -53,6 +54,10 @@ public class ServiceLocator  {
 	
 	private static final String URL_GENERATOR_BEAN_NAME = "urlGenerator";
 	
+	private static final String URI_GENERATOR_BEAN_NAME = "uriGenerator";
+	
+	private static final String PREFIX_REGISTER_BEAN_NAME = "prefixRegisterService";
+	
 
 	//the logger for this class
 	private Log logger = LogFactory.getLog(this.getClass());
@@ -72,7 +77,11 @@ public class ServiceLocator  {
 	
 	private UrlGeneratorIF urlGenerator;
 	
+	private UriGeneratorIF uriGenerator;
+	
 	private FileServiceIF fileService;
+	
+	private PrefixRegisterService prefixRegisterService;
 	
 	private static ServiceLocator singleton = null;
 	
@@ -98,6 +107,12 @@ public class ServiceLocator  {
 		this.messageService = (MessageServiceIF)this.lookupService(MESSAGE_SERVICE_BEAN_NAME);
 		this.fileService = (FileServiceIF)this.lookupService(FILE_SERVICE_BEAN_NAME);
 		this.urlGenerator = (UrlGeneratorIF)this.lookupService(URL_GENERATOR_BEAN_NAME);
+		this.uriGenerator = (UriGeneratorIF)this.lookupService(URI_GENERATOR_BEAN_NAME);
+		
+		this.prefixRegisterService = (PrefixRegisterService)this.lookupService(PREFIX_REGISTER_BEAN_NAME);
+		
+		Thread newThrd = new Thread(prefixRegisterService);
+		newThrd.start();
 		
 		this.logger.info("ServiceLocator is initialized");
 	}
@@ -158,6 +173,13 @@ public class ServiceLocator  {
 		return urlGenerator;
 	}
 	
+	/**
+	 * Retorna o gerador de URI para acesso aos estudos
+	 * @return UriGeneratorIF o gerador de URI para acesso aos estudos
+	 */
+	public UriGeneratorIF getUriGenerator() {
+		return uriGenerator;
+	}
 
 	/**
 	 * Lookup service based on service bean name.

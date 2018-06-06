@@ -37,8 +37,8 @@ public class UrlGenerator implements UrlGeneratorIF {
 	private String context;
 	
 	@Override
-	public String getURL(StudyIF study) {
-		return protocol + "://" + host + ":" + port + "/" + context + "/rest/DownloadStudy/" + study.getStudyIuid();
+	public String getURL(String studyIuid) {
+		return protocol + "://" + host + ":" + port + "/" + context + "/rest/DownloadStudy/" + studyIuid;
 	}
 
 	public String getHost() {

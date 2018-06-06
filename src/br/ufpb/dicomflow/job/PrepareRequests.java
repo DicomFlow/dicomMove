@@ -191,7 +191,7 @@ public class PrepareRequests {
 			
 			PatientIF patient = study.getPatientIF();
 			
-			RequestService requestService = new RequestService(urlGenerator.getURL(study));
+			RequestService requestService = new RequestService(urlGenerator.getURL(study.getStudyIuid()));
 			requestService.setType(RequestService.SENT);
 			requestService.setAction(RequestService.PUT);
 			requestService.setStatus(RequestService.OPEN);

@@ -21,6 +21,8 @@
  */
 package br.ufpb.dicomflow.service;
 
+import java.util.StringTokenizer;
+
 import br.ufpb.dicomflow.bean.StudyIF;
 
 /**
@@ -29,16 +31,19 @@ import br.ufpb.dicomflow.bean.StudyIF;
  * @author Juracy Neto
  * 
  */
-public class UriGenerator implements UrlGeneratorIF {
+public class UriGenerator implements UriGeneratorIF {
 
-	private String protocol;
+	
 	private String host;
-	private int port;
-	private String context;
 	
 	@Override
-	public String getURL(StudyIF study) {
-		return protocol + "://" + host + ":" + port + "/" + context + "/rest/DownloadStudy/" + study.getStudyIuid();
+	public String getPrefix() {
+		return "/" + host;
+	}
+	
+	@Override
+	public String getURI(String studyIuid) {
+		return  getPrefix() +  "/" + studyIuid;
 	}
 
 	public String getHost() {
@@ -49,29 +54,20 @@ public class UriGenerator implements UrlGeneratorIF {
 		this.host = host;
 	}
 
-	public int getPort() {
-		return port;
+	@Override
+	public String getStudyIuid(String uri) {
+		
+		StringTokenizer tokenizer = new StringTokenizer(uri, "/");
+		
+		String studyIuid = "";
+		while(tokenizer.hasMoreTokens()){
+			studyIuid = tokenizer.nextToken();
+		}
+		
+		return studyIuid;
 	}
 
-	public void setPort(int port) {
-		this.port = port;
-	}
-
-	public String getContext() {
-		return context;
-	}
-
-	public void setContext(String context) {
-		this.context = context;
-	}
-
-	public String getProtocol() {
-		return protocol;
-	}
-
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
-	}
+	
 				
 
 }
