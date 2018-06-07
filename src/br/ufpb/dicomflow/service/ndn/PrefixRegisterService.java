@@ -1,9 +1,8 @@
-package br.ufpb.dicomflow.ndn;
+package br.ufpb.dicomflow.service.ndn;
 
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import br.ufpb.dicomflow.service.UriGeneratorIF;
 import br.ufpb.dicomflow.service.UrlGeneratorIF;
 import net.named_data.jndn.Data;
 import net.named_data.jndn.Face;
@@ -27,16 +26,22 @@ public class PrefixRegisterService implements PrefixRegisterServiceIF {
 	private UrlGeneratorIF urlGenerator;
 	
 	private UriGeneratorIF uriGenerator;
+	
+	private boolean running;
 
 	
 
 	@Override
 	public void run() {
+		
+		running = true;
 		try {
 			processRegister();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		running = false;
 
 	}
 
@@ -133,6 +138,11 @@ public class PrefixRegisterService implements PrefixRegisterServiceIF {
 	public void setUriGenerator(UriGeneratorIF uriGenerator) {
 		this.uriGenerator = uriGenerator;
 	}
+
+	public boolean isRunning() {
+		return running;
+	}
+	
 	
 	
 

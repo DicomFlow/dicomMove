@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.job;
+package br.ufpb.dicomflow.job.ndn;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

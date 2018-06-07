@@ -27,8 +27,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import br.ufpb.dicomflow.ndn.PrefixRegisterService;
-import br.ufpb.dicomflow.ndn.PrefixRegisterServiceIF;
+import br.ufpb.dicomflow.service.ndn.PrefixRegisterService;
+import br.ufpb.dicomflow.service.ndn.PrefixRegisterServiceIF;
+import br.ufpb.dicomflow.service.ndn.RouteRegisterServiceIF;
+import br.ufpb.dicomflow.service.ndn.UriGeneratorIF;
 import br.ufpb.dicomflow.util.Util;
 
 /**
@@ -59,6 +61,8 @@ public class ServiceLocator  {
 	
 	private static final String PREFIX_REGISTER_BEAN_NAME = "prefixRegisterService";
 	
+	private static final String ROUTE_REGISTER_BEAN_NAME = "routeRegisterService";
+	
 
 	//the logger for this class
 	private Log logger = LogFactory.getLog(this.getClass());
@@ -83,6 +87,8 @@ public class ServiceLocator  {
 	private FileServiceIF fileService;
 	
 	private PrefixRegisterServiceIF prefixRegisterService;
+	
+	private RouteRegisterServiceIF routeRegisterService;
 	
 	private static ServiceLocator singleton = null;
 	
@@ -110,9 +116,13 @@ public class ServiceLocator  {
 		this.urlGenerator = (UrlGeneratorIF)this.lookupService(URL_GENERATOR_BEAN_NAME);
 		this.uriGenerator = (UriGeneratorIF)this.lookupService(URI_GENERATOR_BEAN_NAME);
 		
+		
+		//TODO verificar uma melhor forma de iniciar a trhead
 		this.prefixRegisterService = (PrefixRegisterServiceIF)this.lookupService(PREFIX_REGISTER_BEAN_NAME);
-		Thread newThrd = new Thread(prefixRegisterService);
-		newThrd.start();
+		
+		
+		
+		this.routeRegisterService = (RouteRegisterServiceIF)this.lookupService(ROUTE_REGISTER_BEAN_NAME);
 		
 		this.logger.info("ServiceLocator is initialized");
 	}
@@ -179,6 +189,14 @@ public class ServiceLocator  {
 	 */
 	public UriGeneratorIF getUriGenerator() {
 		return uriGenerator;
+	}
+	
+	public RouteRegisterServiceIF getRouteRegisterService() {
+		return routeRegisterService;
+	}
+	
+	public PrefixRegisterServiceIF getPrefixRegisterService() {
+		return prefixRegisterService;
 	}
 
 	/**

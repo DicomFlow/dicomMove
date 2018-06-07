@@ -1,4 +1,4 @@
-package br.ufpb.dicomflow.service;
+package br.ufpb.dicomflow.service.ndn;
 
 public interface UriGeneratorIF {
 	
@@ -7,5 +7,7 @@ public interface UriGeneratorIF {
 	public String getURI(String studyIuid);
 	
 	public String getStudyIuid(String uri);
+	
+	public String getPrefix(String uri);
 
 }

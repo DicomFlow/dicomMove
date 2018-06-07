@@ -16,7 +16,7 @@
  * 
  */
 
-package br.ufpb.dicomflow.job;
+package br.ufpb.dicomflow.job.ndn;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,8 +42,8 @@ import br.ufpb.dicomflow.service.PacsPersistentServiceIF;
 import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
-import br.ufpb.dicomflow.service.UriGeneratorIF;
 import br.ufpb.dicomflow.service.UrlGeneratorIF;
+import br.ufpb.dicomflow.service.ndn.UriGeneratorIF;
 import br.ufpb.dicomflow.util.CredentialUtil;
 import br.ufpb.dicomflow.util.Util;
 

@@ -142,7 +142,7 @@
     </bean>
     <bean id="urlGenerator" class="br.ufpb.dicomflow.service.UrlGenerator">
     	<property name="host">
-            <value>DOMAIN_URL</value>
+            <value>DOMAIN_HOST</value>
         </property>
         <property name="port">
             <value>DOMIAN_PORT</value>
@@ -154,6 +154,30 @@
             <value>DOMAIN_PROTOCOL</value>
         </property>
     </bean> 
+    
+    <bean id="uriGenerator" class="br.ufpb.dicomflow.service.ndn.UriGenerator">
+        <property name="prefix">
+            <value>NDN_PREFIX</value>
+        </property>
+    </bean>
+    
+    <bean id="prefixRegisterService" class="br.ufpb.dicomflow.service.ndn.PrefixRegisterService">
+        <property name="uriGenerator">
+            <ref bean="uriGenerator"/>
+        </property>
+        <property name="urlGenerator">
+            <ref bean="urlGenerator"/>
+        </property>
+    </bean>
+    
+    <bean id="routeRegisterService" class="br.ufpb.dicomflow.service.ndn.RouteRegisterService">
+        <property name="protocol">
+            <value>NFD_PROTOCOL</value>
+        </property>
+        <property name="port">
+            <value>NFD_PORT</value>
+        </property>
+    </bean>
     
     <bean id="messageService" class="br.ufpb.dicomflow.service.MessageService"> 
         <property name="mailAuthenticator">
@@ -217,6 +241,18 @@
 			<value>KEYSTORE_KEY_PASSWORD</value>
 		</property>
     </bean>
+    
+    <bean id="verifyPrefixRegisterServiceJob" class="br.ufpb.dicomflow.job.ndn.VerifyPrefixRegisterService"/>
+
+    <bean id="verifyPrefixRegisterServiceJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="verifyPrefixRegisterServiceJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="verifyPrefixRegisterServiceCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="verifyPrefixRegisterServiceJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
     
     <bean id="findAccessJob" class="br.ufpb.dicomflow.job.FindAccesses"> 
         <property name="accessConfigFile">
@@ -316,7 +352,7 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="prepareStoragesJob" class="br.ufpb.dicomflow.job.PrepareStorages">
+	<bean id="prepareStoragesJob" class="br.ufpb.dicomflow.job.ndn.PrepareNDNStorages">
     	<property name="initialDate">
             <value>DATA_INICIAL_FORMAT_DD/MM/AAAA</value>
         </property>
@@ -340,7 +376,7 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="sendStoragesJob" class="br.ufpb.dicomflow.job.SendStorages"/>
+	<bean id="sendStoragesJob" class="br.ufpb.dicomflow.job.ndn.SendNDNStorages"/>
     <bean id="sendStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="sendStoragesJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -351,7 +387,7 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="findStoragesJob" class="br.ufpb.dicomflow.job.FindStorages">
+	<bean id="findStoragesJob" class="br.ufpb.dicomflow.job.FindNDNStorages">
     	<property name="initialDate">
             <value>DATA_INICIAL_FORMAT_DD/MM/AAAA</value>
         </property>
@@ -483,6 +519,10 @@
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	    <property name="triggers">
 	        <list>
+	        
+	        	<!-- JOBS PARA VERIFICAR O REGISTRADOR DE PREFIXOS NDN -->
+            	<ref bean="verifyPrefixRegisterServiceCronTrigger"/>
+	        
 	        	<!-- JOBS PARA ATUALIZACAO DE ACCESSES E SERVICE PERMISSIONS 
             	<ref bean="findAccessCronTrigger"/> -->
 	        

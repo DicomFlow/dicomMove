@@ -19,11 +19,9 @@
  * 	Copyright © 2016 Universidade Federal da Paraiba. * 
  * 
  */
-package br.ufpb.dicomflow.service;
+package br.ufpb.dicomflow.service.ndn;
 
 import java.util.StringTokenizer;
-
-import br.ufpb.dicomflow.bean.StudyIF;
 
 /**
  * 
@@ -34,24 +32,33 @@ import br.ufpb.dicomflow.bean.StudyIF;
 public class UriGenerator implements UriGeneratorIF {
 
 	
-	private String host;
+	private String prefix;
 	
 	@Override
 	public String getPrefix() {
-		return "/" + host;
+		return prefix;
+	}
+	
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+	
+	@Override
+	public String getPrefix(String uri) {
+		
+		StringTokenizer tokenizer = new StringTokenizer(uri, "/");
+		
+		String prefix = "";
+		if(tokenizer.hasMoreTokens()){
+			prefix = tokenizer.nextToken();
+		}
+		
+		return prefix;
 	}
 	
 	@Override
 	public String getURI(String studyIuid) {
 		return  getPrefix() +  "/" + studyIuid;
-	}
-
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
 	}
 
 	@Override
@@ -66,6 +73,8 @@ public class UriGenerator implements UriGeneratorIF {
 		
 		return studyIuid;
 	}
+
+	
 
 	
 				
