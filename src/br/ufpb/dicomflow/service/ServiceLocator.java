@@ -30,6 +30,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import br.ufpb.dicomflow.service.ndn.PrefixRegisterService;
 import br.ufpb.dicomflow.service.ndn.PrefixRegisterServiceIF;
 import br.ufpb.dicomflow.service.ndn.RouteRegisterServiceIF;
+import br.ufpb.dicomflow.service.ndn.SendInterestServiceIF;
 import br.ufpb.dicomflow.service.ndn.UriGeneratorIF;
 import br.ufpb.dicomflow.util.Util;
 
@@ -63,6 +64,8 @@ public class ServiceLocator  {
 	
 	private static final String ROUTE_REGISTER_BEAN_NAME = "routeRegisterService";
 	
+	private static final String SEND_INTEREST_BEAN_NAME = "sendInterestService";
+	
 
 	//the logger for this class
 	private Log logger = LogFactory.getLog(this.getClass());
@@ -90,6 +93,8 @@ public class ServiceLocator  {
 	
 	private RouteRegisterServiceIF routeRegisterService;
 	
+	private SendInterestServiceIF sendInterestService;
+	
 	private static ServiceLocator singleton = null;
 	
 	/**
@@ -116,13 +121,11 @@ public class ServiceLocator  {
 		this.urlGenerator = (UrlGeneratorIF)this.lookupService(URL_GENERATOR_BEAN_NAME);
 		this.uriGenerator = (UriGeneratorIF)this.lookupService(URI_GENERATOR_BEAN_NAME);
 		
-		
-		//TODO verificar uma melhor forma de iniciar a trhead
 		this.prefixRegisterService = (PrefixRegisterServiceIF)this.lookupService(PREFIX_REGISTER_BEAN_NAME);
 		
-		
-		
 		this.routeRegisterService = (RouteRegisterServiceIF)this.lookupService(ROUTE_REGISTER_BEAN_NAME);
+		
+		this.sendInterestService = (SendInterestServiceIF)this.lookupService(SEND_INTEREST_BEAN_NAME);
 		
 		this.logger.info("ServiceLocator is initialized");
 	}
@@ -197,6 +200,10 @@ public class ServiceLocator  {
 	
 	public PrefixRegisterServiceIF getPrefixRegisterService() {
 		return prefixRegisterService;
+	}
+	
+	public SendInterestServiceIF getSendInterestService() {
+		return sendInterestService;
 	}
 
 	/**

@@ -18,8 +18,6 @@
 
 package br.ufpb.dicomflow.job.ndn;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +32,6 @@ import br.ufpb.dicomflow.service.PersistentServiceIF;
 import br.ufpb.dicomflow.service.ServiceException;
 import br.ufpb.dicomflow.service.ServiceLocator;
 import br.ufpb.dicomflow.service.ndn.RouteRegisterServiceIF;
-import br.ufpb.dicomflow.service.ndn.UriGenerator;
 import br.ufpb.dicomflow.service.ndn.UriGeneratorIF;
 import br.ufpb.dicomflow.util.Util;
 
@@ -159,19 +156,12 @@ public class FindNDNStorages {
 				
 				storageService = new StorageService();
 				storageService.setLink(url);
-				try {
-					URL aURL = new URL(url);
-					storageService.setMessageID(originalMessageID);
-					storageService.setHost(aURL.getHost());
-					storageService.setPort(aURL.getPort());
-				} catch (MalformedURLException e) {
-					Util.getLogger(this).error(e.getMessage(), e);
-					e.printStackTrace();
-				}
+				storageService.setMessageID(originalMessageID);
 				storageService.setStatus(StorageService.OPEN);
 				storageService.setAction(StorageService.SAVE);
 				storageService.setType(StorageService.RECEIVED);
 				storageService.setDownloadAttempt(0);
+				storageService.setProcessAttempt(0);
 				
 				try {
 					storageService.save();

@@ -45,10 +45,13 @@ public class StorageService extends AbstractPersistence {
 	
 	//status values
 	public static final String OPEN = "open";
+	public static final String PENDING_PROCESS = "pending_process";
+	public static final String PROCESSED = "processed";
 	public static final String PENDING = "pending";
 	public static final String CLOSED = "closed";
 	public static final String ERROR = "error";
 	public static final String LOCK = "lock";
+	public static final String LOCK_PROCESS = "lock_process";
 	
 	//action values
 	public static final String SAVE = "save";
@@ -84,6 +87,8 @@ public class StorageService extends AbstractPersistence {
 	private String action;
 	
 	private int downloadAttempt;
+	
+	private int processAttempt;
 	
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="id_storage_service")
@@ -186,6 +191,14 @@ public class StorageService extends AbstractPersistence {
 
 	public void setDownloadAttempt(int downloadAttempt) {
 		this.downloadAttempt = downloadAttempt;
+	}
+	
+	public int getProcessAttempt() {
+		return processAttempt;
+	}
+
+	public void setProcessAttempt(int processAttempt) {
+		this.processAttempt = processAttempt;
 	}
 
 	@Override

@@ -179,6 +179,12 @@
         </property>
     </bean>
     
+    <bean id="sendInterestService" class="br.ufpb.dicomflow.service.ndn.SendInterestService">
+        <property name="maxAttempts">
+			<value>3</value>
+		</property>
+    </bean>
+    
     <bean id="messageService" class="br.ufpb.dicomflow.service.MessageService"> 
         <property name="mailAuthenticator">
             <ref bean="mailAuthenticator"/>
@@ -435,7 +441,29 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="storeStudiesJob" class="br.ufpb.dicomflow.job.StoreStudies"/>
+	<bean id="processStoragesJob" class="br.ufpb.dicomflow.job.ProcessNDNStorages"/>
+    <bean id="processStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="processStoragesJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="processStoragesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="processStoragesJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="processPendingStoragesJob" class="br.ufpb.dicomflow.job.ProcessNDNStorages"/>
+    <bean id="processPendingStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="processPendingStoragesJob"/>
+	    <property name="targetMethod" value="execute"/>
+	    <property name="concurrent" value="false"/>
+	</bean>
+	<bean id="processPendingStoragesCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	    <property name="jobDetail" ref="processPendingStoragesJobDetail"/>
+	    <property name="cronExpression" value="0 * * * * ?"/>
+	</bean>
+	
+	<bean id="storeStudiesJob" class="br.ufpb.dicomflow.job.StoreNDNStudies"/>
     <bean id="storeStudiesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="storeStudiesJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -446,7 +474,7 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="storePendingStudiesJob" class="br.ufpb.dicomflow.job.StorePendingStudies"/>
+	<bean id="storePendingStudiesJob" class="br.ufpb.dicomflow.job.StorePendingNDNStudies"/>
     <bean id="storePendingStudiesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="storePendingStudiesJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -540,6 +568,8 @@
                 
                 <!-- JOBS PARA RECEBIMENTO DE STORAGE SAVE 
                 <ref bean="findStoragesCronTrigger"/>
+                <ref bean="processStoragesCronTrigger"/>
+                <ref bean="processPendingStoragesCronTrigger"/>
                 <ref bean="storeStudiesCronTrigger"/>
                 <ref bean="storePendingStudiesCronTrigger"/> -->
                 
