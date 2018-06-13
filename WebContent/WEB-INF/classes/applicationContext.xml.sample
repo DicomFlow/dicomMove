@@ -393,7 +393,7 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="findStoragesJob" class="br.ufpb.dicomflow.job.FindNDNStorages">
+	<bean id="findStoragesJob" class="br.ufpb.dicomflow.job.ndn.FindNDNStorages">
     	<property name="initialDate">
             <value>DATA_INICIAL_FORMAT_DD/MM/AAAA</value>
         </property>
@@ -441,7 +441,7 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="processStoragesJob" class="br.ufpb.dicomflow.job.ProcessNDNStorages"/>
+	<bean id="processStoragesJob" class="br.ufpb.dicomflow.job.ndn.ProcessNDNStorages"/>
     <bean id="processStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="processStoragesJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -452,7 +452,7 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="processPendingStoragesJob" class="br.ufpb.dicomflow.job.ProcessNDNStorages"/>
+	<bean id="processPendingStoragesJob" class="br.ufpb.dicomflow.job.ndn.ProcessNDNStorages"/>
     <bean id="processPendingStoragesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="processPendingStoragesJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -463,7 +463,7 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="storeStudiesJob" class="br.ufpb.dicomflow.job.StoreNDNStudies"/>
+	<bean id="storeStudiesJob" class="br.ufpb.dicomflow.job.ndn.StoreNDNStudies"/>
     <bean id="storeStudiesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="storeStudiesJob"/>
 	    <property name="targetMethod" value="execute"/>
@@ -474,7 +474,7 @@
 	    <property name="cronExpression" value="0 * * * * ?"/>
 	</bean>
 	
-	<bean id="storePendingStudiesJob" class="br.ufpb.dicomflow.job.StorePendingNDNStudies"/>
+	<bean id="storePendingStudiesJob" class="br.ufpb.dicomflow.job.ndn.StorePendingNDNStudies"/>
     <bean id="storePendingStudiesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	    <property name="targetObject" ref="storePendingStudiesJob"/>
 	    <property name="targetMethod" value="execute"/>

@@ -1,9 +1,9 @@
 package br.ufpb.dicomflow.service.ndn;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import br.ufpb.dicomflow.service.UrlGeneratorIF;
+import br.ufpb.dicomflow.util.Util;
 import net.named_data.jndn.Data;
 import net.named_data.jndn.Face;
 import net.named_data.jndn.Interest;
@@ -21,7 +21,6 @@ import net.named_data.jndn.util.Blob;
 
 public class PrefixRegisterService implements PrefixRegisterServiceIF {
 
-	private static final Logger logger = Logger.getLogger(PrefixRegisterService.class.getName());
 
 	private UrlGeneratorIF urlGenerator;
 	
@@ -60,25 +59,25 @@ public class PrefixRegisterService implements PrefixRegisterServiceIF {
 		interest.setInterestLifetimeMilliseconds(1000);
 		face.expressInterest(interest, new OnData() {
 			public void onData(Interest interest, Data data) {
-				logger.info("Data received (bytes): " + data.getContent().size());
+				Util.getLogger(this).debug("Data received (bytes): " + data.getContent().size());
 			}
 		}, new OnTimeout() {
 			public void onTimeout(Interest interest) {
-				logger.severe("Failed to retrieve localhop data from NFD: " + interest.toUri());
+				Util.getLogger(this).debug("Failed to retrieve localhop data from NFD: " + interest.toUri());
 			}
 		});
 
 		// check if face is local
-		logger.info("Face is local: " + face.isLocal());
+		Util.getLogger(this).debug("Face is local: " + face.isLocal());
 
 		// register remotely
 		face.registerPrefix(new Name(uriGenerator.getPrefix()), new OnInterestCallback() {
 			public void onInterest(Name prefix, Interest interest, Face face, long interestFilterId,
 					InterestFilter filter) {
 
-				logger.info("Received prefix: " + prefix);
-				logger.info("Received filter: " + filter.getPrefix());
-				logger.info("received interest: " + interest.getName());
+				Util.getLogger(this).debug("Received prefix: " + prefix);
+				Util.getLogger(this).debug("Received filter: " + filter.getPrefix());
+				Util.getLogger(this).debug("received interest: " + interest.getName());
 				Data data = new Data(interest.getName());
 				
 				String studyIuid = uriGenerator.getStudyIuid(interest.getName().toUri());
@@ -88,12 +87,12 @@ public class PrefixRegisterService implements PrefixRegisterServiceIF {
 				try {
 					face.putData(data);
 				} catch (IOException e) {
-					logger.severe("Failed to send data: " + e.getMessage());
+					Util.getLogger(this).debug("Failed to send data: " + e.getMessage());
 				}
 			}
 		}, new OnRegisterFailed() {
 			public void onRegisterFailed(Name prefix) {
-				logger.severe("Failed to register the external forwarder: " + prefix.toUri());
+				Util.getLogger(this).debug("Failed to register the external forwarder: " + prefix.toUri());
 			}
 		});
 
