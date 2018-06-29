@@ -8,6 +8,9 @@ import net.named_data.jndn.Face;
 import net.named_data.jndn.Name;
 import net.named_data.jndn.security.KeyChain;
 import net.named_data.jndn.security.SecurityException;
+import net.named_data.jndn.security.identity.IdentityManager;
+import net.named_data.jndn.security.identity.MemoryIdentityStorage;
+import net.named_data.jndn.security.identity.MemoryPrivateKeyStorage;
 
 public class RouteRegisterService implements RouteRegisterServiceIF{
 	
@@ -33,8 +36,8 @@ public class RouteRegisterService implements RouteRegisterServiceIF{
 	public void processRoute(String uri, String prefix){
 		
 		try {
-			Face face =  new Face("localhost");
-			KeyChain keyChain = MockKeyChain.configure(new Name("/tmp/identity"));
+			Face face =  new Face();
+			KeyChain keyChain = buildTestKeyChain();//MockKeyChain.configure(new Name("/tmp/identity"));
 			face.setCommandSigningInfo(keyChain, keyChain.getDefaultCertificateName());
 			
 			
@@ -48,6 +51,27 @@ public class RouteRegisterService implements RouteRegisterServiceIF{
 			e.printStackTrace();
 		}
 		
+	}
+	
+	
+	/**
+	 * Setup an in-memory KeyChain with a default identity.
+	 *
+	 * @return
+	 * @throws net.named_data.jndn.security.SecurityException
+	 */
+	public static KeyChain buildTestKeyChain() throws net.named_data.jndn.security.SecurityException {
+		MemoryIdentityStorage identityStorage = new MemoryIdentityStorage();
+		MemoryPrivateKeyStorage privateKeyStorage = new MemoryPrivateKeyStorage();
+		IdentityManager identityManager = new IdentityManager(identityStorage, privateKeyStorage);
+		KeyChain keyChain = new KeyChain(identityManager);
+		try {
+			keyChain.getDefaultCertificateName();
+		} catch (net.named_data.jndn.security.SecurityException e) {
+			keyChain.createIdentityAndCertificate(new Name("/test/identity"));
+			keyChain.getIdentityManager().setDefaultIdentity(new Name("/test/identity"));
+		}
+		return keyChain;
 	}
 
 	public String getProtocol() {
