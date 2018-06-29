@@ -149,7 +149,7 @@ public class FindNDNStorages {
 			Util.getLogger(this).debug("URL FOUND : " + url);
 			System.out.println("URL FOUND : " + url);
 			
-			routeRegisterService.processRoute(null, storage.getHost(), null, uriGenerator.getPrefix(url));
+			routeRegisterService.processRoute(null, uriGenerator.getHost(url), null, uriGenerator.getPrefix(url));
 			
 			StorageService storageService = (StorageService) persistentService.selectByParams(new Object[]{"link", "type", "action"},new Object[]{url,StorageService.RECEIVED, StorageService.SAVE}, StorageService.class);
 			if(storageService == null){

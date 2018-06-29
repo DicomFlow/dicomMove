@@ -44,7 +44,7 @@ public class UriGenerator implements UriGeneratorIF {
 	}
 	
 	@Override
-	public String getPrefix(String uri) {
+	public String getHost(String uri) {
 		
 		StringTokenizer tokenizer = new StringTokenizer(uri, "/");
 		
@@ -54,6 +54,12 @@ public class UriGenerator implements UriGeneratorIF {
 		}
 		
 		return prefix;
+	}
+	
+	@Override
+	public String getPrefix(String uri) {
+		
+		return "/"+getHost(uri);
 	}
 	
 	@Override
@@ -72,6 +78,12 @@ public class UriGenerator implements UriGeneratorIF {
 		}
 		
 		return studyIuid;
+	}
+	
+	public static void main(String[] args) {
+		UriGenerator urigen = new UriGenerator();
+		System.out.println(urigen.getPrefix());
+		System.out.println(urigen.getPrefix("/192.168.43.107"));
 	}
 
 	

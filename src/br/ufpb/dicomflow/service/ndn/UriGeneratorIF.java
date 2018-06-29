@@ -9,5 +9,7 @@ public interface UriGeneratorIF {
 	public String getStudyIuid(String uri);
 	
 	public String getPrefix(String uri);
+	
+	public String getHost(String uri);
 
 }
